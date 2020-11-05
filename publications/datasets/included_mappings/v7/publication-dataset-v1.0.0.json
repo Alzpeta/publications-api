@@ -1,0 +1,10 @@
+{
+  "Dataset": {
+    "oarepo:extends": [
+      "invenio-v1.0.0.json#/InvenioRecord",
+      "dcterms-v2.0.0.json#/DCObject"
+    ],
+    "properties": {
+    }
+  }
+}

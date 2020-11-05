@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "https://restaurovani.vscht.cz/schemas/krokd/restoration-work-v1.0.0.json",
+  "additionalProperties": false,
+  "title": "CIS KROKD repository - restoration work record v1.0.0",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "/schemas/dcterms-v2.0.0.json#/definitions/DCObject"
+    },
+    {
+      "$ref": "/schemas/invenio-v1.0.0.json#/definitions/InvenioRecord"
+    },
+    {
+      "properties": {
+        "literature": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of literature used"
+        },
+        "thesis": {
+          "type": "string"
+        },
+        "supervisor": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "comment": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "institution": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "restorationPeriod": {
+          "type": "object",
+          "properties": {
+            "since": {
+              "type": "string",
+              "format": "date"
+            },
+            "until": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          "description": "Item restoration period"
+        },
+        "examinationMethods": {
+          "$ref": "/schemas/taxonomy-v2.0.0.json#/definitions/TermArray",
+          "$comment": "https://localhost:8080/api/taxonomies/examination-methods/?drilldown=True"
+        },
+        "restorationMethods": {
+          "$ref": "/schemas/taxonomy-v2.0.0.json#/definitions/TermArray",
+          "$comment": "https://localhost:8080/api/taxonomies/restoration-technology/?drilldown=True"
+        },
+        "public": {
+          "type": "boolean"
+        },
+        "workType": {
+          "$ref": "/schemas/taxonomy-v2.0.0.json#/definitions/Term",
+          "$comment": "https://localhost:8080/api/taxonomies/work-type/?drilldown=True"
+        },
+        "_restoration": {
+          "type": "string"
+        }
+      }
+    }
+  ],
+  "required": [
+    "id",
+    "$schema",
+    "identifier",
+    "title",
+    "multilingualAbstract",
+    "literature",
+    "thesis",
+    "public",
+    "workType"
+  ]
+}

@@ -1,0 +1,52 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2020 CESNET.
+#
+# CESNET OA Publication Repository is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
+# Backend services for needed for development.
+#
+# Usage::
+#
+#   $ docker-compose up -d
+#   $ ./conf/wait-for-services.sh
+#
+# Following services are included:
+# - Cache: Redis (exposed port: 6379)
+# - DB: (PostgresSQL/MySQL) (exposed port: 5432 or 3306)
+# - Message queue: RabbitMQ (exposed ports: 5672, 15672)
+# - Elasticsearch (exposed ports: 9200, 9300)
+#
+version: '2.3'
+volumes:
+  archived_data:
+  uploaded_data:
+  static_data:
+services:
+  cache:
+    ports:
+      - "127.0.0.1:6379:6379"
+    extends:
+      file: docker-services.yml
+      service: cache
+  db:
+    ports:
+      - "127.0.0.1:5432:5432"
+    extends:
+      file: docker-services.yml
+      service: db
+  mq:
+    ports:
+      - "127.0.0.1:15672:15672"
+      - "127.0.0.1:5672:5672"
+    extends:
+      file: docker-services.yml
+      service: mq
+  es:
+    ports:
+      - "127.0.0.1:9200:9200"
+      - "127.0.0.1:9300:9300"
+    extends:
+      file: docker-services.yml
+      service: es7
