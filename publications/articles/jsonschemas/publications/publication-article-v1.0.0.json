@@ -1,15 +1,15 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "id": "https://restaurovani.vscht.cz/schemas/krokd/restoration-work-v1.0.0.json",
+  "id": "https://localhost:5000/schemas/publications/publication-article-v1.0.0.json",
   "additionalProperties": false,
-  "title": "CIS KROKD repository - restoration work record v1.0.0",
+  "title": "CESNET publications repository Article record v1.0.0",
   "type": "object",
   "allOf": [
     {
-      "$ref": "/schemas/dcterms-v2.0.0.json#/definitions/DCObject"
+      "$ref": "dcterms-v2.0.0.json#/definitions/DCObject"
     },
     {
-      "$ref": "/schemas/invenio-v1.0.0.json#/definitions/InvenioRecord"
+      "$ref": "invenio-v1.0.0.json#/definitions/InvenioRecord"
     },
     {
       "properties": {

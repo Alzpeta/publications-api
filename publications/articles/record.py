@@ -15,6 +15,7 @@ from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.record import DraftRecordMixin
 from oarepo_references.mixins import ReferenceEnabledRecordMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin, FilesKeepingRecordMixin
+from oarepo_validate.record import AllowedSchemaMixin
 
 from .constants import (
     ARTICLE_ALLOWED_SCHEMAS,
@@ -24,7 +25,6 @@ from .marshmallow import ArticleMetadataSchemaV1
 
 
 class ArticleRecord(SchemaKeepingRecordMixin,
-                    FilesKeepingRecordMixin,
                     MarshmallowValidatedRecordMixin,
                     InheritedSchemaRecordMixin,
                     ReferenceEnabledRecordMixin,

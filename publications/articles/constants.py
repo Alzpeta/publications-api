@@ -6,8 +6,11 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 
+# ARTICLE_ALLOWED_SCHEMAS = ('https://localhost:5000/schemas/publications/publication-article-v1.0.0.json',)
+# ARTICLE_PREFERRED_SCHEMA = 'https://localhost:5000/schemas/publications/publication-article-v1.0.0.json'
 ARTICLE_ALLOWED_SCHEMAS = ('publications/publication-article-v1.0.0.json',)
 ARTICLE_PREFERRED_SCHEMA = 'publications/publication-article-v1.0.0.json'
+
 
 ARTICLE_PID_TYPE = 'pubart'
 ARTICLE_DRAFT_PID_TYPE = 'dpsart'

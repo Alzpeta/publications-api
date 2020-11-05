@@ -8,7 +8,6 @@
 
 from flask_babelex import lazy_gettext as _
 
-JSONSCHEMAS_HOST = 'repozitar-test.cesnet.cz'
 SUPPORTED_LANGUAGES = ['cs', 'en']
 
 BABEL_DEFAULT_LOCALE = 'cs'

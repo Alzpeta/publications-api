@@ -37,8 +37,7 @@ publications = "publications.config"
 
 [tool.poetry.plugins."invenio_search.mappings"]
 datasets = "publications.datasets.mappings"
-# TODO: articles mappings
-# publication-article-v1.0.0.json = "publications.articles.mappings"
+articles = "publications.articles.mappings"
 
 [tool.poetry.plugins."invenio_base.apps"]
 publications-dataset = "publications.datasets.ext:PublicationsDatasets"

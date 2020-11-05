@@ -14,6 +14,7 @@ from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.record import DraftRecordMixin
 from oarepo_references.mixins import ReferenceEnabledRecordMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin, FilesKeepingRecordMixin
+from oarepo_validate.record import AllowedSchemaMixin
 
 from publications.datasets.constants import DATASET_ALLOWED_SCHEMAS,\
     DATASET_PREFERRED_SCHEMA, DATASET_PID_TYPE, DATASET_DRAFT_PID_TYPE
@@ -29,6 +30,8 @@ class DatasetRecord(SchemaKeepingRecordMixin,
     ALLOWED_SCHEMAS = DATASET_ALLOWED_SCHEMAS
     PREFERRED_SCHEMA = DATASET_PREFERRED_SCHEMA
     MARSHMALLOW_SCHEMA = DatasetMetadataSchemaV1
+
+    _schema = 'publication-dataset-v1.0.0.json'
 
     @property
     def canonical_url(self):

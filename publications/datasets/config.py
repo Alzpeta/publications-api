@@ -38,8 +38,9 @@ RECORDS_DRAFT_ENDPOINTS = {
         'edit_permission_factory_imp': allow_all,
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
+        'search_index': 'datasets',
 
-        'list_route': '/publications/datasets',
+        'list_route': '/publications/datasets/',
     },
     'draft-publications/datasets': {
         'pid_type': DATASET_DRAFT_PID_TYPE,

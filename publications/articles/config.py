@@ -27,8 +27,9 @@ RECORDS_DRAFT_ENDPOINTS = {
 
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
+        'search_index': 'articles',
 
-        'list_route': '/publications/articles',
+        'list_route': '/publications/articles/',
     },
     'draft-publications/articles': {
         'pid_type': ARTICLE_DRAFT_PID_TYPE,

@@ -9,28 +9,14 @@
 from flask_principal import Permission, RoleNeed
 
 
-def create_work_permission_impl(*args, **kwargs):
+def create_article_permission_impl(*args, **kwargs):
     return Permission(
         RoleNeed('synchronizer'),
         RoleNeed('curator'),
     )
 
 
-def update_work_permission_impl(*args, **kwargs):
-    return Permission(
-        RoleNeed('synchronizer'),
-        RoleNeed('curator'),
-    )
-
-
-def put_file_permission_impl(*args, **kwargs):
-    return Permission(
-        RoleNeed('synchronizer'),
-        RoleNeed('curator'),
-    )
-
-
-def get_file_permission_impl(*args, **kwargs):
+def update_article_permission_impl(*args, **kwargs):
     return Permission(
         RoleNeed('synchronizer'),
         RoleNeed('curator'),

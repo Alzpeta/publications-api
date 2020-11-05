@@ -1,12 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "id": "https://repozitar-test.cesnet.cz.cz/schemas/publications/publications-dataset-v1.0.0.json",
+  "id": "https://localhost:5000/schemas/publications/publication-dataset-v1.0.0.json",
   "additionalProperties": false,
   "title": "CESNET Publications repository - data set record v1.0.0",
   "type": "object",
   "allOf": [
     {
-      "$ref": "/schemas/record-v1.0.0.json"
+      "$ref": "record-v1.0.0.json"
     }
   ],
   "required": [
