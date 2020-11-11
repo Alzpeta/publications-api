@@ -29,7 +29,7 @@ class DatasetRecord(SchemaKeepingRecordMixin,
     PREFERRED_SCHEMA = DATASET_PREFERRED_SCHEMA
     MARSHMALLOW_SCHEMA = DatasetMetadataSchemaV1
 
-    index_name = 'oarepo-demo-s3-publication-dataset-v1.0.0'
+    index_name = 'oarepo-demo-s3-datasets-publication-dataset-v1.0.0'
     _schema = 'publication-dataset-v1.0.0.json'
 
     @property
@@ -42,7 +42,7 @@ class DatasetDraftRecord(DraftRecordMixin,
                          FilesKeepingRecordMixin,
                          DatasetRecord):
 
-    index_name = 'oarepo-demo-s3-draft-publication-dataset-v1.0.0'
+    index_name = 'oarepo-demo-s3-draft-datasets-publication-dataset-v1.0.0'
 
     def validate(self, *args, **kwargs):
         if 'created' not in self:

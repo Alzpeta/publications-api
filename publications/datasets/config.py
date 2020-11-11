@@ -38,13 +38,13 @@ RECORDS_DRAFT_ENDPOINTS = {
         'edit_permission_factory_imp': allow_all,
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
-        'search_index': 'datasets',
+        'search_index': 'oarepo-demo-s3-datasets-publication-dataset-v1.0.0',
 
         'list_route': '/publications/datasets/',
     },
     'draft-publications/datasets': {
         'pid_type': DATASET_DRAFT_PID_TYPE,
-        'search_index': 'draft-publication-dataset-v1.0.0',
+        'search_index': 'oarepo-demo-s3-draft-datasets-publication-dataset-v1.0.0',
         'record_class': 'publications.datasets.record.DatasetDraftRecord',
         'create_permission_factory_imp': allow_all,  #'publications.datasets.permissions.create_object_permission_impl',
         'update_permission_factory_imp': allow_all,  #'publications.datasets.permissions.update_object_permission_impl',

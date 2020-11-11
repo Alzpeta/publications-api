@@ -27,14 +27,14 @@ RECORDS_DRAFT_ENDPOINTS = {
 
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
-        'search_index': 'articles',
+        'search_index': 'oarepo-demo-s3-articles-publication-article-v1.0.0',
 
         'list_route': '/publications/articles/',
     },
     'draft-publications/articles': {
         'pid_type': ARTICLE_DRAFT_PID_TYPE,
         'record_class': 'publications.articles.record.ArticleDraftRecord',
-        'search_index': 'draft-publication-article-v1.0.0',
+        'search_index': 'oarepo-demo-s3-draft-publication-article-v1.0.0',
         'create_permission_factory_imp': 'publications.articles.permissions.create_article_permission_impl',
         'update_permission_factory_imp': 'publications.articles.permissions.update_article_permission_impl',
         'read_permission_factory_imp': allow_all,

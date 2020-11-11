@@ -32,7 +32,7 @@ class ArticleRecord(SchemaKeepingRecordMixin,
     PREFERRED_SCHEMA = ARTICLE_PREFERRED_SCHEMA
     MARSHMALLOW_SCHEMA = ArticleMetadataSchemaV1
 
-    index_name = 'oarepo-demo-s3-publication-article-v1.0.0'
+    index_name = 'oarepo-demo-s3-articles-publication-article-v1.0.0'
 
     @property
     def canonical_url(self):
@@ -42,7 +42,7 @@ class ArticleRecord(SchemaKeepingRecordMixin,
 
 class ArticleDraftRecord(DraftRecordMixin, ArticleRecord):
 
-    index_name = 'oarepo-demo-s3-draft-publication-article-v1.0.0'
+    index_name = 'oarepo-demo-s3-draft-articles-publication-article-v1.0.0'
 
     def validate(self, *args, **kwargs):
         if 'created' not in self:
