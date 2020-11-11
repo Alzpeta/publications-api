@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "id": "https://localhost:5000/schemas/publications/publication-dataset-v1.0.0.json",
+  "id": "https://repozitar-test.cesnet.cz/schemas/publications/publication-dataset-v1.0.0.json",
   "additionalProperties": false,
   "title": "CESNET Publications repository - data set record v1.0.0",
   "type": "object",

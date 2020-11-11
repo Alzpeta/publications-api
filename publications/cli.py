@@ -27,7 +27,7 @@ def dataset_records():
 
 def create_dataset_record(record_json):
     headers = {'Content-type': 'application/json'}
-    dat_url = 'https://127.0.0.1:5000/api/draft/publications/datasets/'
+    dat_url = 'https://repozitar-test.cesnet.cz/api/draft/publications/datasets/'
     record_json.pop('_files', None)
 
     print(dat_url)

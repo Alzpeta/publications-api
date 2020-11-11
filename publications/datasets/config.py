@@ -71,7 +71,7 @@ RECORDS_REST_ENDPOINTS = {
         pid_fetcher='all-publications-datasets',
         default_endpoint_prefix=True,
         search_class=RecordsSearch,
-        search_index='all-datasets',
+        search_index='oarepo-demo-s3-all-datasets',
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
         },
