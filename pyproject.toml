@@ -12,22 +12,23 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8"
 requests = "^2.24.0"
+wheel = "^0.35.1"
 
-oarepo = "^3.3.0.4"
-oarepo-micro-api = "^1.0.0"
+oarepo = ">=3.3.0.4"
+oarepo-micro-api = ">=1.0.0"
 
-oarepo-validate = "^1.0.0"
-oarepo-references = "^1.8.3"
-oarepo-mapping-includes = "^1.2.0"
-oarepo-invenio-model = "^2.1.2"
-oarepo-rdm-records = "^1.0.1"
-oarepo-s3 = { version = "^1.0.1", allow-prereleases = true }
-flask-taxonomies = { version = "^7.0.0a17", allow-prereleases = true }
-oarepo-taxonomies = { version = ">=2.3.0", allow-prereleases = true }
-oarepo-records-draft = { version = "^5.0.0-alpha.18", allow-prereleases = true }
-invenio-records-files = "^1.2.1"
-oarepo-iiif = "^1.1.1"
-oarepo-ui = "^1.0.2"
+oarepo-validate = ">=1.0.0"
+#oarepo-references = ">=1.8.3"
+oarepo-mapping-includes = ">=1.2.0"
+oarepo-invenio-model = ">=2.1.2"
+oarepo-rdm-records = { version = ">=2.1.0", allow-prereleases = true }
+oarepo-s3 = { version = ">=1.0.1", allow-prereleases = true }
+flask-taxonomies = { version = ">=7.0.0a17", allow-prereleases = true }
+#oarepo-taxonomies = { version = ">=2.3.0", allow-prereleases = true }
+oarepo-records-draft = { version = ">=5.0.0-alpha.18", allow-prereleases = true }
+invenio-records-files = ">=1.2.1"
+oarepo-iiif = ">=1.1.1"
+oarepo-ui = ">=1.0.2"
 
 [tool.poetry.plugins.oarepo_mapping_handlers]
 titled-term = "publications.mappings:titled_term"
@@ -47,6 +48,9 @@ publications-article = "publications.articles.ext:PublicationsArticles"
 publications-dataset = "publications.datasets.ext:PublicationsDatasets"
 publications-article = "publications.articles.ext:PublicationsArticles"
 invenio_i18n = "invenio_i18n:InvenioI18N"
+
+[tool.poetry.plugins."flask.commands"]
+dataset-records = "publications.cli:dataset_records"
 
 [tool.poetry.plugins."invenio_jsonschemas.schemas"]
 publications-dataset = "publications.datasets.jsonschemas"

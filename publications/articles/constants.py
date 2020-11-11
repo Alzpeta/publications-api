@@ -8,8 +8,8 @@
 
 # ARTICLE_ALLOWED_SCHEMAS = ('https://localhost:5000/schemas/publications/publication-article-v1.0.0.json',)
 # ARTICLE_PREFERRED_SCHEMA = 'https://localhost:5000/schemas/publications/publication-article-v1.0.0.json'
-ARTICLE_ALLOWED_SCHEMAS = ('publications/publication-article-v1.0.0.json',)
-ARTICLE_PREFERRED_SCHEMA = 'publications/publication-article-v1.0.0.json'
+ARTICLE_ALLOWED_SCHEMAS = ('articles/publication-article-v1.0.0.json',)
+ARTICLE_PREFERRED_SCHEMA = 'articles/publication-article-v1.0.0.json'
 
 
 ARTICLE_PID_TYPE = 'pubart'

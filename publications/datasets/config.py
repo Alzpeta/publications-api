@@ -44,15 +44,20 @@ RECORDS_DRAFT_ENDPOINTS = {
     },
     'draft-publications/datasets': {
         'pid_type': DATASET_DRAFT_PID_TYPE,
+        'search_index': 'draft-datasets-publication-dataset-v1.0.0',
         'record_class': 'publications.datasets.record.DatasetDraftRecord',
-        'create_permission_factory_imp': 'publications.datasets.permissions.create_object_permission_impl',
-        'update_permission_factory_imp': 'publications.datasets.permissions.update_object_permission_impl',
+        'create_permission_factory_imp': allow_all,  #'publications.datasets.permissions.create_object_permission_impl',
+        'update_permission_factory_imp': allow_all,  #'publications.datasets.permissions.update_object_permission_impl',
+        'read_permission_factory_imp': allow_all,
+        'delete_permission_factory_imp': allow_all,
+        'list_permission_factory_imp': allow_all,
+        'list_route': '/draft/publications/datasets/',
         'record_loaders': {
             'application/json': 'oarepo_validate.json_files_loader'
         },
         'files': dict(
-            put_file_factory='publications.datasets.permissions.put_file_permission_impl',
-            get_file_factory='publications.datasets.permissions.get_file_permission_impl',
+            put_file_factory=allow_all,  #'publications.datasets.permissions.put_file_permission_impl',
+            get_file_factory=allow_all  #'publications.datasets.permissions.get_file_permission_impl',
         )
     }
 }
@@ -139,11 +144,11 @@ FACETS = {
 }
 
 RECORDS_REST_FACETS = {
-    'draft-publications-publication-dataset-v1.0.0': {
+    'draft-datasets-publication-dataset-v1.0.0': {
         'aggs': translate_facets(FACETS, label='{facet_key}', value='{value_key}'),
         'filters': translate_filters(FILTERS, label='{filter_key}')
     },
-    'publications-publication-dataset-v1.0.0': {
+    'datasets-publication-dataset-v1.0.0': {
         'aggs': translate_facets(FACETS, label='{facet_key}'),
         'filters': translate_filters(FILTERS, label='{filter_key}')
     },

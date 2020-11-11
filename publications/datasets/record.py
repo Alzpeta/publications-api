@@ -12,7 +12,6 @@ from flask_login import current_user
 from invenio_records_files.api import Record
 from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.record import DraftRecordMixin
-from oarepo_references.mixins import ReferenceEnabledRecordMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin, FilesKeepingRecordMixin
 from oarepo_validate.record import AllowedSchemaMixin
 
@@ -24,7 +23,6 @@ from publications.datasets.marshmallow import DatasetMetadataSchemaV1
 class DatasetRecord(SchemaKeepingRecordMixin,
                     MarshmallowValidatedRecordMixin,
                     InheritedSchemaRecordMixin,
-                    ReferenceEnabledRecordMixin,
                     Record):
     """Data set record class for Data set records."""
     ALLOWED_SCHEMAS = DATASET_ALLOWED_SCHEMAS
@@ -47,7 +45,7 @@ class DatasetDraftRecord(DraftRecordMixin,
         if 'created' not in self:
             self['created'] = datetime.date.today().strftime('%Y-%m-%d')
         if 'creator' not in self:
-            if current_user.is_authenticated:
+            if current_user and current_user.is_authenticated:
                 self['creator'] = current_user.email
             else:
                 self['creator'] = 'anonymous'

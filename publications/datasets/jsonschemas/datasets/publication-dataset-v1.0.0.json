@@ -6,7 +6,7 @@
   "type": "object",
   "allOf": [
     {
-      "$ref": "record-v1.0.0.json"
+      "$ref": "rdm-record-v2.0.0.json"
     }
   ],
   "required": [

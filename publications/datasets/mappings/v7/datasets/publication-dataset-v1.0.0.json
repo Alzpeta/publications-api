@@ -45,7 +45,8 @@
     "date_detection": false,
     "numeric_detection": false,
     "oarepo:extends": [
-      "invenio-v1.0.0.json#/InvenioRecord"
+      "invenio-v1.0.0.json#/InvenioRecord",
+      "rdm-record-v2.0.0.json#/RDMRecord"
     ],
     "properties": {
       "_search": {

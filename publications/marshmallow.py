@@ -8,22 +8,21 @@
 
 import flask
 from oarepo_multilingual.marshmallow import MultilingualStringV2
-from oarepo_taxonomies.marshmallow import TaxonomyField
 
 
 class TitledMixin:
     title = MultilingualStringV2()
 
-
-def TitledTaxonomyField(*args, **kwargs):
-    return TaxonomyField(
-        *args, name=kwargs.pop('name', 'TitledTaxonomyField'),
-        mixins=[
-            TitledMixin,
-            *(kwargs.pop('mixins', []))
-        ],
-        **kwargs
-    )
+#
+# def TitledTaxonomyField(*args, **kwargs):
+#     return TaxonomyField(
+#         *args, name=kwargs.pop('name', 'TitledTaxonomyField'),
+#         mixins=[
+#             TitledMixin,
+#             *(kwargs.pop('mixins', []))
+#         ],
+#         **kwargs
+#     )
 
 
 def check_multilingual_string_length(val, max_words=100, max_length=5000):

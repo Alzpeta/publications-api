@@ -13,7 +13,6 @@ from flask_login import current_user
 from invenio_records_files.api import Record
 from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.record import DraftRecordMixin
-from oarepo_references.mixins import ReferenceEnabledRecordMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin, FilesKeepingRecordMixin
 from oarepo_validate.record import AllowedSchemaMixin
 
@@ -27,7 +26,6 @@ from .marshmallow import ArticleMetadataSchemaV1
 class ArticleRecord(SchemaKeepingRecordMixin,
                     MarshmallowValidatedRecordMixin,
                     InheritedSchemaRecordMixin,
-                    ReferenceEnabledRecordMixin,
                     Record):
     """Record class for an Article Record"""
     ALLOWED_SCHEMAS = ARTICLE_ALLOWED_SCHEMAS

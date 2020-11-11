@@ -7,8 +7,8 @@
 #
 # DATASET_ALLOWED_SCHEMAS = ('https://localhost:5000/schemas/publications/publication-dataset-v1.0.0.json',)
 # DATASET_PREFERRED_SCHEMA = 'https://localhost:5000/schemas/publications/publication-dataset-v1.0.0.json'
-DATASET_ALLOWED_SCHEMAS = ('publications/publication-dataset-v1.0.0.json',)
-DATASET_PREFERRED_SCHEMA = 'publications/publication-dataset-v1.0.0.json'
+DATASET_ALLOWED_SCHEMAS = ('datasets/publication-dataset-v1.0.0.json',)
+DATASET_PREFERRED_SCHEMA = 'datasets/publication-dataset-v1.0.0.json'
 
 
 DATASET_PID_TYPE = 'datset'
