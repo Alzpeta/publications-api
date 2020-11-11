@@ -34,6 +34,7 @@ RECORDS_DRAFT_ENDPOINTS = {
     'draft-publications/articles': {
         'pid_type': ARTICLE_DRAFT_PID_TYPE,
         'record_class': 'publications.articles.record.ArticleDraftRecord',
+        'search_index': 'draft-publication-article-v1.0.0',
         'create_permission_factory_imp': 'publications.articles.permissions.create_article_permission_impl',
         'update_permission_factory_imp': 'publications.articles.permissions.update_article_permission_impl',
         'read_permission_factory_imp': allow_all,

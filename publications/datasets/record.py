@@ -7,7 +7,7 @@
 #
 import datetime
 
-from flask import url_for
+from flask import url_for, current_app
 from flask_login import current_user
 from invenio_records_files.api import Record
 from oarepo_invenio_model import InheritedSchemaRecordMixin
@@ -29,6 +29,7 @@ class DatasetRecord(SchemaKeepingRecordMixin,
     PREFERRED_SCHEMA = DATASET_PREFERRED_SCHEMA
     MARSHMALLOW_SCHEMA = DatasetMetadataSchemaV1
 
+    index_name = f"{current_app.config('SEARCH_INDEX_PREFIX')}publication-dataset-v1.0.0"
     _schema = 'publication-dataset-v1.0.0.json'
 
     @property
@@ -40,6 +41,8 @@ class DatasetRecord(SchemaKeepingRecordMixin,
 class DatasetDraftRecord(DraftRecordMixin,
                          FilesKeepingRecordMixin,
                          DatasetRecord):
+
+    index_name = f"{current_app.config('SEARCH_INDEX_PREFIX')}draft-publication-dataset-v1.0.0"
 
     def validate(self, *args, **kwargs):
         if 'created' not in self:

@@ -6,6 +6,15 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 from invenio_indexer.api import RecordIndexer
+from oarepo_records_draft.record import record_to_index as draft_record_to_index
+
+
+def record_to_index(record):
+    index = getattr(record, 'index_name', None)
+    if index:
+        return index, '_doc'
+
+    return draft_record_to_index(record)
 
 
 class CommitingRecordIndexer(RecordIndexer):

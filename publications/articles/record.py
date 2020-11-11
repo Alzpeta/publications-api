@@ -8,7 +8,7 @@
 
 import datetime
 
-from flask import url_for
+from flask import url_for, current_app
 from flask_login import current_user
 from invenio_records_files.api import Record
 from oarepo_invenio_model import InheritedSchemaRecordMixin
@@ -32,6 +32,8 @@ class ArticleRecord(SchemaKeepingRecordMixin,
     PREFERRED_SCHEMA = ARTICLE_PREFERRED_SCHEMA
     MARSHMALLOW_SCHEMA = ArticleMetadataSchemaV1
 
+    index_name = f"{current_app.config('SEARCH_INDEX_PREFIX')}publication-article-v1.0.0"
+
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.publications/{ARTICLE_PID_TYPE}_item',
@@ -39,6 +41,9 @@ class ArticleRecord(SchemaKeepingRecordMixin,
 
 
 class ArticleDraftRecord(DraftRecordMixin, ArticleRecord):
+
+    index_name = f"{current_app.config('SEARCH_INDEX_PREFIX')}draft-publication-article-v1.0.0"
+
     def validate(self, *args, **kwargs):
         if 'created' not in self:
             self['created'] = datetime.date.today().strftime('%Y-%m-%d')

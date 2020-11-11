@@ -24,6 +24,8 @@ ELASTICSEARCH_DEFAULT_LANGUAGE_TEMPLATE = {
     }
 }
 
+INDEXER_RECORD_TO_INDEX = 'publications.indexer:record_to_index'
+
 # hack to serve schemas both on jsonschemas host and server name (if they differ)
 import jsonresolver
 
