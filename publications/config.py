@@ -5,8 +5,10 @@
 # CESNET OA Publication Repository is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+import os
 
 from flask_babelex import lazy_gettext as _
+from invenio_openid_connect import InvenioAuthOpenIdRemote
 
 SUPPORTED_LANGUAGES = ['cs', 'en']
 
@@ -46,3 +48,14 @@ def jsonresolver_loader(url_map):
 
 
 FILES_REST_STORAGE_FACTORY = 'oarepo_s3.storage.s3_storage_factory'
+
+OPENIDC_CONFIG = dict(
+    base_url='https://login.cesnet.cz/oidc/',
+    consumer_key=os.environ.get('OPENIDC_KEY', 'MISSING_OIDC_KEY'),
+    consumer_secret=os.environ.get('OPENIDC_SECRET', 'MISSING_OIDC_SECRET'),
+    scope='openid email profile'
+)
+
+OAUTHCLIENT_REST_REMOTE_APPS = dict(
+    eduid=InvenioAuthOpenIdRemote().remote_app(),
+)
