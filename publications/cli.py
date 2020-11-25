@@ -25,9 +25,9 @@ def dataset_records():
     pass
 
 
-def create_dataset_record(record_json):
+def create_dataset_record(record_json, token):
     headers = {'Content-type': 'application/json'}
-    dat_url = 'https://repozitar-test.cesnet.cz/api/draft/publications/datasets/'
+    dat_url = f'https://127.0.0.1:5000/api/draft/publications/datasets/?access_token={token}'
     record_json.pop('_files', None)
 
     print(dat_url)
@@ -43,14 +43,15 @@ def create_dataset_record(record_json):
 
 
 @dataset_records.command('demo')
+@click.argument('token')
 @with_appcontext
-def demo():
+def demo(token):
     """Create 10 fake data set records for demo purposes."""
     click.secho('Creating demo records...', fg='blue')
 
     for _ in range(10):
         data = create_fake_record()
-        res = create_dataset_record(data)
+        res = create_dataset_record(data, token)
         click.secho(str(res), fg='red')
 
     click.secho('Created records!', fg='green')

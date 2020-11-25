@@ -31,6 +31,10 @@ def allow_owner(record, *args, **kwargs):
     )
 
 
+def allow_ingester(record, *args, **kwargs):
+    return Permission(RoleNeed('ingester'))
+
+
 def allow_curator_or_owner(record, *args, **kwargs):
     owner = allow_owner(record, *args, **kwargs)
     curator = allow_curator(*args, **kwargs)

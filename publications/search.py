@@ -17,7 +17,7 @@ def search_permission_filter():
         if 'curator' in [rol.name for rol in current_user.roles]:
             # Curators can see the whole search index
             return Q('match_all')
-        return Q('terms', _owners=current_user.get_id())
+        return Q('terms', _owners=[current_user.get_id()])
     return Q('match_none')
 
 

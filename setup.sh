@@ -16,6 +16,22 @@ invenio index init
 invenio index queue init purge
 invenio files location --default 'default-s3' s3://oarepo
 
-# Create admin role to restrict access
-invenio roles create admin
+# Create roles to manage access
+invenio roles create ingester -d 'data ingester'
+invenio roles create curator -d 'curator'
+invenio roles create admin -d 'system administrator'
+
+# Create system users
+echo 'Creating dataset-ingest user'
+read -s -p "Password:" datinpass
+invenio users create dataset-ingest@cesnet.cz --password $datinpass
+invenio users activate dataset-ingest@cesnet.cz
+
+invenio roles add dataset-ingest@cesnet.cz ingester
+
+echo 'Creating demo-ingest token (use for `invenio dataset-records demo ${TOKEN}`)'
+invenio tokens create -n demo-ingest -u dataset-ingest@cesnet.cz
+
 invenio access allow superuser-access role admin
+
+echo 'Thats all folks!'
