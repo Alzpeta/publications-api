@@ -23,4 +23,5 @@ def search_permission_filter():
 
 class FilteredRecordsSearch(RecordsSearch):
     class Meta:
+        doc_types = None
         default_filter = DefaultFilter(search_permission_filter)
