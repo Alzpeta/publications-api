@@ -21,6 +21,7 @@ def update_object_permission_impl(*args, **kwargs):
         RoleNeed('curator'),
     )
 
+
 def put_file_permission_impl(*args, **kwargs):
     return Permission(
         RoleNeed('synchronizer'),
