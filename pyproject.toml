@@ -30,7 +30,6 @@ oarepo-iiif = ">=1.1.1"
 oarepo-ui = ">=1.0.2"
 invenio-openid-connect = "^2.0.2"
 #s3-client-lib = { path = "../../../s3-client" }
-#wheel = "^0.35.1"
 
 [tool.poetry.plugins.oarepo_mapping_handlers]
 titled-term = "publications.mappings:titled_term"

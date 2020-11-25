@@ -9,15 +9,6 @@ from flask_principal import Permission, RoleNeed, UserNeed
 from invenio_access import authenticated_user
 
 
-def _get_owners(record):
-    owners = record.get('_owners')
-    try:
-        owners.remove(-1)
-    except ValueError:
-        pass
-    return owners
-
-
 def allow_curator(*args, **kwargs):
     return Permission(
         RoleNeed('curator')
@@ -34,10 +25,9 @@ def allow_admin(*args, **kwargs):
 
 
 def allow_owner(record, *args, **kwargs):
-    owners = _get_owners(record)
+    owners = record.get('_owners')
     return Permission(
         *[UserNeed(int(owner)) for owner in owners],
-        Permission(UserNeed(-1))
     )
 
 
