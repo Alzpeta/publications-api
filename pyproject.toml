@@ -13,7 +13,7 @@ packages = [
 python = "^3.8"
 requests = "^2.24.0"
 
-oarepo = ">=3.3.0.4"
+oarepo = "^3.3"
 oarepo-micro-api = ">=1.0.0"
 
 oarepo-validate = ">=1.0.0"
@@ -28,6 +28,9 @@ oarepo-records-draft = { version = ">=5.0.0-alpha.18", allow-prereleases = true 
 invenio-records-files = ">=1.2.1"
 oarepo-iiif = ">=1.1.1"
 oarepo-ui = ">=1.0.2"
+invenio-oauth2server = "^1.2.0"
+invenio-openid-connect = "^2.0.2"
+#s3-client-lib = { path = "../../../s3-client" }
 
 [tool.poetry.plugins.oarepo_mapping_handlers]
 titled-term = "publications.mappings:titled_term"

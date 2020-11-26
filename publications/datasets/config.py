@@ -7,20 +7,19 @@
 #
 
 from elasticsearch_dsl import Q
-from invenio_indexer.api import RecordIndexer
 from invenio_records_rest.facets import terms_filter, range_filter
-from invenio_records_rest.utils import allow_all, deny_all, check_elasticsearch
+from invenio_records_rest.utils import allow_all, deny_all
 from invenio_search import RecordsSearch
 from oarepo_multilingual import language_aware_text_match_filter
-
 from oarepo_records_draft import DRAFT_IMPORTANT_FACETS, DRAFT_IMPORTANT_FILTERS
 from oarepo_ui import translate_facets, translate_filters, translate_facet
 
 from publications.datasets.constants import DATASET_DRAFT_PID_TYPE, DATASET_PID_TYPE, DATASET_ALL_PID_TYPE
 from publications.indexer import CommitingRecordIndexer
+from publications.permissions import allow_curator, allow_owner, allow_curator_or_owner, allow_authenticated
+from publications.search import FilteredRecordsSearch
 
 _ = lambda x: x
-
 
 RECORDS_DRAFT_ENDPOINTS = {
     'publications/datasets': {
@@ -33,31 +32,72 @@ RECORDS_DRAFT_ENDPOINTS = {
 
         'record_class': 'publications.datasets.record.DatasetRecord',
 
-        'publish_permission_factory_imp': allow_all,  # TODO: change this !!!
-        'unpublish_permission_factory_imp': allow_all,
-        'edit_permission_factory_imp': allow_all,
+        # Who can publish a draft dataset record
+        'publish_permission_factory_imp': allow_curator,
+        # Who can unpublish (delete published & create a new draft version of)
+        # a published dataset record
+        'unpublish_permission_factory_imp': allow_curator,
+        # Who can edit (create a new draft version of) a published dataset record
+        'edit_permission_factory_imp': allow_curator_or_owner,
+        # Who can enumerate published dataset record collection
+        'list_permission_factory_imp': allow_all,
+        # Who can view an existing published dataset record detail
+        'read_permission_factory_imp': allow_all,
+        # Make sure everything else is for biden
+        'create_permission_factory_imp': deny_all,
+        'update_permission_factory_imp': deny_all,
+        'delete_permission_factory_imp': deny_all,
+
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
+        'search_class': RecordsSearch,
         'search_index': 'oarepo-demo-s3-datasets-publication-dataset-v1.0.0',
+        'search_serializers': {
+            'application/json': 'oarepo_validate:json_search',
+        },
 
         'list_route': '/publications/datasets/',
+
+        'files': dict(
+            # Who can upload attachments to a draft dataset record
+            put_file_factory=deny_all,
+            # Who can download attachments from a draft dataset record
+            get_file_factory=allow_all,
+            # Who can delete attachments from a draft dataset record
+            delete_file_factory=deny_all
+        )
     },
     'draft-publications/datasets': {
         'pid_type': DATASET_DRAFT_PID_TYPE,
+        'search_class': FilteredRecordsSearch,
         'search_index': 'oarepo-demo-s3-draft-datasets-publication-dataset-v1.0.0',
+        'search_serializers': {
+            'application/json': 'oarepo_validate:json_search',
+        },
         'record_class': 'publications.datasets.record.DatasetDraftRecord',
-        'create_permission_factory_imp': allow_all,  #'publications.datasets.permissions.create_object_permission_impl',
-        'update_permission_factory_imp': allow_all,  #'publications.datasets.permissions.update_object_permission_impl',
-        'read_permission_factory_imp': allow_all,
-        'delete_permission_factory_imp': allow_all,
-        'list_permission_factory_imp': allow_all,
+
+        # Who can create a new draft dataset record
+        'create_permission_factory_imp': allow_authenticated,
+        # Who can edit an existing draft dataset record
+        'update_permission_factory_imp': allow_owner,
+        # Who can view an existing draft dataset record
+        'read_permission_factory_imp': allow_curator_or_owner,
+        # Who can delete an existing draft dataset record
+        'delete_permission_factory_imp': allow_curator_or_owner,
+        # Who can enumerate a draft dataset record collection
+        'list_permission_factory_imp': allow_authenticated,
+
         'list_route': '/draft/publications/datasets/',
         'record_loaders': {
             'application/json': 'oarepo_validate.json_files_loader'
         },
         'files': dict(
-            put_file_factory=allow_all,  #'publications.datasets.permissions.put_file_permission_impl',
-            get_file_factory=allow_all  #'publications.datasets.permissions.get_file_permission_impl',
+            # Who can upload attachments to a draft dataset record
+            put_file_factory=allow_owner,
+            # Who can download attachments from a draft dataset record
+            get_file_factory=allow_curator_or_owner,
+            # Who can delete attachments from a draft dataset record
+            delete_file_factory=allow_curator_or_owner
         )
     }
 }
@@ -70,7 +110,7 @@ RECORDS_REST_ENDPOINTS = {
         pid_minter='all-publications-datasets',
         pid_fetcher='all-publications-datasets',
         default_endpoint_prefix=True,
-        search_class=RecordsSearch,
+        search_class=FilteredRecordsSearch,
         search_index='oarepo-demo-s3-all-datasets',
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
@@ -84,7 +124,8 @@ RECORDS_REST_ENDPOINTS = {
         create_permission_factory_imp=deny_all,
         delete_permission_factory_imp=deny_all,
         update_permission_factory_imp=deny_all,
-        read_permission_factory_imp=check_elasticsearch,
+        read_permission_factory_imp=allow_authenticated,
+        list_permission_factory_imp=allow_authenticated,
         record_serializers={
             'application/json': 'oarepo_validate:json_response',
         },
