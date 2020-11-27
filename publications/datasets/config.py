@@ -111,7 +111,7 @@ RECORDS_REST_ENDPOINTS = {
         pid_fetcher='all-publications-datasets',
         default_endpoint_prefix=True,
         search_class=FilteredRecordsSearch,
-        search_index='oarepo-demo-s3-all-datasets',
+        search_index='all-datasets',
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
         },
@@ -193,14 +193,14 @@ RECORDS_REST_FACETS = {
         'aggs': translate_facets(FACETS, label='{facet_key}'),
         'filters': translate_filters(FILTERS, label='{filter_key}')
     },
-    'all-publications': {
+    'all-datasets': {
         'aggs': translate_facets(FACETS, label='{facet_key}'),
         'filters': translate_filters(FILTERS, label='{filter_key}')
     },
 }
 
 RECORDS_REST_SORT_OPTIONS = {
-    'all-publications': {
+    'all-datasets': {
         'alphabetical': {
             'title': 'alphabetical',
             'fields': [
@@ -219,7 +219,7 @@ RECORDS_REST_SORT_OPTIONS = {
 }
 
 RECORDS_REST_DEFAULT_SORT = {
-    'all-publications': {
+    'all-datasets': {
         'query': 'best_match',
         'noquery': 'alphabetical'
     }
