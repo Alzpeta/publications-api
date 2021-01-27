@@ -7,35 +7,37 @@
 #
 from flask_principal import Permission, RoleNeed, UserNeed
 from invenio_access import authenticated_user
+from oarepo_fsm.permissions import require_any
+
+CURATOR_ROLE_PERMISSIONS = Permission(
+    RoleNeed('curator')
+)
+
+INGESTER_ROLE_PERMISSIONS = Permission(
+    RoleNeed('ingester')
+)
+
+ADMIN_ROLE_PERMISSIONS = Permission(
+    RoleNeed('admin')
+)
+
+AUTHENTICATED_PERMISSION = Permission(authenticated_user)
 
 
-def allow_curator(*args, **kwargs):
-    return Permission(
-        RoleNeed('curator')
-    )
-
-
-def allow_authenticated(*args, **kwargs):
-    return Permission(authenticated_user)
-
-
-def allow_admin(*args, **kwargs):
-    """Permissions factory for buckets."""
-    return Permission(RoleNeed('admin'))
-
-
-def allow_owner(record, *args, **kwargs):
+def owner_permission_impl(record, *args, **kwargs):
     owners = record.get('_owners')
     return Permission(
         *[UserNeed(int(owner)) for owner in owners],
     )
 
 
-def allow_ingester(record, *args, **kwargs):
-    return Permission(RoleNeed('ingester'))
+MODIFICATION_ROLE_PERMISSIONS = require_any(
+    CURATOR_ROLE_PERMISSIONS,
+    INGESTER_ROLE_PERMISSIONS,
+    owner_permission_impl
+)
+PUBLISHER_ROLE_PERMISSION = CURATOR_ROLE_PERMISSIONS
+DELETER_ROLE_PERMISSIONS = ADMIN_ROLE_PERMISSIONS
 
 
-def allow_curator_or_owner(record, *args, **kwargs):
-    owner = allow_owner(record, *args, **kwargs)
-    curator = allow_curator(*args, **kwargs)
-    return curator.union(owner)
+

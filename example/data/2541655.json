@@ -1,0 +1,104 @@
+{
+  "files": [
+    {
+      "links": {
+        "self": "https://zenodo.org/api/files/f56d5b8b-f3a8-48e8-9dc5-2c82da79bab5/seed_at_center.zip"
+      },
+      "checksum": "md5:7100d5825dfc35b24318d229d1c58168",
+      "bucket": "f56d5b8b-f3a8-48e8-9dc5-2c82da79bab5",
+      "key": "seed_at_center.zip",
+      "type": "zip",
+      "size": 57238
+    }
+  ],
+  "owners": [
+    59003
+  ],
+  "doi": "10.5281/zenodo.2541656",
+  "stats": {
+    "version_unique_downloads": 2.0,
+    "unique_views": 19.0,
+    "views": 21.0,
+    "version_views": 21.0,
+    "unique_downloads": 2.0,
+    "version_unique_views": 19.0,
+    "volume": 11447736634.0,
+    "version_downloads": 2.0,
+    "downloads": 2.0,
+    "version_volume": 11447736634.0
+  },
+  "links": {
+    "doi": "https://doi.org/10.5281/zenodo.2541656",
+    "conceptdoi": "https://doi.org/10.5281/zenodo.2541655",
+    "bucket": "https://zenodo.org/api/files/f56d5b8b-f3a8-48e8-9dc5-2c82da79bab5",
+    "conceptbadge": "https://zenodo.org/badge/doi/10.5281/zenodo.2541655.svg",
+    "html": "https://zenodo.org/record/2541656",
+    "latest_html": "https://zenodo.org/record/2541656",
+    "badge": "https://zenodo.org/badge/doi/10.5281/zenodo.2541656.svg",
+    "latest": "https://zenodo.org/api/records/2541656"
+  },
+  "conceptdoi": "10.5281/zenodo.2541655",
+  "created": "2019-01-16T13:26:34.013824+00:00",
+  "updated": "2020-01-24T19:22:06.672161+00:00",
+  "conceptrecid": "2541655",
+  "revision": 4,
+  "id": 2541656,
+  "metadata": {
+    "access_right_category": "success",
+    "doi": "10.5281/zenodo.2541656",
+    "description": "<p>We conducted a lattice free cell based simulation of tumor spheroids within an artificial vasculature as<br>\ndocumented in the related publication. This dataset contains time snapshots of the simulation where the initial<br>\ntumour seed was place in the center of the simulation domain. The data is stored as uncompressed hdf5 file.</p>",
+    "language": "eng",
+    "title": "Vascularized tumor spheroid simulation with seed at center",
+    "license": {
+      "id": "CC-BY-4.0"
+    },
+    "relations": {
+      "version": [
+        {
+          "count": 1,
+          "index": 0,
+          "parent": {
+            "pid_type": "recid",
+            "pid_value": "2541655"
+          },
+          "is_last": true,
+          "last_child": {
+            "pid_type": "recid",
+            "pid_value": "2541656"
+          }
+        }
+      ]
+    },
+    "keywords": [],
+    "publication_date": "2019-01-16",
+    "creators": [
+      {
+        "orcid": "0000-0001-7030-3048",
+        "affiliation": "Saarland University",
+        "name": "Fredrich, Thierry"
+      }
+    ],
+    "access_right": "open",
+    "resource_type": {
+      "type": "dataset",
+      "title": "Dataset"
+    },
+    "related_identifiers": [
+      {
+        "scheme": "doi",
+        "identifier": "10.6084/m9.figshare.7406180.v1",
+        "relation": "compiles"
+      },
+      {
+        "scheme": "doi",
+        "identifier": "10.6084/m9.figshare.7406183.v1",
+        "relation": "compiles"
+      },
+      {
+        "scheme": "doi",
+        "identifier": "10.5281/zenodo.2541655",
+        "relation": "isVersionOf"
+      }
+    ]
+  }
+}

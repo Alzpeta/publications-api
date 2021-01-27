@@ -1,0 +1,90 @@
+{
+  "files": [
+    {
+      "links": {
+        "self": "https://zenodo.org/api/files/fb154c44-1d75-4ce9-8247-6050a1fa14e3/colouration_experiment_WFS_in_room.zip"
+      },
+      "checksum": "md5:94d43f07cf6c34867fe1c7c4088e8569",
+      "bucket": "fb154c44-1d75-4ce9-8247-6050a1fa14e3",
+      "key": "colouration_experiment_WFS_in_room.zip",
+      "type": "zip",
+      "size": 511253
+    }
+  ],
+  "owners": [
+    20373
+  ],
+  "doi": "10.5281/zenodo.3543040",
+  "stats": {
+    "version_unique_downloads": 1.0,
+    "unique_views": 15.0,
+    "views": 21.0,
+    "version_views": 21.0,
+    "unique_downloads": 1.0,
+    "version_unique_views": 15.0,
+    "volume": 1022506.0,
+    "version_downloads": 2.0,
+    "downloads": 2.0,
+    "version_volume": 1022506.0
+  },
+  "links": {
+    "doi": "https://doi.org/10.5281/zenodo.3543040",
+    "conceptdoi": "https://doi.org/10.5281/zenodo.3543039",
+    "bucket": "https://zenodo.org/api/files/fb154c44-1d75-4ce9-8247-6050a1fa14e3",
+    "conceptbadge": "https://zenodo.org/badge/doi/10.5281/zenodo.3543039.svg",
+    "html": "https://zenodo.org/record/3543040",
+    "latest_html": "https://zenodo.org/record/3543040",
+    "badge": "https://zenodo.org/badge/doi/10.5281/zenodo.3543040.svg",
+    "latest": "https://zenodo.org/api/records/3543040"
+  },
+  "conceptdoi": "10.5281/zenodo.3543039",
+  "created": "2019-11-15T10:55:11.643512+00:00",
+  "updated": "2020-01-24T19:24:03.522548+00:00",
+  "conceptrecid": "3543039",
+  "revision": 2,
+  "id": 3543040,
+  "metadata": {
+    "access_right_category": "success",
+    "doi": "10.5281/zenodo.3543040",
+    "description": "<p>This data set contains stimuli, results and code for statistical analysis of a colouration experiment where humans had to rate the colouration of virtual sources synthesised by Wave Field Synthesis in free field and in different listening rooms compared to a real source as reference. The stimuli were presented via dynamic binaural synthesis with the <a href=\"http://www.spatialaudio.net/ssr/\">SoundScape Renderer</a>. The source code is licensed under GPL v3.</p>\n\n<p>Overview:</p>\n\n<ul>\n\t<li>The folder &#39;stimuli&#39; contains the impulse responses for the SoundScape Renderer as WAV files and anechoic audio content.</li>\n\t<li>The folder &#39;experimental_results&#39; contains the data saved in the listening experiment as CSV files.</li>\n\t<li>The folder &#39;statistics&#39; contains <a href=\"http://www.mathworks.com\">Matlab</a> scripts that perform the statistical analysis.</li>\n</ul>",
+    "license": {
+      "id": "CC-BY-4.0"
+    },
+    "title": "Code and data for colouration experiment 'WFS in listening room'",
+    "relations": {
+      "version": [
+        {
+          "count": 1,
+          "index": 0,
+          "parent": {
+            "pid_type": "recid",
+            "pid_value": "3543039"
+          },
+          "is_last": true,
+          "last_child": {
+            "pid_type": "recid",
+            "pid_value": "3543040"
+          }
+        }
+      ]
+    },
+    "publication_date": "2019-11-15",
+    "creators": [
+      {
+        "name": "Vera Erbes"
+      }
+    ],
+    "access_right": "open",
+    "resource_type": {
+      "type": "dataset",
+      "title": "Dataset"
+    },
+    "related_identifiers": [
+      {
+        "scheme": "doi",
+        "identifier": "10.5281/zenodo.3543039",
+        "relation": "isVersionOf"
+      }
+    ]
+  }
+}

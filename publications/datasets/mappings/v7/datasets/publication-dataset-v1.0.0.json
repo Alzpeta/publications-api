@@ -45,25 +45,11 @@
     "date_detection": false,
     "numeric_detection": false,
     "oarepo:extends": [
-      "invenio-v1.0.0.json#/InvenioRecord",
-      "rdm-record-v2.0.0.json#/RDMRecord"
+      "dataset-v1.0.0.json#/DataSet"
     ],
     "properties": {
-      "_search": {
-        "type": "text",
-        "analyzer": "czech"
-      },
-      "submissionStatus": {
+      "state": {
         "type": "keyword"
-      },
-      "keywords": {
-        "type": "keyword"
-      },
-      "description": {
-        "type": "multilingual"
-      },
-      "suggestFields": {
-        "type": "completion"
       }
     }
   }

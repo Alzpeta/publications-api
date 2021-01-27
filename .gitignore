@@ -71,3 +71,5 @@ docs/migration/data
 
 .env
 .envrc
+/.python-version
+/poetry.lock

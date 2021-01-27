@@ -1,0 +1,138 @@
+{
+  "files": [
+    {
+      "links": {
+        "self": "https://zenodo.org/api/files/2524d4a5-79ae-44fe-bce0-725e82f635aa/female_measurements.csv"
+      },
+      "checksum": "md5:fb3837d71569651464add1ad765204cd",
+      "bucket": "2524d4a5-79ae-44fe-bce0-725e82f635aa",
+      "key": "female_measurements.csv",
+      "type": "csv",
+      "size": 7990
+    },
+    {
+      "links": {
+        "self": "https://zenodo.org/api/files/2524d4a5-79ae-44fe-bce0-725e82f635aa/females_recaught_vs_non_recaught.csv"
+      },
+      "checksum": "md5:e55df0afa2fecfa62867ca7ea9a97cc7",
+      "bucket": "2524d4a5-79ae-44fe-bce0-725e82f635aa",
+      "key": "females_recaught_vs_non_recaught.csv",
+      "type": "csv",
+      "size": 5087
+    },
+    {
+      "links": {
+        "self": "https://zenodo.org/api/files/2524d4a5-79ae-44fe-bce0-725e82f635aa/nestling_measurements.csv"
+      },
+      "checksum": "md5:753c82ab8f427c20455b64bed1de9d13",
+      "bucket": "2524d4a5-79ae-44fe-bce0-725e82f635aa",
+      "key": "nestling_measurements.csv",
+      "type": "csv",
+      "size": 34647
+    },
+    {
+      "links": {
+        "self": "https://zenodo.org/api/files/2524d4a5-79ae-44fe-bce0-725e82f635aa/ReadMe.txt"
+      },
+      "checksum": "md5:3fc6315d9cf5fdc86216e2637a25685d",
+      "bucket": "2524d4a5-79ae-44fe-bce0-725e82f635aa",
+      "key": "ReadMe.txt",
+      "type": "txt",
+      "size": 5270
+    }
+  ],
+  "owners": [
+    90070
+  ],
+  "doi": "10.5061/dryad.bcc2fqz8c",
+  "stats": {
+    "version_unique_downloads": 1.0,
+    "unique_views": 0.0,
+    "views": 0.0,
+    "version_views": 0.0,
+    "unique_downloads": 1.0,
+    "version_unique_views": 0.0,
+    "volume": 7990.0,
+    "version_downloads": 1.0,
+    "downloads": 1.0,
+    "version_volume": 7990.0
+  },
+  "links": {
+    "doi": "https://doi.org/10.5061/dryad.bcc2fqz8c",
+    "latest_html": "https://zenodo.org/record/4072206",
+    "bucket": "https://zenodo.org/api/files/2524d4a5-79ae-44fe-bce0-725e82f635aa",
+    "badge": "https://zenodo.org/badge/doi/10.5061/dryad.bcc2fqz8c.svg",
+    "html": "https://zenodo.org/record/4072206",
+    "latest": "https://zenodo.org/api/records/4072206"
+  },
+  "created": "2020-10-07T19:48:12.113114+00:00",
+  "updated": "2020-10-08T00:27:00.861152+00:00",
+  "conceptrecid": "4072205",
+  "revision": 3,
+  "id": 4072206,
+  "metadata": {
+    "access_right_category": "success",
+    "doi": "10.5061/dryad.bcc2fqz8c",
+    "description": "<p>The hormone corticosterone (CORT)\u00a0has been hypothesized to be linked with fitness, but the directionality of the relationship is unclear. The \"CORT-fitness hypothesis\" proposes that high levels of CORT arise from challenging environmental conditions, resulting in lower reproductive success (a negative relationship). In contrast, the \"CORT-adaptation hypothesis\" suggests that, during energetically demanding periods, CORT will mediate physiological or behavioural changes that result in increased reproductive investment and success (a positive relationship). During two breeding seasons, we experimentally manipulated circulating CORT levels in female tree swallows (<i>Tachycineta bicolor</i>) prior to egg laying, and measured subsequent reproductive effort, breeding success, and maternal survival. When females were recaptured during egg incubation and again during the nestling stage, the CORT levels were similar among individuals in each treatment group, and maternal treatment had no effect on indices of fitness. By considering variation among females, we found support for the \"CORT-adaptation hypothesis\"; there was a significant positive relationship between CORT levels during incubation and hatching and fledging success. During the nestling stage CORT levels were unrelated to any measure of investment or success. Within the environmental context of our study, relationships between maternal glucocorticoid levels and indices fitness vary across reproductive stages.</p>",
+    "license": {
+      "id": "CC0-1.0"
+    },
+    "title": "Data for: Maternal glucocorticoid levels during incubation predict breeding success, but not reproductive investment, in a free-ranging bird",
+    "relations": {
+      "version": [
+        {
+          "count": 1,
+          "index": 0,
+          "parent": {
+            "pid_type": "recid",
+            "pid_value": "4072205"
+          },
+          "is_last": true,
+          "last_child": {
+            "pid_type": "recid",
+            "pid_value": "4072206"
+          }
+        }
+      ]
+    },
+    "communities": [
+      {
+        "id": "dryad"
+      }
+    ],
+    "keywords": [
+      "corticosterone",
+      "Tachycineta bicolor",
+      "avian glucocorticoid"
+    ],
+    "publication_date": "2020-09-23",
+    "creators": [
+      {
+        "affiliation": "Trent University",
+        "name": "Fischer, Devin"
+      },
+      {
+        "orcid": "0000-0003-4383-4673",
+        "affiliation": "Trent University",
+        "name": "Marrotte, Robby"
+      },
+      {
+        "affiliation": "Capilano University",
+        "name": "Chin, Eunice"
+      },
+      {
+        "affiliation": "Trent University",
+        "name": "Coulson, Smolly"
+      },
+      {
+        "affiliation": "Trent University",
+        "name": "Burness, Gary"
+      }
+    ],
+    "access_right": "open",
+    "resource_type": {
+      "type": "dataset",
+      "title": "Dataset"
+    }
+  }
+}

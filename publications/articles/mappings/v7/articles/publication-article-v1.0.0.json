@@ -46,24 +46,6 @@
     "numeric_detection": false,
     "oarepo:extends": [
       "invenio-v1.0.0.json#/InvenioRecord"
-    ],
-    "properties": {
-      "_search": {
-        "type": "text",
-        "analyzer": "czech"
-      },
-      "submissionStatus": {
-        "type": "keyword"
-      },
-      "keywords": {
-        "type": "keyword"
-      },
-      "description": {
-        "type": "multilingual"
-      },
-      "suggestFields": {
-        "type": "completion"
-      }
-    }
+    ]
   }
 }

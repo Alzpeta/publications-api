@@ -6,6 +6,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 from invenio_indexer.api import RecordIndexer
+from invenio_search.utils import build_alias_name
 from oarepo_records_draft.record import record_to_index as draft_record_to_index
 
 
@@ -21,5 +22,6 @@ class CommitingRecordIndexer(RecordIndexer):
     def index(self, record, arguments=None, **kwargs):
         ret = super().index(record, arguments=arguments, **kwargs)
         index, doc_type = self.record_to_index(record)
-        self.client.indices.flush(index=index)
+        index = build_alias_name(index)
+        self.client.indices.refresh(index=index)
         return ret

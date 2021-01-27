@@ -17,20 +17,21 @@ oarepo = "^3.3"
 oarepo-micro-api = ">=1.0.0"
 
 oarepo-validate = ">=1.0.0"
-#oarepo-references = ">=1.8.3"
 oarepo-mapping-includes = ">=1.2.0"
 oarepo-invenio-model = ">=2.1.2"
-oarepo-rdm-records = { version = ">=2.1.0", allow-prereleases = true }
+oarepo-rdm-records = { git = "https://github.com/oarepo/oarepo-rdm-records.git" }
 oarepo-s3 = { version = ">=1.2.0", allow-prereleases = true }
 flask-taxonomies = { version = ">=7.0.0a17", allow-prereleases = true }
-#oarepo-taxonomies = { version = ">=2.3.0", allow-prereleases = true }
-oarepo-records-draft = { version = ">=5.0.0-alpha.18", allow-prereleases = true }
+oarepo-taxonomies = { version = ">=2.3.0", allow-prereleases = true }
+oarepo-records-draft = { version = ">=5.0.0-alpha.22", allow-prereleases = true }
 invenio-records-files = ">=1.2.1"
 oarepo-iiif = ">=1.1.1"
-oarepo-ui = ">=1.0.2"
+oarepo-ui = "^2.0"
 invenio-oauth2server = "^1.2.0"
-invenio-openid-connect = "^2.0.2"
-#s3-client-lib = { path = "../../../s3-client" }
+invenio-openid-connect = "^2.0"
+s3-client-lib = { git = "https://github.com/CESNET/s3-client.git" }
+oarepo-fsm = "^1.4.1"
+oarepo-actions = "^1.0.5"
 
 [tool.poetry.plugins.oarepo_mapping_handlers]
 titled-term = "publications.mappings:titled_term"
@@ -68,7 +69,7 @@ all-publications-articles = "publications.articles.minters:article_all_minter"
 publications-dataset = "publications.datasets.fetchers:dataset_fetcher"
 publications-article = "publications.articles.fetchers:article_fetcher"
 all-publications-datasets = "publications.datasets.fetchers:dataset_all_fetcher"
-all-publications-articles = "publications.articles.minters:article_all_minter"
+all-publications-articles = "publications.articles.fetchers:article_all_fetcher"
 
 [tool.poetry.plugins."oarepo_iiif.openers"]
 image-opener = "publications.images:opener"
@@ -79,7 +80,7 @@ image-checker = "publications.images:checker"
 [tool.poetry.plugins."oarepo_iiif.identifier_makers"]
 image-checker = "publications.images:identifier_maker"
 
-# TODO: mapping includes
+# TODO: mapping includes?
 #[tool.poetry.plugins."oarepo_mapping_includes"]
 #publications-articles = "publications.articles.included_mappings"
 

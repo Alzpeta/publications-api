@@ -7,47 +7,25 @@
 #
 
 import logging
-import uuid
-
-from flask_login import current_user
-from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 
 from publications.datasets.constants import DATASET_PID_TYPE
-from publications.providers import PublicationProvider
 
 
 log = logging.getLogger('dataset-minter')
 
 
-class DatasetProvider(PublicationProvider):
+class DatasetProvider(RecordIdProviderV2):
     pid_type = DATASET_PID_TYPE
 
 
 def dataset_minter(record_uuid, data):
-    provider = None
-
-    if 'id' not in data:
-        data['identifier'] = data['id'] = str(uuid.uuid4())
-        provider = DatasetProvider.create(
-            object_type='rec',
-            object_uuid=record_uuid,
-            pid_value=data['id'],
-        )
-    else:
-        try:
-            provider = DatasetProvider.get(pid_value=str(data['id']))
-        except PIDDoesNotExistError:
-            if current_user.has_role('synchronizer'):
-                provider = DatasetProvider.create(
-                    object_type='rec',
-                    object_uuid=record_uuid,
-                    pid_value=data['id'],
-                )
-                return provider.pid
-            else:
-                log.error('Id present in data but user has no role `synchronizer` - bailing out')
-            raise
-
+    assert 'id' not in data
+    provider = DatasetProvider.create(
+        object_type='rec',
+        object_uuid=record_uuid,
+    )
+    data['id'] = provider.pid.pid_value
     return provider.pid
 
 

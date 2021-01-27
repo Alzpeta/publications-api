@@ -10,8 +10,6 @@ from invenio_search import RecordsSearch
 
 from publications.articles.constants import ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_TYPE, ARTICLE_ALL_PID_TYPE
 from publications.indexer import CommitingRecordIndexer
-from publications.permissions import allow_owner, allow_curator, allow_admin, allow_authenticated, \
-    allow_curator_or_owner
 from publications.search import FilteredRecordsSearch
 
 RECORDS_DRAFT_ENDPOINTS = {
@@ -25,17 +23,18 @@ RECORDS_DRAFT_ENDPOINTS = {
 
         'record_class': 'publications.articles.record.ArticleRecord',
 
+        # TODO: implement proper permissions
         # Who can publish a draft article record
-        'publish_permission_factory_imp': allow_owner,
+        'publish_permission_factory_imp': deny_all,
         # Who can unpublish (delete published & create a new draft version of)
         # a published article record
-        'unpublish_permission_factory_imp': allow_admin,
+        'unpublish_permission_factory_imp': deny_all,
         # Who can edit (create a new draft version of) a published dataset record
-        'edit_permission_factory_imp': allow_curator,
+        'edit_permission_factory_imp': deny_all,
         # Who can enumerate published articles
-        'list_permission_factory_imp': allow_all,
+        'list_permission_factory_imp': deny_all,
         # Who can view a detail of an existing published article
-        'read_permission_factory_imp': allow_all,
+        'read_permission_factory_imp': deny_all,
         # Make sure everything else is for biden
         'create_permission_factory_imp': deny_all,
         'update_permission_factory_imp': deny_all,
@@ -66,17 +65,18 @@ RECORDS_DRAFT_ENDPOINTS = {
             'application/json': 'oarepo_validate:json_search',
         },
 
-        # Who can create a new draft article record
-        # TODO: owner of the linked dataset, actually
-        'create_permission_factory_imp': allow_authenticated,
+        # Who can create a new draft article record?
+        # TODO: owner of the dataset referenced in article create request?
+        # TODO: IMPORTANT!!! harden all permissions
+        'create_permission_factory_imp': allow_all,
         # Who can edit an existing draft article record
-        'update_permission_factory_imp': allow_owner,
+        'update_permission_factory_imp': allow_all,
         # Who can view an existing draft article record
-        'read_permission_factory_imp': allow_curator_or_owner,
+        'read_permission_factory_imp': allow_all,
         # Who can delete an existing draft article record
-        'delete_permission_factory_imp': allow_curator_or_owner,
+        'delete_permission_factory_imp': allow_all,
         # Who can enumerate a draft article record collection
-        'list_permission_factory_imp': allow_authenticated,
+        'list_permission_factory_imp': allow_all,
 
         'record_loaders': {
             'application/json': 'oarepo_validate.json_files_loader'
@@ -112,8 +112,7 @@ RECORDS_REST_ENDPOINTS = {
         create_permission_factory_imp=deny_all,
         delete_permission_factory_imp=deny_all,
         update_permission_factory_imp=deny_all,
-        read_permission_factory_imp=allow_authenticated,
-        list_permission_factory_imp=allow_authenticated,
+        read_permission_factory_imp=check_elasticsearch,
         record_serializers={
             'application/json': 'oarepo_validate:json_response',
         },

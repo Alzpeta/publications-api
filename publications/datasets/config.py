@@ -7,16 +7,18 @@
 #
 
 from elasticsearch_dsl import Q
+from elasticsearch_dsl.query import Bool
 from invenio_records_rest.facets import terms_filter, range_filter
-from invenio_records_rest.utils import allow_all, deny_all
+from invenio_records_rest.utils import allow_all, deny_all, check_elasticsearch
 from invenio_search import RecordsSearch
 from oarepo_multilingual import language_aware_text_match_filter
 from oarepo_records_draft import DRAFT_IMPORTANT_FACETS, DRAFT_IMPORTANT_FILTERS
 from oarepo_ui import translate_facets, translate_filters, translate_facet
 
 from publications.datasets.constants import DATASET_DRAFT_PID_TYPE, DATASET_PID_TYPE, DATASET_ALL_PID_TYPE
+from publications.datasets.record import published_index_name, draft_index_name, AllDatasetsRecord, all_index_name
+from publications.datasets.search import DatasetRecordsSearch
 from publications.indexer import CommitingRecordIndexer
-from publications.permissions import allow_curator, allow_owner, allow_curator_or_owner, allow_authenticated
 from publications.search import FilteredRecordsSearch
 
 _ = lambda x: x
@@ -33,12 +35,12 @@ RECORDS_DRAFT_ENDPOINTS = {
         'record_class': 'publications.datasets.record.DatasetRecord',
 
         # Who can publish a draft dataset record
-        'publish_permission_factory_imp': allow_curator,
+        'publish_permission_factory_imp': 'publications.datasets.permissions.publish_draft_object_permission_impl',
         # Who can unpublish (delete published & create a new draft version of)
         # a published dataset record
-        'unpublish_permission_factory_imp': allow_curator,
+        'unpublish_permission_factory_imp': 'publications.datasets.permissions.unpublish_draft_object_permission_impl',
         # Who can edit (create a new draft version of) a published dataset record
-        'edit_permission_factory_imp': allow_curator_or_owner,
+        'edit_permission_factory_imp': 'publications.datasets.permissions.update_object_permission_impl',
         # Who can enumerate published dataset record collection
         'list_permission_factory_imp': allow_all,
         # Who can view an existing published dataset record detail
@@ -51,7 +53,8 @@ RECORDS_DRAFT_ENDPOINTS = {
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
         'search_class': RecordsSearch,
-        'search_index': 'oarepo-demo-s3-datasets-publication-dataset-v1.0.0',
+        'search_index': published_index_name,
+        'links_factory_imp': 'oarepo_fsm.links:record_fsm_links_factory',
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
         },
@@ -70,34 +73,38 @@ RECORDS_DRAFT_ENDPOINTS = {
     'draft-publications/datasets': {
         'pid_type': DATASET_DRAFT_PID_TYPE,
         'search_class': FilteredRecordsSearch,
-        'search_index': 'oarepo-demo-s3-draft-datasets-publication-dataset-v1.0.0',
+        'search_index': draft_index_name,
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
+        },
+        'record_serializers': {
+            'application/json': 'publications.datasets.serializer.json_response',
         },
         'record_class': 'publications.datasets.record.DatasetDraftRecord',
 
         # Who can create a new draft dataset record
-        'create_permission_factory_imp': allow_authenticated,
+        'create_permission_factory_imp': 'publications.datasets.permissions.create_draft_object_permission_impl',
         # Who can edit an existing draft dataset record
-        'update_permission_factory_imp': allow_owner,
+        'update_permission_factory_imp': 'publications.datasets.permissions.update_draft_object_permission_impl',
         # Who can view an existing draft dataset record
-        'read_permission_factory_imp': allow_curator_or_owner,
+        'read_permission_factory_imp': 'publications.datasets.permissions.read_draft_object_permission_impl',
         # Who can delete an existing draft dataset record
-        'delete_permission_factory_imp': allow_curator_or_owner,
+        'delete_permission_factory_imp': 'publications.datasets.permissions.delete_draft_object_permission_impl',
         # Who can enumerate a draft dataset record collection
-        'list_permission_factory_imp': allow_authenticated,
+        'list_permission_factory_imp': 'publications.datasets.permissions.list_draft_object_permission_impl',
 
         'list_route': '/draft/publications/datasets/',
         'record_loaders': {
-            'application/json': 'oarepo_validate.json_files_loader'
+            'application/json': 'oarepo_validate.json_files_loader',
+            'application/json-patch+json': 'oarepo_validate.json_loader'
         },
         'files': dict(
             # Who can upload attachments to a draft dataset record
-            put_file_factory=allow_owner,
+            put_file_factory='publications.datasets.permissions.put_draft_file_permission_impl',
             # Who can download attachments from a draft dataset record
-            get_file_factory=allow_curator_or_owner,
+            get_file_factory='publications.datasets.permissions.get_draft_file_permission_impl',
             # Who can delete attachments from a draft dataset record
-            delete_file_factory=allow_curator_or_owner
+            delete_file_factory='publications.datasets.permissions.delete_draft_file_permission_impl'
         )
     }
 }
@@ -110,8 +117,9 @@ RECORDS_REST_ENDPOINTS = {
         pid_minter='all-publications-datasets',
         pid_fetcher='all-publications-datasets',
         default_endpoint_prefix=True,
-        search_class=FilteredRecordsSearch,
-        search_index='all-datasets',
+        record_class=AllDatasetsRecord,
+        search_class=DatasetRecordsSearch,
+        search_index=all_index_name,
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
         },
@@ -124,12 +132,11 @@ RECORDS_REST_ENDPOINTS = {
         create_permission_factory_imp=deny_all,
         delete_permission_factory_imp=deny_all,
         update_permission_factory_imp=deny_all,
-        read_permission_factory_imp=allow_authenticated,
-        list_permission_factory_imp=allow_authenticated,
+        read_permission_factory_imp=check_elasticsearch,
         record_serializers={
             'application/json': 'oarepo_validate:json_response',
         },
-        search_factory_imp='publications.datasets.search:dataset_search_factory'
+        use_options_view=False
     )
 }
 
@@ -154,57 +161,79 @@ def date_year_range(field, start_date_math=None, end_date_math=None, **kwargs):
     return inner
 
 
+def state_terms_filter(field):
+    def inner(values):
+        if 'filling' in values:
+            return Bool(should=[
+                Q('terms', **{field: values}),
+                Bool(
+                    must_not=[
+                        Q('exists', field='state')
+                    ]
+                )
+            ], minimum_should_match=1)
+        else:
+            return Q('terms', **{field: values})
+
+    return inner
+
+
 FILTERS = {
     _('category'): terms_filter('category'),
-    _('submissionStatus'): terms_filter('submissionStatus'),
     _('creator'): terms_filter('creator.raw'),
-    _('title'): language_aware_text_match_filter('title'),
-
+    _('title'): language_aware_text_match_filter('titles'),
+    _('state'): state_terms_filter('state'),
     # draft
     **DRAFT_IMPORTANT_FILTERS
 }
 
 
-def term_facet(field, order='desc', size=100):
-    return {
+def term_facet(field, order='desc', size=100, missing=None):
+    ret = {
         'terms': {
             'field': field,
             'size': size,
             "order": {"_count": order}
         },
     }
+    if missing is not None:
+        ret['terms']['missing'] = missing
+    return ret
 
 
 FACETS = {
-    'submissionStatus': translate_facet(term_facet('submissionStatus'), possible_values=[
-        _('incomplete'),
-        _('pending_approval')
+    'state': translate_facet(term_facet('state', missing='filling'), possible_values=[
+        _('filling'),
+        _('approving'),
+        _('approved'),
+        _('published'),
+        _('deleted')
     ]),
     'creator': term_facet('creator.raw'),
     **DRAFT_IMPORTANT_FACETS
 }
 
 RECORDS_REST_FACETS = {
-    'draft-datasets-publication-dataset-v1.0.0': {
+    draft_index_name: {
         'aggs': translate_facets(FACETS, label='{facet_key}', value='{value_key}'),
         'filters': translate_filters(FILTERS, label='{filter_key}')
     },
-    'datasets-publication-dataset-v1.0.0': {
+    published_index_name: {
         'aggs': translate_facets(FACETS, label='{facet_key}'),
         'filters': translate_filters(FILTERS, label='{filter_key}')
     },
-    'all-datasets': {
+    all_index_name: {
         'aggs': translate_facets(FACETS, label='{facet_key}'),
         'filters': translate_filters(FILTERS, label='{filter_key}')
     },
 }
 
 RECORDS_REST_SORT_OPTIONS = {
-    'all-datasets': {
+    all_index_name: {
         'alphabetical': {
             'title': 'alphabetical',
             'fields': [
-                'title.cs.raw'
+                'titles.cs.raw'
             ],
             'default_order': 'asc',
             'order': 1
@@ -219,63 +248,8 @@ RECORDS_REST_SORT_OPTIONS = {
 }
 
 RECORDS_REST_DEFAULT_SORT = {
-    'all-datasets': {
+    all_index_name: {
         'query': 'best_match',
         'noquery': 'alphabetical'
     }
 }
-
-"""
-RECORDS_REST_SORT_OPTIONS = {
-    DATASET_DRAFT_SEARCH_INDEX: {
-        'bestmatch': {
-            'title': 'Best match',
-            'fields': ['_score'],
-            'default_order': 'desc',
-            'order': 1,
-        },
-        'mostrecent': {
-            'title': 'Most recent',
-            'fields': ['_created'],
-            'default_order': 'asc',
-            'order': 2,
-        },
-        'alphabet': {
-            'title': 'A - Z',
-            'fields': [
-                {
-                    'title.value.raw': {
-                        "order": "asc",
-                        "nested": {
-                            "path": "title",
-                            "filter": {
-                                "term": {"title.lang": "cs"}
-                            }
-                        }
-                    }
-                },
-                {
-                    'title.value.raw': {
-                        "order": "asc",
-                        "nested": {
-                            "path": "title",
-                            "filter": {
-                                "term": {"title.lang": "en"}
-                            }
-                        }
-                    }
-                }
-            ],
-            'default_order': 'asc',
-            'order': 2,
-        },
-    }
-}
-
-RECORDS_REST_DEFAULT_SORT = {
-    DATASET_DRAFT_SEARCH_INDEX: {
-        'query': 'alphabet',
-        'noquery': 'alphabet',
-    }
-}
-"""

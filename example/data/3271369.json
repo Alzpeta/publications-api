@@ -1,0 +1,134 @@
+{
+  "files": [
+    {
+      "links": {
+        "self": "https://zenodo.org/api/files/7613ce29-f1f3-4e7a-9632-d277a14a525c/Data.zip"
+      },
+      "checksum": "md5:e92eb318803c55dd7917c31e0d784be2",
+      "bucket": "7613ce29-f1f3-4e7a-9632-d277a14a525c",
+      "key": "Data.zip",
+      "type": "zip",
+      "size": 461111
+    },
+    {
+      "links": {
+        "self": "https://zenodo.org/api/files/7613ce29-f1f3-4e7a-9632-d277a14a525c/_Setup1.JPG"
+      },
+      "checksum": "md5:ca98047cf9085347a33c7ddb86a0d451",
+      "bucket": "7613ce29-f1f3-4e7a-9632-d277a14a525c",
+      "key": "_Setup1.JPG",
+      "type": "jpg",
+      "size": 2678230
+    },
+    {
+      "links": {
+        "self": "https://zenodo.org/api/files/7613ce29-f1f3-4e7a-9632-d277a14a525c/_Setup2.JPG"
+      },
+      "checksum": "md5:a8410d6170101527923f0e44d16a3b08",
+      "bucket": "7613ce29-f1f3-4e7a-9632-d277a14a525c",
+      "key": "_Setup2.JPG",
+      "type": "jpg",
+      "size": 3026385
+    }
+  ],
+  "owners": [
+    71602
+  ],
+  "doi": "10.5281/zenodo.3274772",
+  "stats": {
+    "version_unique_downloads": 10.0,
+    "unique_views": 40.0,
+    "views": 51.0,
+    "version_views": 64.0,
+    "unique_downloads": 8.0,
+    "version_unique_views": 48.0,
+    "volume": 4640924118.0,
+    "version_downloads": 14.0,
+    "downloads": 12.0,
+    "version_volume": 9254748458.0
+  },
+  "links": {
+    "thumb250": "https://zenodo.org/api/iiif/v2/7613ce29-f1f3-4e7a-9632-d277a14a525c:88927f0a-6b5b-40cd-8704-a6983b4783d2:_Setup1.JPG/full/250,/0/default.jpg",
+    "doi": "https://doi.org/10.5281/zenodo.3274772",
+    "thumbs": {
+      "10": "https://zenodo.org/record/3274772/thumb10",
+      "750": "https://zenodo.org/record/3274772/thumb750",
+      "50": "https://zenodo.org/record/3274772/thumb50",
+      "1200": "https://zenodo.org/record/3274772/thumb1200",
+      "100": "https://zenodo.org/record/3274772/thumb100",
+      "250": "https://zenodo.org/record/3274772/thumb250"
+    },
+    "conceptdoi": "https://doi.org/10.5281/zenodo.3271369",
+    "conceptbadge": "https://zenodo.org/badge/doi/10.5281/zenodo.3271369.svg",
+    "latest_html": "https://zenodo.org/record/3274772",
+    "bucket": "https://zenodo.org/api/files/7613ce29-f1f3-4e7a-9632-d277a14a525c",
+    "badge": "https://zenodo.org/badge/doi/10.5281/zenodo.3274772.svg",
+    "html": "https://zenodo.org/record/3274772",
+    "latest": "https://zenodo.org/api/records/3274772"
+  },
+  "conceptdoi": "10.5281/zenodo.3271369",
+  "created": "2019-07-09T11:12:59.396240+00:00",
+  "updated": "2020-01-24T19:21:55.462657+00:00",
+  "conceptrecid": "3271369",
+  "revision": 4,
+  "id": 3274772,
+  "metadata": {
+    "access_right_category": "success",
+    "doi": "10.5281/zenodo.3274772",
+    "description": "<p>Dataset supporting conference proceedings&nbsp;publication:</p>\n\n<p><strong>## Abstract</strong></p>\n\n<p>Well-maintained pianos are said to &rdquo;mature&rdquo; and to &rdquo;change for the better&rdquo; over the first years. When auditioning concert<br>\npianos for purchase, technicians do often not choose the best sounding instrument but the one with the greatest potential<br>\nfor future development. The present work addresses the following questions: Are structural changes measurable on a<br>\npiano after one year of operation in a concert house? Are these changes perceivable by listeners?<br>\nMeasurements are performed on two occasions: First, on a brand new instrument prepared for sale. Second, on the same<br>\npiano after having been played for one year in a concert hall. Single notes are recorded with dummy-head-microphones<br>\nin player position in an anechoic chamber. An extended ABX listening test engaging approx. 100 players, tuners,<br>\nand builders, addresses the questions whether a variation in tonal quality is audible and if so, what sound properties<br>\ncould lead to a perceived difference. Semantic sub-grouping allows for indication on the vocabulary listeners of varying<br>\nexpertise use to verbalize their sensation. The statements give hints on what could have changed over the year and<br>\nare used as a basis for the analysis of corresponding physical properties and psychoacoustic parameters related to the<br>\ndescribed sensations.</p>\n\n<p><strong>## Data Structure</strong></p>\n\n<p><strong>### Naming Rules:</strong></p>\n\n<p><strong>Example:</strong> &#39;D1_PROD07_01__0000_M0000.csv&#39;</p>\n\n<ul>\n\t<li>Ignore the <em>D1</em></li>\n\t<li><em>PROD07&nbsp;</em>is before the year in a concert hall, <em>PROD08&nbsp;</em>is after the year.</li>\n\t<li><em>01</em> is the key (range: <em>01-88</em>)</li>\n\t<li>Ignore the&nbsp;<em>0000.</em></li>\n\t<li><em>M0000 </em>is the take (range: <em>M0000-M0004</em>)</li>\n</ul>\n\n<p>.csv files contain the data, the corresponding&nbsp;.txt files are the headers.</p>\n\n<p><strong>### Columns in&nbsp;.csv file:</strong></p>\n\n<ul>\n\t<li><strong>Time [s]</strong>; Time vector</li>\n\t<li><strong>Kistler 9722A500 [N]</strong>; Force sensor, measures the key / key bed impact force</li>\n\t<li><strong>PCB 352C23 [m/s^2]</strong>; Acceleration sensor, measures the acceleration at the bridge (at the hitch pins of the corresponding string) in direction normal to the soundboard.&nbsp;</li>\n\t<li><strong>HSU 3.2 left [Pa]</strong>; Left ear channel of dummy head, measures sound pressure in player position.</li>\n\t<li><strong>HSU 3.2 right [Pa]</strong>;&nbsp;Right ear channel of dummy head, measures sound pressure in player position.</li>\n</ul>\n\n<p>sample rate = 50000</p>\n\n<p>The listening test utilizing this dataset is still online (however, your input will not be evaluated):&nbsp;<a href=\"http://www.culturalheritage.digital/listeningtest/\">http://www.culturalheritage.digital/listeningtest/</a></p>\n\n<p>Feel free to contact me for comments or questions: niko.plath@uni-hamburg.de</p>",
+    "license": {
+      "id": "CC-BY-4.0"
+    },
+    "title": "Influence of Playing on the Tonal Characteristics of a Concert Piano - Dataset",
+    "relations": {
+      "version": [
+        {
+          "count": 2,
+          "index": 1,
+          "parent": {
+            "pid_type": "recid",
+            "pid_value": "3271369"
+          },
+          "is_last": true,
+          "last_child": {
+            "pid_type": "recid",
+            "pid_value": "3274772"
+          }
+        }
+      ]
+    },
+    "version": "1.0.1",
+    "keywords": [
+      "Concert Grand Piano, Playing, Musical Instrument Acoustics, Dummy Head Recordings"
+    ],
+    "publication_date": "2019-07-08",
+    "creators": [
+      {
+        "orcid": "0000-0003-3337-4677",
+        "affiliation": "Institute for Systematic Musicology, University of Hamburg, Germany",
+        "name": "Plath, Niko"
+      }
+    ],
+    "meeting": {
+      "dates": "13.-17.9.2019",
+      "title": "ISMA 2019 International Symposium on Music Acoustics",
+      "acronym": "ISMA 2019",
+      "url": "http://www.isma2019.de/",
+      "session": "Timbre and Perception",
+      "place": "Detmold, Germany",
+      "session_part": "1"
+    },
+    "access_right": "open",
+    "resource_type": {
+      "type": "dataset",
+      "title": "Dataset"
+    },
+    "related_identifiers": [
+      {
+        "scheme": "doi",
+        "identifier": "10.5281/zenodo.3271369",
+        "relation": "isVersionOf"
+      }
+    ]
+  }
+}

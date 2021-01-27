@@ -6,43 +6,58 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 import datetime
+import os
 
-from flask import url_for, current_app
+from flask import url_for, jsonify
 from flask_login import current_user
 from invenio_records_files.api import Record
+from oarepo_actions.decorators import action
+from oarepo_fsm.mixins import FSMMixin
 from oarepo_invenio_model import InheritedSchemaRecordMixin
-from oarepo_records_draft.record import DraftRecordMixin
+from oarepo_records_draft.record import DraftRecordMixin, InvalidRecordAllowedMixin
+from oarepo_references import ReferenceEnabledRecordMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin, FilesKeepingRecordMixin
-from oarepo_validate.record import AllowedSchemaMixin
 
-from publications.datasets.constants import DATASET_ALLOWED_SCHEMAS,\
-    DATASET_PREFERRED_SCHEMA, DATASET_PID_TYPE, DATASET_DRAFT_PID_TYPE
-from publications.datasets.marshmallow import DatasetMetadataSchemaV1
+from publications.datasets.constants import DATASET_ALLOWED_SCHEMAS, \
+    DATASET_PREFERRED_SCHEMA
+from publications.datasets.marshmallow import PublicationDatasetMetadataSchemaV1
+from publications.datasets.search import MineRecordsSearch
+
+published_index_name = 'datasets-publication-dataset-v1.0.0'
+draft_index_name = 'datasets-publication-dataset-v1.0.0'
+all_index_name = 'all-datasets'
+
+prefixed_published_index_name = os.environ.get('INVENIO_SEARCH_INDEX_PREFIX', '') + published_index_name
+prefixed_draft_index_name = os.environ.get('INVENIO_SEARCH_INDEX_PREFIX', '') + draft_index_name
+prefixed_all_index_name = os.environ.get('INVENIO_SEARCH_INDEX_PREFIX', '') + all_index_name
 
 
-class DatasetRecord(SchemaKeepingRecordMixin,
-                    MarshmallowValidatedRecordMixin,
-                    InheritedSchemaRecordMixin,
-                    Record):
-    """Data set record class for Data set records."""
+class DatasetBaseRecord(SchemaKeepingRecordMixin,
+                        MarshmallowValidatedRecordMixin,
+                        InheritedSchemaRecordMixin,
+                        ReferenceEnabledRecordMixin,
+                        FSMMixin,
+                        Record):
+    """Base Data set record class for Data set records."""
     ALLOWED_SCHEMAS = DATASET_ALLOWED_SCHEMAS
     PREFERRED_SCHEMA = DATASET_PREFERRED_SCHEMA
-    MARSHMALLOW_SCHEMA = DatasetMetadataSchemaV1
+    MARSHMALLOW_SCHEMA = PublicationDatasetMetadataSchemaV1
 
-    index_name = 'oarepo-demo-s3-datasets-publication-dataset-v1.0.0'
+
+class DatasetRecord(InvalidRecordAllowedMixin, DatasetBaseRecord):
+    index_name = published_index_name
     _schema = 'publication-dataset-v1.0.0.json'
 
     @property
     def canonical_url(self):
-        return url_for(f'invenio_records_rest.publications/{DATASET_PID_TYPE}_item',
+        return url_for(f'invenio_records_rest.publications/datasets_item',
                        pid_value=self['id'], _external=True)
 
 
 class DatasetDraftRecord(DraftRecordMixin,
                          FilesKeepingRecordMixin,
-                         DatasetRecord):
-
-    index_name = 'oarepo-demo-s3-draft-datasets-publication-dataset-v1.0.0'
+                         DatasetBaseRecord):
+    index_name = draft_index_name
 
     def validate(self, *args, **kwargs):
         if 'created' not in self:
@@ -58,5 +73,25 @@ class DatasetDraftRecord(DraftRecordMixin,
 
     @property
     def canonical_url(self):
-        return url_for(f'invenio_records_rest.draft-publications/{DATASET_DRAFT_PID_TYPE}_item',
+        return url_for(f'invenio_records_rest.draft-publications/datasets_item',
                        pid_value=self['id'], _external=True)
+
+
+class AllDatasetsRecord(Record):
+    @classmethod
+    @action(detail=False, url_path='mine')
+    def my_records(cls, **kwargs):
+        search = MineRecordsSearch(index=all_index_name, doc_type='_doc')
+        search = search.with_preference_param().params(version=True)
+        search = search[0:10]
+        search_result = search.execute().to_dict()
+        search_result = {
+            'hits': {
+                'hits': [
+                    x['_source'] for x in search_result['hits']['hits']
+                ],
+                'total': search_result['hits']['total']['value']
+            },
+        }
+
+        return jsonify(search_result)

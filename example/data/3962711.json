@@ -1,0 +1,121 @@
+{
+  "files": [
+    {
+      "links": {
+        "self": "https://zenodo.org/api/files/e6318f32-0ce6-48d6-ab86-219aded1b9f8/iGluSnFr-GTC-Data.zip"
+      },
+      "checksum": "md5:63c1325de997e1a77ac6cda70cd42690",
+      "bucket": "e6318f32-0ce6-48d6-ab86-219aded1b9f8",
+      "key": "iGluSnFr-GTC-Data.zip",
+      "type": "zip",
+      "size": 102866
+    },
+    {
+      "links": {
+        "self": "https://zenodo.org/api/files/e6318f32-0ce6-48d6-ab86-219aded1b9f8/iGluSnFR_revised.pxp"
+      },
+      "checksum": "md5:13304401b7c923a6eecd468086d62f53",
+      "bucket": "e6318f32-0ce6-48d6-ab86-219aded1b9f8",
+      "key": "iGluSnFR_revised.pxp",
+      "type": "pxp",
+      "size": 118444
+    }
+  ],
+  "owners": [
+    90070
+  ],
+  "doi": "10.5061/dryad.573n5tb4q",
+  "stats": {
+    "version_unique_downloads": 0.0,
+    "unique_views": 0.0,
+    "views": 0.0,
+    "version_views": 0.0,
+    "unique_downloads": 0.0,
+    "version_unique_views": 0.0,
+    "volume": 0.0,
+    "version_downloads": 0.0,
+    "downloads": 0.0,
+    "version_volume": 0.0
+  },
+  "links": {
+    "doi": "https://doi.org/10.5061/dryad.573n5tb4q",
+    "latest_html": "https://zenodo.org/record/3962711",
+    "bucket": "https://zenodo.org/api/files/e6318f32-0ce6-48d6-ab86-219aded1b9f8",
+    "badge": "https://zenodo.org/badge/doi/10.5061/dryad.573n5tb4q.svg",
+    "html": "https://zenodo.org/record/3962711",
+    "latest": "https://zenodo.org/api/records/3962711"
+  },
+  "created": "2020-07-27T19:41:19.427562+00:00",
+  "updated": "2020-07-28T00:59:25.088167+00:00",
+  "conceptrecid": "3962710",
+  "revision": 2,
+  "id": 3962711,
+  "metadata": {
+    "access_right_category": "success",
+    "doi": "10.5061/dryad.573n5tb4q",
+    "description": "Genetically encoded fluorescent glutamate indicators (iGluSnFRs) enable neurotransmitter release and diffusion to be visualized in intact tissue. Synaptic iGluSnFR signal time courses vary widely depending on experimental conditions, often lasting 10-100 times longer than the extracellular lifetime of synaptically released glutamate estimated with uptake measurements. iGluSnFR signals typically also decay much more slowly than the unbinding kinetics of the indicator. To resolve these discrepancies, here we have modeled synaptic glutamate diffusion, uptake and iGluSnFR activation to identify factors influencing iGluSnFR signal waveforms. Simulations suggested that iGluSnFR competes with transporters to bind synaptically released glutamate, delaying glutamate uptake. Accordingly, synaptic transporter currents recorded from iGluSnFR-expressing astrocytes in mouse cortex were slower than those in control astrocytes. Simulations also suggested that iGluSnFR reduces free glutamate levels in extrasynaptic spaces, likely limiting extrasynaptic receptor activation. iGluSnFR and lower-affinity variants nonetheless provide linear indications of vesicle release, underscoring their value for optical quantal analysis.",
+    "license": {
+      "id": "CC0-1.0"
+    },
+    "title": "Data from: Effects of fluorescent glutamate indicators on neurotransmitter diffusion and uptake",
+    "notes": "<p>Each experiment has an associated textfile for additional information</p>\n<p>Funding provided by: National Institute of Neurological Disorders and Stroke<br>Award Number: NS003039</p><p>Funding provided by: National Institute of Neurological Disorders and Stroke<br>Award Number: NS100796</p><p>Funding provided by: National Institute of Neurological Disorders and Stroke<br>Award Number: NS113499</p><p>Funding provided by: National Institute of Neurological Disorders and Stroke<br>Award Number: NS104478</p>",
+    "relations": {
+      "version": [
+        {
+          "count": 1,
+          "index": 0,
+          "parent": {
+            "pid_type": "recid",
+            "pid_value": "3962710"
+          },
+          "is_last": true,
+          "last_child": {
+            "pid_type": "recid",
+            "pid_value": "3962711"
+          }
+        }
+      ]
+    },
+    "access_right": "open",
+    "communities": [
+      {
+        "id": "dryad"
+      }
+    ],
+    "keywords": [
+      "iglusnfr",
+      "glutamate transporter currents",
+      "astrocyte"
+    ],
+    "publication_date": "2020-07-15",
+    "creators": [
+      {
+        "orcid": "0000-0003-2341-513X",
+        "affiliation": "Tufts University",
+        "name": "Armbruster, Moritz"
+      },
+      {
+        "orcid": "0000-0002-6560-6535",
+        "affiliation": "Tufts University",
+        "name": "Dulla, Chris G"
+      },
+      {
+        "orcid": "0000-0002-1770-2629",
+        "affiliation": "National Institute of Neurological Disorders and Stroke",
+        "name": "Diamond, Jeffrey S"
+      }
+    ],
+    "method": "<p>Please see methods; raw unprocessed data. Modeling.</p>",
+    "resource_type": {
+      "type": "dataset",
+      "title": "Dataset"
+    },
+    "related_identifiers": [
+      {
+        "scheme": "doi",
+        "identifier": "10.7554/elife.54441",
+        "relation": "isSupplementTo"
+      }
+    ]
+  }
+}

@@ -4,13 +4,10 @@
   "additionalProperties": false,
   "title": "CESNET publications repository Article record v1.0.0",
   "type": "object",
-  "allOf": [
-    {
-      "$ref": "dcterms-v2.0.0.json#/definitions/DCObject"
-    },
-    {
-      "$ref": "invenio-v1.0.0.json#/definitions/InvenioRecord"
-    },
+  "oarepo:extends": [
+    "dataset-v1.0.0.json#/DataSet"
+  ],
+  "properties":
     {
       "properties": {
         "literature": {

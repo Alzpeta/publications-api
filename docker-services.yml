@@ -59,9 +59,9 @@ services:
     image: postgres:9.6
     restart: "always"
     environment:
-      - "POSTGRES_USER=oarepo-publications-user"
-      - "POSTGRES_PASSWORD=oarepo-publications-pass"
-      - "POSTGRES_DB=oarepo-publications"
+      - "POSTGRES_USER=publications-user"
+      - "POSTGRES_PASSWORD=publications-pass"
+      - "POSTGRES_DB=publications"
   mq:
     image: rabbitmq:3-management
     restart: "always"
@@ -77,11 +77,3 @@ services:
         soft: -1
         hard: -1
     mem_limit: 1g
-  kibana:
-    image: docker.elastic.co/kibana/kibana-oss:7.6.0
-    environment:
-      - "ELASTICSEARCH_HOSTS=http://es:9200"
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-  flower:
-    image: mher/flower
-    command: --broker=amqp://guest:guest@mq:5672/ --broker_api=http://guest:guest@mq:15672/api/
