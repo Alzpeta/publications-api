@@ -1,6 +1,6 @@
 {
   "aliases": {
-    "oarepo-demo-s3-all-datasets": {}
+    "{PREFIX}all-datasets": {}
   },
   "settings": {
     "analysis": {
