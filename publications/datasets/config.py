@@ -180,7 +180,7 @@ def state_terms_filter(field):
 
 FILTERS = {
     _('category'): terms_filter('category'),
-    _('creator'): terms_filter('creator.raw'),
+    _('creators'): terms_filter('creators.type'),
     _('title'): language_aware_text_match_filter('titles'),
     _('state'): state_terms_filter('state'),
     # draft
@@ -209,7 +209,7 @@ FACETS = {
         _('published'),
         _('deleted')
     ]),
-    'creator': term_facet('creator.raw'),
+    'creators': term_facet('creators.type'),
     **DRAFT_IMPORTANT_FACETS
 }
 
