@@ -32,6 +32,9 @@ invenio-openid-connect = "^2.0"
 s3-client-lib = { git = "https://github.com/CESNET/s3-client.git" }
 oarepo-fsm = "^1.4.1"
 oarepo-actions = "^1.0.5"
+invenio-communities = "<2.1.1"
+oarepo-communities = "^1.0.0"
+cesnet-openid-remote = "^1.1.0"
 
 [tool.poetry.plugins.oarepo_mapping_handlers]
 titled-term = "publications.mappings:titled_term"

@@ -9,7 +9,7 @@ import os
 from datetime import timedelta
 
 from flask_babelex import lazy_gettext as _
-from invenio_openid_connect import InvenioAuthOpenIdRemote
+from cesnet_openid_remote import CesnetOpenIdRemote
 
 PIDSTORE_RECID_FIELD = 'id'
 JSONSCHEMAS_HOST = 'repozitar.cesnet.cz'
@@ -67,15 +67,3 @@ SESSION_COOKIE_PATH = '/'
 
 OAISERVER_ID_PREFIX = 'oai:repozitar.cesnet.cz:'
 MAIL_SUPPRESS_SEND = os.environ.get('FLASK_DEBUG', False)
-
-OPENIDC_CONFIG = dict(
-    base_url='https://login.cesnet.cz/oidc/',
-    consumer_key=os.environ.get('OPENIDC_KEY', 'MISSING_OIDC_KEY'),
-    consumer_secret=os.environ.get('OPENIDC_SECRET', 'MISSING_OIDC_SECRET'),
-    scope='openid email profile'
-)
-
-OAUTHCLIENT_REST_REMOTE_APPS = dict(
-    eduid=InvenioAuthOpenIdRemote().remote_app(),
-)
-
