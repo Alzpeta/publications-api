@@ -28,7 +28,7 @@ RECORDS_DRAFT_ENDPOINTS = {
         'publish_permission_factory_imp': deny_all,
         # Who can unpublish (delete published & create a new draft version of)
         # a published article record
-        'unpublish_permission_factory_imp': deny_all,
+        'unpublish_permission_factory_imp': allow_all,
         # Who can edit (create a new draft version of) a published dataset record
         'edit_permission_factory_imp': deny_all,
         # Who can enumerate published articles
