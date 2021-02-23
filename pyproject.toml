@@ -32,6 +32,7 @@ invenio-openid-connect = "^2.0"
 s3-client-lib = { git = "https://github.com/CESNET/s3-client.git" }
 oarepo-fsm = "^1.4.1"
 oarepo-actions = "^1.0.5"
+tqdm = "^4.56.0"
 
 [tool.poetry.plugins.oarepo_mapping_handlers]
 titled-term = "publications.mappings:titled_term"
@@ -54,6 +55,7 @@ invenio_i18n = "invenio_i18n:InvenioI18N"
 
 [tool.poetry.plugins."flask.commands"]
 dataset-records = "publications.cli:dataset_records"
+article-records = "publications.cli:article_records"
 
 [tool.poetry.plugins."invenio_jsonschemas.schemas"]
 publications-dataset = "publications.datasets.jsonschemas"

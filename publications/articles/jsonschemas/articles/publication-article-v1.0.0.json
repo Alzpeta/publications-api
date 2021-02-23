@@ -1,97 +1,18 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "id": "https://repozitar-test.cesnet.cz/schemas/publications/publication-article-v1.0.0.json",
-  "additionalProperties": false,
-  "title": "CESNET publications repository Article record v1.0.0",
   "type": "object",
-  "oarepo:extends": [
-    "dataset-v1.0.0.json#/DataSet"
-  ],
-  "properties":
+  "allOf": [
     {
       "properties": {
-        "literature": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "List of literature used"
-        },
-        "thesis": {
-          "type": "string"
-        },
-        "supervisor": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "comment": {
-                "type": "string"
-              },
-              "code": {
-                "type": "string"
-              },
-              "institution": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "code": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
+        "datasets": {
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
           }
-        },
-        "restorationPeriod": {
-          "type": "object",
-          "properties": {
-            "since": {
-              "type": "string",
-              "format": "date"
-            },
-            "until": {
-              "type": "string",
-              "format": "date"
-            }
-          },
-          "description": "Item restoration period"
-        },
-        "examinationMethods": {
-          "$ref": "/schemas/taxonomy-v2.0.0.json#/definitions/TermArray",
-          "$comment": "https://localhost:8080/api/taxonomies/examination-methods/?drilldown=True"
-        },
-        "restorationMethods": {
-          "$ref": "/schemas/taxonomy-v2.0.0.json#/definitions/TermArray",
-          "$comment": "https://localhost:8080/api/taxonomies/restoration-technology/?drilldown=True"
-        },
-        "public": {
-          "type": "boolean"
-        },
-        "workType": {
-          "$ref": "/schemas/taxonomy-v2.0.0.json#/definitions/Term",
-          "$comment": "https://localhost:8080/api/taxonomies/work-type/?drilldown=True"
-        },
-        "_restoration": {
-          "type": "string"
-        }
       }
+    },
+    {
+      "$ref": "/schemas/document-v1.0.0.json#/definitions/Document"
     }
   ],
-  "required": [
-    "id",
-    "$schema",
-    "identifier",
-    "title",
-    "multilingualAbstract",
-    "literature",
-    "thesis",
-    "public",
-    "workType"
-  ]
+  "additionalProperties": "false"
 }

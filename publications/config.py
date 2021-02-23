@@ -13,7 +13,9 @@ from invenio_openid_connect import InvenioAuthOpenIdRemote
 
 PIDSTORE_RECID_FIELD = 'id'
 JSONSCHEMAS_HOST = 'repozitar.cesnet.cz'
-SUPPORTED_LANGUAGES = ['cs', 'en', '_']
+SUPPORTED_LANGUAGES = ['cs', 'en']
+MULTILINGUAL_SUPPORTED_LANGUAGES = ['cs', 'en']
+
 
 BABEL_DEFAULT_LOCALE = 'cs'
 I18N_LANGUAGES = (('en', _('English')), ('cs', _('Czech')))
@@ -79,3 +81,4 @@ OAUTHCLIENT_REST_REMOTE_APPS = dict(
     eduid=InvenioAuthOpenIdRemote().remote_app(),
 )
 
+from . import invenio_hacks     # noqa to register app loaded event

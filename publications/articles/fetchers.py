@@ -23,7 +23,8 @@ def article_fetcher(record_uuid, data):
     return FetchedPID(
         provider=ArticleProvider,
         pid_type=ArticleProvider.pid_type,
-        pid_value=data['id']
+        #pid_value=data['id']
+        pid_value=data['pid']
     )
 
 

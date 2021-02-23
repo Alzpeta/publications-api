@@ -10,39 +10,48 @@ import datetime
 
 from flask import url_for, current_app
 from flask_login import current_user
+from invenio_indexer.api import RecordIndexer
 from invenio_records_files.api import Record
+from jsonref import requests
 from oarepo_invenio_model import InheritedSchemaRecordMixin
+from oarepo_records_draft.endpoints import make_draft_minter
 from oarepo_records_draft.record import DraftRecordMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin, FilesKeepingRecordMixin
 from oarepo_validate.record import AllowedSchemaMixin
+from oarepo_actions.decorators import action
+from werkzeug.local import LocalProxy
 
 from .constants import (
     ARTICLE_ALLOWED_SCHEMAS,
     ARTICLE_PREFERRED_SCHEMA, ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_TYPE
 )
 from .marshmallow import ArticleMetadataSchemaV1
-
+from oarepo_documents.api import DocumentRecordMixin
 
 class ArticleRecord(SchemaKeepingRecordMixin,
                     MarshmallowValidatedRecordMixin,
                     InheritedSchemaRecordMixin,
-                    Record):
+                    Record,
+                    ):
     """Record class for an Article Record"""
     ALLOWED_SCHEMAS = ARTICLE_ALLOWED_SCHEMAS
     PREFERRED_SCHEMA = ARTICLE_PREFERRED_SCHEMA
     MARSHMALLOW_SCHEMA = ArticleMetadataSchemaV1
 
-    index_name = 'oarepo-demo-s3-articles-publication-article-v1.0.0'
-
+    #index_name = 'oarepo-demo-s3-articles-publication-article-v1.0.0'
+    index_name = 'articles-publication-article-v1.0.0'
     @property
     def canonical_url(self):
-        return url_for(f'invenio_records_rest.publications/{ARTICLE_PID_TYPE}_item',
+        return url_for(f'invenio_records_rest.publications/articles_item',
                        pid_value=self['id'], _external=True)
 
 
-class ArticleDraftRecord(DraftRecordMixin, ArticleRecord):
+class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleRecord):
+    DOCUMENT_MINTER = LocalProxy(lambda: make_draft_minter(ARTICLE_DRAFT_PID_TYPE,'publications-article'))
+    DOCUMENT_INDEXER = RecordIndexer
 
-    index_name = 'oarepo-demo-s3-draft-articles-publication-article-v1.0.0'
+    index_name = 'draft-articles-publication-article-v1.0.0'
+    #index_name = 'oarepo-demo-s3-draft-articles-publication-article-v1.0.0'
 
     def validate(self, *args, **kwargs):
         if 'created' not in self:
@@ -58,5 +67,5 @@ class ArticleDraftRecord(DraftRecordMixin, ArticleRecord):
 
     @property
     def canonical_url(self):
-        return url_for(f'invenio_records_rest.draft-publications/{ARTICLE_DRAFT_PID_TYPE}_item',
+        return url_for(f'invenio_records_rest.draft-publications/articles_item',
                        pid_value=self['id'], _external=True)

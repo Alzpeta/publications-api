@@ -25,24 +25,25 @@ RECORDS_DRAFT_ENDPOINTS = {
 
         # TODO: implement proper permissions
         # Who can publish a draft article record
-        'publish_permission_factory_imp': deny_all,
+        'publish_permission_factory_imp': allow_all,
         # Who can unpublish (delete published & create a new draft version of)
         # a published article record
         'unpublish_permission_factory_imp': allow_all,
         # Who can edit (create a new draft version of) a published dataset record
-        'edit_permission_factory_imp': deny_all,
+        'edit_permission_factory_imp': allow_all,
         # Who can enumerate published articles
-        'list_permission_factory_imp': deny_all,
+        'list_permission_factory_imp': allow_all,
         # Who can view a detail of an existing published article
-        'read_permission_factory_imp': deny_all,
+        'read_permission_factory_imp': allow_all,
         # Make sure everything else is for biden
-        'create_permission_factory_imp': deny_all,
-        'update_permission_factory_imp': deny_all,
-        'delete_permission_factory_imp': deny_all,
+        'create_permission_factory_imp': allow_all,
+        'update_permission_factory_imp': allow_all,
+        'delete_permission_factory_imp': allow_all,
 
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
-        'search_index': 'oarepo-demo-s3-articles-publication-article-v1.0.0',
+        #'search_index': 'oarepo-demo-s3-articles-publication-article-v1.0.0',
+        'search_index': 'articles-publication-article-v1.0.0',
         'search_class': RecordsSearch,
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
@@ -51,15 +52,16 @@ RECORDS_DRAFT_ENDPOINTS = {
         'list_route': '/publications/articles/',
         'files': dict(
             # File attachments are currently not allowed on article records
-            put_file_factory=deny_all,
-            get_file_factory=deny_all,
-            delete_file_factory=deny_all
+            put_file_factory=allow_all,
+            get_file_factory=allow_all,
+            delete_file_factory=allow_all
         )
     },
     'draft-publications/articles': {
         'pid_type': ARTICLE_DRAFT_PID_TYPE,
         'record_class': 'publications.articles.record.ArticleDraftRecord',
-        'search_index': 'oarepo-demo-s3-draft-publication-article-v1.0.0',
+        #'search_index': 'oarepo-demo-s3-draft-publication-article-v1.0.0',
+        'search_index': 'draft-articles-publication-article-v1.0.0',
         'search_class': FilteredRecordsSearch,
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
@@ -79,13 +81,14 @@ RECORDS_DRAFT_ENDPOINTS = {
         'list_permission_factory_imp': allow_all,
 
         'record_loaders': {
+            'application/json-patch+json': 'oarepo_validate.json_files_loader',
             'application/json': 'oarepo_validate.json_files_loader'
         },
         'files': dict(
             # File attachments are currently not allowed on article records
-            put_file_factory=deny_all,
-            get_file_factory=deny_all,
-            delete_file_factory=deny_all
+            put_file_factory=allow_all,
+            get_file_factory=allow_all,
+            delete_file_factory=allow_all
         )
     }
 }
@@ -99,7 +102,7 @@ RECORDS_REST_ENDPOINTS = {
         pid_fetcher='all-publications-articles',
         default_endpoint_prefix=True,
         search_class=FilteredRecordsSearch,
-        search_index='oarepo-demo-s3-all-articles',
+        search_index='all-articles',
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
         },
@@ -109,9 +112,9 @@ RECORDS_REST_ENDPOINTS = {
 
         # not used really
         item_route='/publications/all-articles/not-used-but-must-be-present',
-        create_permission_factory_imp=deny_all,
-        delete_permission_factory_imp=deny_all,
-        update_permission_factory_imp=deny_all,
+        create_permission_factory_imp=allow_all,
+        delete_permission_factory_imp=allow_all,
+        update_permission_factory_imp=allow_all,
         read_permission_factory_imp=check_elasticsearch,
         record_serializers={
             'application/json': 'oarepo_validate:json_response',

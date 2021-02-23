@@ -68,18 +68,6 @@ To setup your development environment, follow these steps:
    export UI_ADDRESS='https://127.0.0.1:5000'
    poetry run python load_data.py $INGEST_TOKEN ${UI_ADDRESS}/api/
    ```
-
-
-## Set up OIDC auth
-
-To get the federated eduID authentication going, you will need to register
-an OIDC client and put the following into your Invenio server environment variables (e.g. to `.env`):
-
-```shell
-OPENIDC_KEY=''
-OPENIDC_SECRET=''
-```
-
 ## Usage
 
 You can check if everything worked out by listing the API of dataset collection:

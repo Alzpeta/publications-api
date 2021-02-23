@@ -9,21 +9,19 @@
 from __future__ import absolute_import, print_function
 
 from invenio_records_rest.schemas import StrictKeysMixin
+from marshmallow import fields, EXCLUDE, Schema
 from marshmallow.decorators import validates
 from marshmallow.exceptions import ValidationError
 from oarepo_invenio_model.marshmallow import InvenioRecordMetadataSchemaV1Mixin, InvenioRecordMetadataFilesMixin
 
 from publications.marshmallow import check_multilingual_string_length
+from oarepo_documents.marshmallow.document import DocumentSchemaV1
 
 
-# TODO: inherit from oarepo-documents
 class ArticleMetadataSchemaV1(InvenioRecordMetadataFilesMixin,
                               InvenioRecordMetadataSchemaV1Mixin,
-                              StrictKeysMixin):
+                              StrictKeysMixin,
+                              DocumentSchemaV1):
+    datasets = fields.List(fields.Str())
 
-    @validates('abstract')
-    def validate_description(self, val):
-        if not check_multilingual_string_length(val, max_words=self.context.get('max_words', 200)):
-            raise ValidationError('Abstract must be under 200 words.')
-        else:
-            return True
+
