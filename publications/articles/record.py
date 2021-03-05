@@ -8,7 +8,7 @@
 
 import datetime
 
-from flask import url_for, current_app
+from flask import url_for, current_app, jsonify
 from flask_login import current_user
 from invenio_indexer.api import RecordIndexer
 from invenio_records_files.api import Record
@@ -19,6 +19,7 @@ from oarepo_records_draft.record import DraftRecordMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin, FilesKeepingRecordMixin
 from oarepo_validate.record import AllowedSchemaMixin
 from oarepo_actions.decorators import action
+from publications.articles.search import MineRecordsSearch
 from werkzeug.local import LocalProxy
 
 from .constants import (
@@ -69,3 +70,22 @@ class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleRecord):
     def canonical_url(self):
         return url_for(f'invenio_records_rest.draft-publications/articles_item',
                        pid_value=self['id'], _external=True)
+
+class AllArticlesRecord(ArticleRecord):
+    @classmethod
+    @action(detail=False, url_path='mine')
+    def my_records(cls, **kwargs):
+        search = MineRecordsSearch(index='all-articles', doc_type='_doc')
+        search = search.with_preference_param().params(version=True)
+        search = search[0:10]
+        search_result = search.execute().to_dict()
+        search_result = {
+            'hits': {
+                'hits': [
+                    x['_source'] for x in search_result['hits']['hits']
+                ],
+                'total': search_result['hits']['total']['value']
+            },
+        }
+
+        return jsonify(search_result)
