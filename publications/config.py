@@ -8,8 +8,10 @@
 import os
 from datetime import timedelta
 
+from flask import current_app
 from flask_babelex import lazy_gettext as _
 from invenio_openid_connect import InvenioAuthOpenIdRemote
+from werkzeug.local import LocalProxy
 
 PIDSTORE_RECID_FIELD = 'id'
 JSONSCHEMAS_HOST = 'repozitar.cesnet.cz'
@@ -72,9 +74,9 @@ MAIL_SUPPRESS_SEND = os.environ.get('FLASK_DEBUG', False)
 
 OPENIDC_CONFIG = dict(
     base_url='https://login.cesnet.cz/oidc/',
-    consumer_key=os.environ.get('OPENIDC_KEY', 'MISSING_OIDC_KEY'),
+    consumer_key=LocalProxy(lambda: current_app.config['OPENIDC_KEY']),
     consumer_secret=os.environ.get('OPENIDC_SECRET', 'MISSING_OIDC_SECRET'),
-    scope='openid email profile'
+    scope='openid email profile eduperson_entitlement_extended isCesnetEligibleLastSeen'
 )
 
 OAUTHCLIENT_REST_REMOTE_APPS = dict(

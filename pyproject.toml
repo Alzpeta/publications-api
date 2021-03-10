@@ -14,18 +14,18 @@ python = "^3.8"
 requests = "^2.24.0"
 
 oarepo = "^3.3"
-oarepo-micro-api = ">=1.0.0"
-
-oarepo-validate = ">=1.0.0"
-oarepo-mapping-includes = ">=1.2.0"
-oarepo-invenio-model = ">=2.1.2"
+oarepo-micro-api = "^3.3.0"
+oarepo-whitenoise = "^2.0.0"
+oarepo-validate = "^1.0.0"
+oarepo-mapping-includes = "^1.2.0"
+oarepo-invenio-model = "^2.1.2"
 oarepo-rdm-records = { git = "https://github.com/oarepo/oarepo-rdm-records.git" }
-oarepo-s3 = { version = ">=1.2.0", allow-prereleases = true }
-flask-taxonomies = { version = ">=7.0.0a17", allow-prereleases = true }
-oarepo-taxonomies = { version = ">=2.3.0", allow-prereleases = true }
-oarepo-records-draft = { version = ">=5.0.0-alpha.22", allow-prereleases = true }
-invenio-records-files = ">=1.2.1"
-oarepo-iiif = ">=1.1.1"
+oarepo-s3 = { version = "^1.2.0", allow-prereleases = true }
+flask-taxonomies = { version = "^7.0.0a17", allow-prereleases = true }
+oarepo-taxonomies = { version = "^2.3.0", allow-prereleases = true }
+oarepo-records-draft = { version = "^5.0.0-alpha.22", allow-prereleases = true }
+invenio-records-files = "^1.2.1"
+oarepo-iiif = "^1.1.1"
 oarepo-ui = "^2.0"
 invenio-oauth2server = "^1.2.0"
 invenio-openid-connect = "^2.0"
@@ -33,6 +33,7 @@ s3-client-lib = { git = "https://github.com/CESNET/s3-client.git" }
 oarepo-fsm = "^1.4.1"
 oarepo-actions = "^1.0.5"
 tqdm = "^4.56.0"
+oarepo-documents = "^1.0.8"
 
 [tool.poetry.plugins.oarepo_mapping_handlers]
 titled-term = "publications.mappings:titled_term"
