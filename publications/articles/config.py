@@ -51,9 +51,9 @@ RECORDS_DRAFT_ENDPOINTS = {
         # Who can view a detail of an existing published article
         'read_permission_factory_imp': allow_all,
         # Make sure everything else is for biden
-        'create_permission_factory_imp': allow_all,
-        'update_permission_factory_imp': allow_all,
-        'delete_permission_factory_imp': allow_all,
+        'create_permission_factory_imp': deny_all,
+        'update_permission_factory_imp': deny_all,
+        'delete_permission_factory_imp': deny_all,
 
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
@@ -64,12 +64,13 @@ RECORDS_DRAFT_ENDPOINTS = {
             'application/json': 'oarepo_validate:json_search',
         },
 
-        'list_route': '/publications/articles/',
+        'list_route': '/articles/published',
+        'item_route': '/articles/',
         'files': dict(
             # File attachments are currently not allowed on article records
-            put_file_factory=allow_all,
-            get_file_factory=allow_all,
-            delete_file_factory=allow_all
+            put_file_factory=deny_all,
+            get_file_factory=deny_all,
+            delete_file_factory=deny_all
         )
     },
     'draft-publications/articles': {
@@ -81,7 +82,8 @@ RECORDS_DRAFT_ENDPOINTS = {
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
         },
-
+        'list_route': '/articles/draft/',
+        'item_route': '/articles/draft/',
         # Who can create a new draft article record?
         # TODO: owner of the dataset referenced in article create request?
         # TODO: IMPORTANT!!! harden all permissions
@@ -101,9 +103,9 @@ RECORDS_DRAFT_ENDPOINTS = {
         },
         'files': dict(
             # File attachments are currently not allowed on article records
-            put_file_factory=allow_all,
-            get_file_factory=allow_all,
-            delete_file_factory=allow_all
+            put_file_factory=deny_all,
+            get_file_factory=deny_all,
+            delete_file_factory=deny_all
         )
     }
 }
@@ -122,15 +124,15 @@ RECORDS_REST_ENDPOINTS = {
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
         },
-        list_route='/publications/all-articles/',
+        list_route='/articles/',
         default_media_type='application/json',
         max_result_window=10000,
 
         # not used really
-        item_route='/publications/all-articles/not-used-but-must-be-present',
-        create_permission_factory_imp=allow_all,
-        delete_permission_factory_imp=allow_all,
-        update_permission_factory_imp=allow_all,
+        item_route='/articles/not-used-but-must-be-present',
+        create_permission_factory_imp=deny_all,
+        delete_permission_factory_imp=deny_all,
+        update_permission_factory_imp=deny_all,
         read_permission_factory_imp=check_elasticsearch,
         record_serializers={
             'application/json': 'oarepo_validate:json_response',

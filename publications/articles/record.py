@@ -8,7 +8,7 @@
 
 import datetime
 
-from flask import url_for, current_app, jsonify
+from flask import url_for, current_app, jsonify, request
 from flask_login import current_user
 from invenio_indexer.api import RecordIndexer
 from invenio_records_files.api import Record
@@ -19,6 +19,8 @@ from oarepo_records_draft.record import DraftRecordMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin, FilesKeepingRecordMixin
 from oarepo_validate.record import AllowedSchemaMixin
 from oarepo_actions.decorators import action
+from simplejson import JSONDecodeError
+
 from publications.articles.search import MineRecordsSearch
 from werkzeug.local import LocalProxy
 
@@ -27,7 +29,8 @@ from .constants import (
     ARTICLE_PREFERRED_SCHEMA, ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_TYPE
 )
 from .marshmallow import ArticleMetadataSchemaV1
-from oarepo_documents.api import DocumentRecordMixin
+from oarepo_documents.api import DocumentRecordMixin, getMetadataFromDOI
+
 
 class ArticleRecord(SchemaKeepingRecordMixin,
                     MarshmallowValidatedRecordMixin,
@@ -72,6 +75,19 @@ class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleRecord):
                        pid_value=self['id'], _external=True)
 
 class AllArticlesRecord(ArticleRecord):
+    @classmethod
+    @action(detail=False, url_path='from-doi/', method='post')
+    def from_doi(cls, **kwargs):
+        doi = request.json['doi']
+        try:
+            article = getMetadataFromDOI(doi)
+        except(JSONDecodeError):
+            return jsonify()
+
+        if article is None:
+            return jsonify()
+        else:
+            return jsonify(article=article)
     @classmethod
     @action(detail=False, url_path='mine')
     def my_records(cls, **kwargs):

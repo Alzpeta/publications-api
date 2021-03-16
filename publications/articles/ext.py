@@ -23,9 +23,6 @@ class PublicationsArticles:
         app.config.setdefault('RECORDS_REST_ENDPOINTS', {}).update(
             config.RECORDS_REST_ENDPOINTS
         )
-        app.config.setdefault('RECORDS_REST_ENDPOINTS', {}).update(
-            config.RECORDS_REST_ENDPOINTS
-        )
         app.config.setdefault('RECORDS_REST_FACETS', {}).update(
             config.RECORDS_REST_FACETS
         )

@@ -37,7 +37,7 @@ class DatasetBaseRecord(SchemaKeepingRecordMixin,
                         InheritedSchemaRecordMixin,
                         ReferenceEnabledRecordMixin,
                         FSMMixin,
-                        Record, DocumentRecordMixin):
+                        Record):
     """Base Data set record class for Data set records."""
     ALLOWED_SCHEMAS = DATASET_ALLOWED_SCHEMAS
     PREFERRED_SCHEMA = DATASET_PREFERRED_SCHEMA
