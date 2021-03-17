@@ -16,7 +16,7 @@ from s3_client_lib.s3_multipart_client import upload_part
 from publications.datasets.marshmallow import PublicationDatasetMetadataSchemaV1
 
 TOKEN = sys.argv[1]
-DATA_URL = sys.argv[2] if len(sys.argv) > 2 else 'https://localhost:8080/api/'
+DATA_URL = sys.argv[2] if len(sys.argv) > 2 else 'https://localhost:8080/'
 DRY_RUN = False
 
 
@@ -49,8 +49,8 @@ def simplify_strings(data):
 
 
 def publish_dataset(dataset_json, id):
-    col_url = DATA_URL + 'draft/publications/datasets/?access_token=%s' % TOKEN
-    dataset_url = DATA_URL + 'draft/publications/datasets/%s?access_token=%s' % (id, TOKEN)
+    col_url = DATA_URL + 'datasets/draft/?access_token=%s' % TOKEN
+    dataset_url = DATA_URL + 'datasets/draft/%s?access_token=%s' % (id, TOKEN)
 
     headers = {'Content-type': 'application/json'}
 

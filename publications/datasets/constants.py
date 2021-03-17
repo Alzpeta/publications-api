@@ -10,7 +10,6 @@
 DATASET_ALLOWED_SCHEMAS = ('datasets/publication-dataset-v1.0.0.json',)
 DATASET_PREFERRED_SCHEMA = 'datasets/publication-dataset-v1.0.0.json'
 
-
 DATASET_PID_TYPE = 'datset'
 DATASET_DRAFT_PID_TYPE = 'dpsdat'
 DATASET_ALL_PID_TYPE = 'apsdat'

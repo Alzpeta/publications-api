@@ -9,16 +9,17 @@ import os
 from datetime import timedelta
 
 from flask_babelex import lazy_gettext as _
-from cesnet_openid_remote import CesnetOpenIdRemote
+from invenio_openid_connect import InvenioAuthOpenIdRemote
 
 PIDSTORE_RECID_FIELD = 'id'
 JSONSCHEMAS_HOST = 'repozitar.cesnet.cz'
-SUPPORTED_LANGUAGES = ['cs', 'en', '_']
+SUPPORTED_LANGUAGES = ['cs', 'en']
+MULTILINGUAL_SUPPORTED_LANGUAGES = ['cs', 'en']
 
 BABEL_DEFAULT_LOCALE = 'cs'
 I18N_LANGUAGES = (('en', _('English')), ('cs', _('Czech')))
 I18N_SESSION_KEY = 'language'
-I18N_SET_LANGUAGE_URL = '/api/lang'
+I18N_SET_LANGUAGE_URL = '/lang'
 
 ELASTICSEARCH_DEFAULT_LANGUAGE_TEMPLATE = {
     "type": "text",
@@ -54,16 +55,18 @@ FILES_REST_STORAGE_FACTORY = 'oarepo_s3.storage.s3_storage_factory'
 CELERY_BEAT_SCHEDULE = {
     'cleanup_expired_multipart_uploads': {
         'task': 'oarepo_s3.tasks.cleanup_expired_multipart_uploads',
-        'schedule': timedelta(minutes=60*24),
+        'schedule': timedelta(minutes=60 * 24),
     }
 }
 
 REST_CSRF_ENABLED = False
 CSRF_HEADER = 'X-CSRFTOKEN'
-SESSION_COOKIE_SECURE=True
-SESSION_COOKIE_HTTPONLY=True
-SESSION_COOKIE_SAMESITE='Lax'
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_PATH = '/'
 
 OAISERVER_ID_PREFIX = 'oai:repozitar.cesnet.cz:'
 MAIL_SUPPRESS_SEND = os.environ.get('FLASK_DEBUG', False)
+
+from . import invenio_hacks  # noqa to register app loaded event
