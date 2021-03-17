@@ -8,7 +8,7 @@
 
 from __future__ import absolute_import, print_function
 
-import uuid
+import logging
 
 from flask_login import current_user
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -16,7 +16,6 @@ from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 
 from publications.articles.constants import ARTICLE_PID_TYPE
 from publications.providers import PublicationProvider
-import logging
 
 log = logging.getLogger('article-minter')
 
@@ -29,7 +28,7 @@ class ArticleProvider(PublicationProvider):
 def article_minter(record_uuid, data):
     if 'id' not in data:
         data['id'] = RecordIdProviderV2.generate_id()
-        #todo ArticleProvider podedit od RecordIdProviderV2
+        # todo ArticleProvider podedit od RecordIdProviderV2
         provider = ArticleProvider.create(
             object_type='rec',
             object_uuid=record_uuid,

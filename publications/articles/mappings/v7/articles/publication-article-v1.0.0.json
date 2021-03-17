@@ -48,9 +48,9 @@
       "document-v1.0.0.json#/Document"
     ],
     "properties": {
-          "datasets": {
-            "type": "keyword"
-          }
-  }
+      "datasets": {
+        "type": "keyword"
+      }
+    }
   }
 }

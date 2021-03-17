@@ -8,13 +8,6 @@
 from elasticsearch_dsl import Q
 from elasticsearch_dsl.query import Bool
 from flask_security.utils import _
-from invenio_records_rest.facets import range_filter, terms_filter
-from invenio_records_rest.utils import allow_all, deny_all, check_elasticsearch
-from invenio_search import RecordsSearch
-from oarepo_multilingual import language_aware_text_match_filter
-from oarepo_records_draft import DRAFT_IMPORTANT_FILTERS
-from elasticsearch_dsl import Q
-from elasticsearch_dsl.query import Bool
 from invenio_records_rest.facets import terms_filter, range_filter
 from invenio_records_rest.utils import allow_all, deny_all, check_elasticsearch
 from invenio_search import RecordsSearch
@@ -57,7 +50,7 @@ RECORDS_DRAFT_ENDPOINTS = {
 
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
-        #'search_index': 'oarepo-demo-s3-articles-publication-article-v1.0.0',
+        # 'search_index': 'oarepo-demo-s3-articles-publication-article-v1.0.0',
         'search_index': 'articles-publication-article-v1.0.0',
         'search_class': RecordsSearch,
         'search_serializers': {
@@ -76,7 +69,7 @@ RECORDS_DRAFT_ENDPOINTS = {
     'draft-publications/articles': {
         'pid_type': ARTICLE_DRAFT_PID_TYPE,
         'record_class': 'publications.articles.record.ArticleDraftRecord',
-        #'search_index': 'oarepo-demo-s3-draft-publication-article-v1.0.0',
+        # 'search_index': 'oarepo-demo-s3-draft-publication-article-v1.0.0',
         'search_index': 'draft-articles-publication-article-v1.0.0',
         'search_class': FilteredRecordsSearch,
         'search_serializers': {
@@ -140,6 +133,8 @@ RECORDS_REST_ENDPOINTS = {
         search_factory_imp='publications.articles.search:article_search_factory'
     )
 }
+
+
 def boolean_filter(field):
     def val2bool(x):
         if x == '1' or x == 'true' or x is True:

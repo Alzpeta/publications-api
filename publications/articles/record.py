@@ -8,28 +8,25 @@
 
 import datetime
 
-from flask import url_for, current_app, jsonify, request
+from flask import url_for, jsonify, request
 from flask_login import current_user
 from invenio_indexer.api import RecordIndexer
 from invenio_records_files.api import Record
-from jsonref import requests
+from oarepo_actions.decorators import action
+from oarepo_documents.api import DocumentRecordMixin, getMetadataFromDOI
 from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.endpoints import make_draft_minter
 from oarepo_records_draft.record import DraftRecordMixin
-from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin, FilesKeepingRecordMixin
-from oarepo_validate.record import AllowedSchemaMixin
-from oarepo_actions.decorators import action
+from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin
 from simplejson import JSONDecodeError
-
-from publications.articles.search import MineRecordsSearch
 from werkzeug.local import LocalProxy
 
+from publications.articles.search import MineRecordsSearch
 from .constants import (
     ARTICLE_ALLOWED_SCHEMAS,
-    ARTICLE_PREFERRED_SCHEMA, ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_TYPE
+    ARTICLE_PREFERRED_SCHEMA, ARTICLE_DRAFT_PID_TYPE
 )
 from .marshmallow import ArticleMetadataSchemaV1
-from oarepo_documents.api import DocumentRecordMixin, getMetadataFromDOI
 
 
 class ArticleRecord(SchemaKeepingRecordMixin,
@@ -42,8 +39,9 @@ class ArticleRecord(SchemaKeepingRecordMixin,
     PREFERRED_SCHEMA = ARTICLE_PREFERRED_SCHEMA
     MARSHMALLOW_SCHEMA = ArticleMetadataSchemaV1
 
-    #index_name = 'oarepo-demo-s3-articles-publication-article-v1.0.0'
+    # index_name = 'oarepo-demo-s3-articles-publication-article-v1.0.0'
     index_name = 'articles-publication-article-v1.0.0'
+
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.publications/articles_item',
@@ -51,11 +49,12 @@ class ArticleRecord(SchemaKeepingRecordMixin,
 
 
 class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleRecord):
-    DOCUMENT_MINTER = LocalProxy(lambda: make_draft_minter(ARTICLE_DRAFT_PID_TYPE,'publications-article'))
+    DOCUMENT_MINTER = LocalProxy(lambda: make_draft_minter(ARTICLE_DRAFT_PID_TYPE, 'publications-article'))
     DOCUMENT_INDEXER = RecordIndexer
 
     index_name = 'draft-articles-publication-article-v1.0.0'
-    #index_name = 'oarepo-demo-s3-draft-articles-publication-article-v1.0.0'
+
+    # index_name = 'oarepo-demo-s3-draft-articles-publication-article-v1.0.0'
 
     def validate(self, *args, **kwargs):
         if 'created' not in self:
@@ -74,6 +73,7 @@ class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleRecord):
         return url_for(f'invenio_records_rest.draft-publications/articles_item',
                        pid_value=self['id'], _external=True)
 
+
 class AllArticlesRecord(ArticleRecord):
     @classmethod
     @action(detail=False, url_path='from-doi/', method='post')
@@ -88,6 +88,7 @@ class AllArticlesRecord(ArticleRecord):
             return jsonify()
         else:
             return jsonify(article=article)
+
     @classmethod
     @action(detail=False, url_path='mine')
     def my_records(cls, **kwargs):

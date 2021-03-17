@@ -22,7 +22,7 @@ from publications.datasets.constants import DATASET_ALLOWED_SCHEMAS, \
     DATASET_PREFERRED_SCHEMA
 from publications.datasets.marshmallow import PublicationDatasetMetadataSchemaV1
 from publications.datasets.search import MineRecordsSearch
-from oarepo_documents.api import DocumentRecordMixin
+
 published_index_name = 'datasets-publication-dataset-v1.0.0'
 draft_index_name = 'draft-datasets-publication-dataset-v1.0.0'
 all_index_name = 'all-datasets'
@@ -43,6 +43,7 @@ class DatasetBaseRecord(SchemaKeepingRecordMixin,
     PREFERRED_SCHEMA = DATASET_PREFERRED_SCHEMA
     MARSHMALLOW_SCHEMA = PublicationDatasetMetadataSchemaV1
 
+
 class DatasetRecord(InvalidRecordAllowedMixin, DatasetBaseRecord):
     index_name = published_index_name
     _schema = 'publication-dataset-v1.0.0.json'
@@ -51,7 +52,6 @@ class DatasetRecord(InvalidRecordAllowedMixin, DatasetBaseRecord):
     def canonical_url(self):
         return url_for(f'invenio_records_rest.publications/datasets_item',
                        pid_value=self['id'], _external=True)
-
 
 
 class DatasetDraftRecord(DraftRecordMixin,
@@ -70,7 +70,6 @@ class DatasetDraftRecord(DraftRecordMixin,
 
         self['modified'] = datetime.date.today().strftime('%Y-%m-%d')
         return super().validate(*args, **kwargs)
-
 
     @property
     def canonical_url(self):
@@ -96,4 +95,3 @@ class AllDatasetsRecord(Record):
         }
 
         return jsonify(search_result)
-

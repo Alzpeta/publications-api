@@ -6,13 +6,16 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 
-from invenio_records_rest.query import default_search_factory
+import traceback
+
 from elasticsearch_dsl import Q
 from elasticsearch_dsl.query import Bool
 from flask import request
+from invenio_records_rest.query import default_search_factory
 from invenio_search import RecordsSearch
-import traceback
+
 from publications.permissions import MODIFICATION_ROLE_PERMISSIONS
+
 
 def article_search_factory(self, search, query_parser=None):
     search, kwargs = default_search_factory(self, search, query_parser)
@@ -20,6 +23,8 @@ def article_search_factory(self, search, query_parser=None):
                             'creator', 'abstract'])
     search = search.highlight('*')
     return search, kwargs
+
+
 class ArticleRecordsSearch(RecordsSearch):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -87,6 +92,7 @@ class ArticleRecordsSearch(RecordsSearch):
                     Q('term', state='published')
                 ])
             return q
+
 
 class MineRecordsSearch(ArticleRecordsSearch):
     class Meta:

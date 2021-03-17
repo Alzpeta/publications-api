@@ -19,14 +19,16 @@ from invenio_search import current_search_client
 from invenio_search.utils import build_alias_name
 
 from publications.articles.constants import ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_TYPE
+from publications.articles.record import ArticleRecord, ArticleDraftRecord
 from publications.datasets.constants import DATASET_PID_TYPE, DATASET_DRAFT_PID_TYPE
 from publications.datasets.record import DatasetRecord, DatasetDraftRecord
-from publications.articles.record import ArticleRecord, ArticleDraftRecord
+
 
 @click.group()
 def dataset_records():
     """Do Data set records commands."""
     pass
+
 
 @dataset_records.command('reindex')
 @click.option(
@@ -68,10 +70,12 @@ def dataset_reindex(ctx, raise_on_error=True, only=None):
         reindex_pid(DATASET_PID_TYPE, DatasetRecord)
         reindex_pid(DATASET_DRAFT_PID_TYPE, DatasetDraftRecord)
 
+
 @click.group()
 def article_records():
     """Do Data set records commands."""
     pass
+
 
 @article_records.command('reindex')
 @click.option(

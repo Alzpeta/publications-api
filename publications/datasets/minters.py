@@ -7,10 +7,10 @@
 #
 
 import logging
+
 from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 
 from publications.datasets.constants import DATASET_PID_TYPE
-
 
 log = logging.getLogger('dataset-minter')
 

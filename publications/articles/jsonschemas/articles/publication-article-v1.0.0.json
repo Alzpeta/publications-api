@@ -4,13 +4,13 @@
     {
       "properties": {
         "datasets": {
-            "minItems": 0,
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
-          }
+          "minItems": 0,
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
       }
     },
     {
