@@ -59,8 +59,8 @@ RECORDS_DRAFT_ENDPOINTS = {
             'application/json': 'oarepo_validate:json_search',
         },
 
-        'list_route': '/publications/datasets/',
-
+        'list_route': '/datasets/published',
+        'item_route': '/datasets/',
         'files': dict(
             # Who can upload attachments to a draft dataset record
             put_file_factory=deny_all,
@@ -93,7 +93,8 @@ RECORDS_DRAFT_ENDPOINTS = {
         # Who can enumerate a draft dataset record collection
         'list_permission_factory_imp': 'publications.datasets.permissions.list_draft_object_permission_impl',
 
-        'list_route': '/draft/publications/datasets/',
+        'list_route': '/datasets/draft/',
+        'item_route': '/datasets/draft/',
         'record_loaders': {
             'application/json': 'oarepo_validate.json_files_loader',
             'application/json-patch+json': 'oarepo_validate.json_loader'
@@ -123,12 +124,12 @@ RECORDS_REST_ENDPOINTS = {
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
         },
-        list_route='/publications/all-datasets/',
+        list_route='/datasets/',
         default_media_type='application/json',
         max_result_window=10000,
 
         # not used really
-        item_route='/publications/all-datasets/not-used-but-must-be-present',
+        item_route='/datasets/not-used-but-must-be-present',
         create_permission_factory_imp=deny_all,
         delete_permission_factory_imp=deny_all,
         update_permission_factory_imp=deny_all,
@@ -180,7 +181,7 @@ def state_terms_filter(field):
 
 FILTERS = {
     _('category'): terms_filter('category'),
-    _('creators'): terms_filter('creators.type'),
+    _('creator'): terms_filter('creator.raw'),
     _('title'): language_aware_text_match_filter('titles'),
     _('state'): state_terms_filter('state'),
     # draft
@@ -209,7 +210,7 @@ FACETS = {
         _('published'),
         _('deleted')
     ]),
-    'creators': term_facet('creators.type'),
+    'creator': term_facet('creator.raw'),
     **DRAFT_IMPORTANT_FACETS
 }
 

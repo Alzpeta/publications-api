@@ -20,3 +20,16 @@ class PublicationsArticles:
         app.config.setdefault('RECORDS_DRAFT_ENDPOINTS', {}).update(
             config.RECORDS_DRAFT_ENDPOINTS
         )
+        app.config.setdefault('RECORDS_REST_ENDPOINTS', {}).update(
+            config.RECORDS_REST_ENDPOINTS
+        )
+        app.config.setdefault('RECORDS_REST_FACETS', {}).update(
+            config.RECORDS_REST_FACETS
+        )
+        # app.config.setdefault('RECORDS_REST_DEFAULT_SORT', {}).update(
+        #     config.RECORDS_REST_DEFAULT_SORT
+        # )
+        #
+        app.config.setdefault('RECORDS_REST_SORT_OPTIONS', {}).update(
+            config.RECORDS_REST_SORT_OPTIONS
+        )

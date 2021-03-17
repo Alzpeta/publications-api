@@ -11,7 +11,6 @@
 ARTICLE_ALLOWED_SCHEMAS = ('articles/publication-article-v1.0.0.json',)
 ARTICLE_PREFERRED_SCHEMA = 'articles/publication-article-v1.0.0.json'
 
-
 ARTICLE_PID_TYPE = 'pubart'
 ARTICLE_DRAFT_PID_TYPE = 'dpsart'
 ARTICLE_ALL_PID_TYPE = 'apsart'

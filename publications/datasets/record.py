@@ -24,7 +24,7 @@ from publications.datasets.marshmallow import PublicationDatasetMetadataSchemaV1
 from publications.datasets.search import MineRecordsSearch
 
 published_index_name = 'datasets-publication-dataset-v1.0.0'
-draft_index_name = 'datasets-publication-dataset-v1.0.0'
+draft_index_name = 'draft-datasets-publication-dataset-v1.0.0'
 all_index_name = 'all-datasets'
 
 prefixed_published_index_name = os.environ.get('INVENIO_SEARCH_INDEX_PREFIX', '') + published_index_name

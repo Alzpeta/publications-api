@@ -1,6 +1,6 @@
 {
   "aliases": {
-    "oarepo-demo-s3-all-articles": {}
+    "{PREFIX}all-articles": {}
   },
   "settings": {
     "analysis": {
@@ -45,7 +45,12 @@
     "date_detection": false,
     "numeric_detection": false,
     "oarepo:extends": [
-      "invenio-v1.0.0.json#/InvenioRecord"
-    ]
+      "document-v1.0.0.json#/Document"
+    ],
+    "properties": {
+      "datasets": {
+        "type": "keyword"
+      }
+    }
   }
 }
