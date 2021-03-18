@@ -13,6 +13,7 @@ from flask_login import current_user
 from invenio_indexer.api import RecordIndexer
 from invenio_records_files.api import Record
 from oarepo_actions.decorators import action
+from oarepo_communities.record import CommunityRecordMixin
 from oarepo_documents.api import DocumentRecordMixin, getMetadataFromDOI
 from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.endpoints import make_draft_minter
@@ -32,6 +33,7 @@ from .marshmallow import ArticleMetadataSchemaV1
 class ArticleRecord(SchemaKeepingRecordMixin,
                     MarshmallowValidatedRecordMixin,
                     InheritedSchemaRecordMixin,
+                    CommunityRecordMixin,
                     Record,
                     ):
     """Record class for an Article Record"""

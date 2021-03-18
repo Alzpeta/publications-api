@@ -14,3 +14,6 @@ ARTICLE_PREFERRED_SCHEMA = 'articles/publication-article-v1.0.0.json'
 ARTICLE_PID_TYPE = 'pubart'
 ARTICLE_DRAFT_PID_TYPE = 'dpsart'
 ARTICLE_ALL_PID_TYPE = 'apsart'
+
+ARTICLE_RECORD_CLASS = 'publications.articles.record.ArticleRecord'
+ARTICLE_DRAFT_RECORD_CLASS = 'publications.articles.record.ArticleDraftRecord'

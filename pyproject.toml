@@ -21,8 +21,8 @@ oarepo-mapping-includes = "^1.2.0"
 oarepo-invenio-model = "^2.1.2"
 oarepo-rdm-records = { git = "https://github.com/oarepo/oarepo-rdm-records.git" }
 oarepo-s3 = { version = "^1.2.0", allow-prereleases = true }
-flask-taxonomies = { version = "^7.0.0a17", allow-prereleases = true }
-oarepo-taxonomies = { version = "^2.3.0", allow-prereleases = true }
+#flask-taxonomies = { version = "^7.0.0a17", allow-prereleases = true }
+#oarepo-taxonomies = { version = "^2.3.0", allow-prereleases = true }
 oarepo-records-draft = { version = "^5.0.0-alpha.22", allow-prereleases = true }
 invenio-records-files = "^1.2.1"
 oarepo-iiif = "^1.1.1"
@@ -35,7 +35,7 @@ oarepo-actions = "^1.0.5"
 tqdm = "^4.56.0"
 oarepo-documents = "^1.0.8"
 oarepo-communities = "^1.0.0"
-cesnet-openid-remote = "^1.1.0"
+cesnet-openid-remote = "^2.0.0"
 
 [tool.poetry.plugins.oarepo_mapping_handlers]
 titled-term = "publications.mappings:titled_term"
