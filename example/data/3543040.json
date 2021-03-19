@@ -44,6 +44,7 @@
   "revision": 2,
   "id": 3543040,
   "metadata": {
+    "_primary_community": "cesnet",
     "access_right_category": "success",
     "doi": "10.5281/zenodo.3543040",
     "description": "<p>This data set contains stimuli, results and code for statistical analysis of a colouration experiment where humans had to rate the colouration of virtual sources synthesised by Wave Field Synthesis in free field and in different listening rooms compared to a real source as reference. The stimuli were presented via dynamic binaural synthesis with the <a href=\"http://www.spatialaudio.net/ssr/\">SoundScape Renderer</a>. The source code is licensed under GPL v3.</p>\n\n<p>Overview:</p>\n\n<ul>\n\t<li>The folder &#39;stimuli&#39; contains the impulse responses for the SoundScape Renderer as WAV files and anechoic audio content.</li>\n\t<li>The folder &#39;experimental_results&#39; contains the data saved in the listening experiment as CSV files.</li>\n\t<li>The folder &#39;statistics&#39; contains <a href=\"http://www.mathworks.com\">Matlab</a> scripts that perform the statistical analysis.</li>\n</ul>",

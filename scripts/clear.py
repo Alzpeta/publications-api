@@ -14,7 +14,7 @@ from invenio_files_rest.models import Bucket, FileInstance, ObjectVersion
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.models import RecordMetadata
 from invenio_records_files.models import RecordsBuckets
-from oarepo_references.models import RecordReference, ClassName, ReferencingRecord
+# from oarepo_references.models import RecordReference, ClassName, ReferencingRecord
 from sqlalchemy_continuum import version_class, versioning_manager
 
 
@@ -33,9 +33,9 @@ def clear():
         version_cls = version_class(RecordMetadata)
         version_cls.query.delete()
         versioning_manager.transaction_cls.query.delete()
-        RecordReference.query.delete()
-        ReferencingRecord.query.delete()
-        ClassName.query.delete()
+        # RecordReference.query.delete()
+        # ReferencingRecord.query.delete()
+        # ClassName.query.delete()
 
         subprocess.call([
             'invenio',

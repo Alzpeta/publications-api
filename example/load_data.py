@@ -49,8 +49,8 @@ def simplify_strings(data):
 
 
 def publish_dataset(dataset_json, id):
-    col_url = DATA_URL + 'datasets/draft/?access_token=%s' % TOKEN
-    dataset_url = DATA_URL + 'datasets/draft/%s?access_token=%s' % (id, TOKEN)
+    col_url = DATA_URL + 'cesnet/datasets/draft/?access_token=%s' % TOKEN
+    dataset_url = DATA_URL + 'cesnet/datasets/draft/%s?access_token=%s' % (id, TOKEN)
 
     headers = {'Content-type': 'application/json'}
 
@@ -202,7 +202,7 @@ def import_dataset(pid, dataset_json, files_dir):
 
     # Drop unsupported fields
     metadata.pop('relations', None)
-    metadata.pop('communities', None)
+    metadata['_communities'] = [com['id'] for com in metadata.pop('communities', [])]
     metadata.pop('meeting', None)
     metadata.pop('method', None)
 

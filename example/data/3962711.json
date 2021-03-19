@@ -51,6 +51,7 @@
   "revision": 2,
   "id": 3962711,
   "metadata": {
+    "_primary_community": "cesnet",
     "access_right_category": "success",
     "doi": "10.5061/dryad.573n5tb4q",
     "description": "Genetically encoded fluorescent glutamate indicators (iGluSnFRs) enable neurotransmitter release and diffusion to be visualized in intact tissue. Synaptic iGluSnFR signal time courses vary widely depending on experimental conditions, often lasting 10-100 times longer than the extracellular lifetime of synaptically released glutamate estimated with uptake measurements. iGluSnFR signals typically also decay much more slowly than the unbinding kinetics of the indicator. To resolve these discrepancies, here we have modeled synaptic glutamate diffusion, uptake and iGluSnFR activation to identify factors influencing iGluSnFR signal waveforms. Simulations suggested that iGluSnFR competes with transporters to bind synaptically released glutamate, delaying glutamate uptake. Accordingly, synaptic transporter currents recorded from iGluSnFR-expressing astrocytes in mouse cortex were slower than those in control astrocytes. Simulations also suggested that iGluSnFR reduces free glutamate levels in extrasynaptic spaces, likely limiting extrasynaptic receptor activation. iGluSnFR and lower-affinity variants nonetheless provide linear indications of vesicle release, underscoring their value for optical quantal analysis.",

@@ -36,6 +36,7 @@ tqdm = "^4.56.0"
 oarepo-documents = "^1.0.8"
 oarepo-communities = "^1.0.0"
 cesnet-openid-remote = "^2.0.0"
+boltons = "^20.0.0"
 
 [tool.poetry.plugins.oarepo_mapping_handlers]
 titled-term = "publications.mappings:titled_term"
