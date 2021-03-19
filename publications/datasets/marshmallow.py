@@ -8,12 +8,15 @@
 
 from marshmallow.decorators import validates
 from marshmallow.exceptions import ValidationError
+from oarepo_fsm.marshmallow import FSMRecordSchemaMixin
 from oarepo_rdm_records.marshmallow import DataSetMetadataSchemaV1
-
+from oarepo_communities.marshmallow import OARepoCommunitiesMixin
 from publications.marshmallow import check_multilingual_string_length
 
 
-class PublicationDatasetMetadataSchemaV1(DataSetMetadataSchemaV1):
+class PublicationDatasetMetadataSchemaV1(OARepoCommunitiesMixin,
+                                         FSMRecordSchemaMixin,
+                                         DataSetMetadataSchemaV1):
     """Schema for dataset drafts metadata."""
 
     @validates('abstract')
