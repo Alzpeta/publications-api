@@ -13,7 +13,6 @@ from flask_login import current_user
 from invenio_records_files.api import Record
 from oarepo_actions.decorators import action
 from oarepo_communities.record import CommunityRecordMixin
-from oarepo_fsm.mixins import FSMMixin
 from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.record import DraftRecordMixin, InvalidRecordAllowedMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin, FilesKeepingRecordMixin

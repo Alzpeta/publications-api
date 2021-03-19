@@ -10,7 +10,6 @@ from elasticsearch_dsl.query import Bool
 from flask_security.utils import _
 from invenio_records_rest.facets import terms_filter, range_filter
 from invenio_records_rest.utils import allow_all, deny_all, check_elasticsearch
-from invenio_search import RecordsSearch
 from oarepo_communities.links import community_record_links_factory
 from oarepo_communities.search import CommunitySearch
 from oarepo_multilingual import language_aware_text_match_filter
@@ -21,7 +20,6 @@ from publications.articles.constants import ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_
     ARTICLE_DRAFT_RECORD_CLASS, ARTICLE_RECORD_CLASS
 from publications.articles.record import AllArticlesRecord
 from publications.indexer import CommitingRecordIndexer
-from publications.search import FilteredRecordsSearch
 
 RECORDS_DRAFT_ENDPOINTS = {
     'publications/articles': {
