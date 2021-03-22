@@ -134,10 +134,11 @@ RECORDS_REST_ENDPOINTS = {
         # not used really
         item_route=f'/datasets'
                    f'/not-used-but-must-be-present',
+        list_permission_factory_imp='publications.datasets.permissions.list_all_object_permission_impl',
         create_permission_factory_imp=deny_all,
         delete_permission_factory_imp=deny_all,
         update_permission_factory_imp=deny_all,
-        read_permission_factory_imp=check_elasticsearch,
+        read_permission_factory_imp=deny_all,
         record_serializers={
             'application/json': 'oarepo_validate:json_response',
         },
