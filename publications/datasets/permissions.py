@@ -9,7 +9,7 @@
 
 # DRAFT dataset record manipulation
 from oarepo_fsm.permissions import require_any
-
+from oarepo_communities.permissions import read_object_permission_impl
 from publications.permissions import MODIFICATION_ROLE_PERMISSIONS, AUTHENTICATED_PERMISSION, DELETER_ROLE_PERMISSIONS, \
     ADMIN_ROLE_PERMISSIONS
 
@@ -18,7 +18,7 @@ create_draft_object_permission_impl = require_any(
     AUTHENTICATED_PERMISSION
 )
 update_draft_object_permission_impl = MODIFICATION_ROLE_PERMISSIONS
-read_draft_object_permission_impl = update_draft_object_permission_impl
+read_draft_object_permission_impl = read_object_permission_impl
 delete_draft_object_permission_impl = DELETER_ROLE_PERMISSIONS
 list_draft_object_permission_impl = AUTHENTICATED_PERMISSION
 

@@ -17,8 +17,8 @@ from oarepo_records_draft import DRAFT_IMPORTANT_FACETS, DRAFT_IMPORTANT_FILTERS
 from oarepo_ui import translate_facets, translate_filters, translate_facet
 
 from publications.datasets.constants import DATASET_DRAFT_PID_TYPE, DATASET_PID_TYPE, DATASET_ALL_PID_TYPE, \
-    DATASET_RECORD_CLASS, DATASET_DRAFT_RECORD_CLASS
-from publications.datasets.record import published_index_name, draft_index_name, AllDatasetsRecord, all_index_name
+    DATASET_RECORD_CLASS, DATASET_DRAFT_RECORD_CLASS, DATASET_ALL_RECORD_CLASS
+from publications.datasets.record import published_index_name, draft_index_name, all_index_name
 from publications.indexer import CommitingRecordIndexer
 
 _ = lambda x: x
@@ -59,8 +59,9 @@ RECORDS_DRAFT_ENDPOINTS = {
             'application/json': 'oarepo_validate:json_search',
         },
 
-        'list_route': '<community_id>/datasets/',
-        'item_route': f'/<commpid({DATASET_PID_TYPE},record_class="{DATASET_RECORD_CLASS}"):pid_value>/datasets/',
+        'list_route': '/<community_id>/datasets/published/',  # will not be used really
+        'item_route':
+            f'/<commpid({DATASET_PID_TYPE},model="datasets",record_class="{DATASET_RECORD_CLASS}"):pid_value>',
         'files': dict(
             # Who can upload attachments to a draft dataset record
             put_file_factory=deny_all,
@@ -96,8 +97,7 @@ RECORDS_DRAFT_ENDPOINTS = {
 
         'list_route': '/<community_id>/datasets/draft/',
         'item_route':
-            f'/<commpid({DATASET_DRAFT_PID_TYPE},record_class="{DATASET_DRAFT_RECORD_CLASS}"):pid_value>'
-            f'/datasets/draft/',
+            f'/<commpid({DATASET_DRAFT_PID_TYPE},model="datasets/draft",record_class="{DATASET_DRAFT_RECORD_CLASS}"):pid_value>',
         'record_loaders': {
             'application/json': 'oarepo_validate.json_files_loader',
             'application/json-patch+json': 'oarepo_validate.json_loader'
@@ -121,18 +121,19 @@ RECORDS_REST_ENDPOINTS = {
         pid_minter='all-publications-datasets',
         pid_fetcher='all-publications-datasets',
         default_endpoint_prefix=True,
-        record_class=AllDatasetsRecord,
+        record_class=DATASET_ALL_RECORD_CLASS,
         search_class=CommunitySearch,
         search_index=all_index_name,
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
         },
-        list_route='/datasets/',
+        list_route='/<community_id>/datasets/',
+        links_factory_imp=community_record_links_factory,
         default_media_type='application/json',
         max_result_window=10000,
-
         # not used really
-        item_route='/datasets/not-used-but-must-be-present',
+        item_route=f'/datasets'
+                   f'/not-used-but-must-be-present',
         create_permission_factory_imp=deny_all,
         delete_permission_factory_imp=deny_all,
         update_permission_factory_imp=deny_all,

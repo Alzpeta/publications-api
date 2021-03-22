@@ -16,3 +16,4 @@ DATASET_ALL_PID_TYPE = 'apsdat'
 
 DATASET_RECORD_CLASS = 'publications.datasets.record.DatasetRecord'
 DATASET_DRAFT_RECORD_CLASS = 'publications.datasets.record.DatasetDraftRecord'
+DATASET_ALL_RECORD_CLASS = 'publications.datasets.record.AllDatasetsRecord'

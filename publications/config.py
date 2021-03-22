@@ -76,16 +76,20 @@ OAUTHCLIENT_REST_REMOTE_APPS = dict(
 OAREPO_COMMUNITIES_ENDPOINTS = [
     'publications/datasets',
     'draft-publications/datasets',
+    'publications/all-datasets',
     'publications/articles',
-    'draft-publications/articles'
+    'draft-publications/articles',
+    'publications/all-articles'
 ]
 """List of community enabled endpoints."""
 
 OAREPO_FSM_ENABLED_REST_ENDPOINTS = [
     'publications/datasets',
     'draft-publications/datasets',
+    'publications/all-datasets',
     'publications/articles',
-    'draft-publications/articles'
+    'draft-publications/articles',
+    'publications/all-articles'
 ]
 """Enable FSM transitions for the community record collection."""
 

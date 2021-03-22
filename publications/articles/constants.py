@@ -17,3 +17,4 @@ ARTICLE_ALL_PID_TYPE = 'apsart'
 
 ARTICLE_RECORD_CLASS = 'publications.articles.record.ArticleRecord'
 ARTICLE_DRAFT_RECORD_CLASS = 'publications.articles.record.ArticleDraftRecord'
+ARTICLE_ALL_RECORD_CLASS = 'publications.articles.record.AllArticlesRecord'

@@ -75,7 +75,7 @@ class DatasetDraftRecord(DraftRecordMixin,
                        pid_value=self['id'], _external=True)
 
 
-class AllDatasetsRecord(Record):
+class AllDatasetsRecord(DatasetRecord):
     @classmethod
     @action(detail=False, url_path='mine')
     def my_records(cls, **kwargs):
