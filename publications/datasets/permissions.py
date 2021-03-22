@@ -14,9 +14,9 @@ from invenio_access import Permission
 from invenio_records_rest.utils import deny_all
 from oarepo_communities.api import OARepoCommunity
 from oarepo_communities.permissions import read_object_permission_impl, create_object_permission_impl, \
-    update_object_permission_impl, delete_object_permission_impl, read_permission_factory
+    update_object_permission_impl, delete_object_permission_impl, publish_permission_impl, unpublish_permission_impl
 
-from publications.permissions import MODIFICATION_ROLE_PERMISSIONS, ADMIN_ROLE_PERMISSIONS
+from publications.permissions import ADMIN_ROLE_PERMISSIONS
 
 create_draft_object_permission_impl = create_object_permission_impl
 update_draft_object_permission_impl = update_object_permission_impl
@@ -25,13 +25,13 @@ delete_draft_object_permission_impl = delete_object_permission_impl
 list_draft_object_permission_impl = deny_all
 
 # DRAFT dataset file manipulation
-put_draft_file_permission_impl = update_draft_object_permission_impl
-delete_draft_file_permission_impl = update_draft_object_permission_impl
-get_draft_file_permission_impl = update_draft_object_permission_impl
+put_draft_file_permission_impl = update_object_permission_impl
+delete_draft_file_permission_impl = update_object_permission_impl
+get_draft_file_permission_impl = read_draft_object_permission_impl
 
 # DRAFT dataset publishing
-publish_draft_object_permission_impl = MODIFICATION_ROLE_PERMISSIONS
-unpublish_draft_object_permission_impl = MODIFICATION_ROLE_PERMISSIONS
+publish_draft_object_permission_impl = publish_permission_impl
+unpublish_draft_object_permission_impl = unpublish_permission_impl
 
 # PUBLISHED dataset manipulation
 update_object_permission_impl = ADMIN_ROLE_PERMISSIONS
