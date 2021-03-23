@@ -5,12 +5,30 @@ on: [push]
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ 3.9 ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          # This path is specific to Ubuntu
+          path: ~/.cache/pip
+          # Look to see if there is a cache hit for the corresponding requirements file
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
       - name: Install dependencies
         run: |
           mkdir pypi
+          mkdir variables
           pip install --upgrade pip setuptools py poetry
           poetry config virtualenvs.in-project true --local
           python -m venv .venv
@@ -27,6 +45,8 @@ jobs:
           echo "PROJECT_NAME=$(poetry version | cut -d' ' -f1)" >> $GITHUB_ENV
           echo "PROJECT_VERSION=$(poetry version -s)" >> $GITHUB_ENV
           echo Building project: ${PROJECT_NAME}, version: ${PROJECT_VERSION}
+          echo "PROJECT_NAME=$PROJECT_NAME" > variables/project_variables
+          echo "PROJECT_VERSION=$PROJECT_VERSION" >> variables/project_variables
       - name: Upload pypi artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -48,15 +68,21 @@ jobs:
     needs: build_and_test
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     steps:
-      - name: Set project info to ENV
-        run: |
-          echo "PROJECT_NAME=$(poetry version | cut -d' ' -f1)" >> $GITHUB_ENV
-          echo "PROJECT_VERSION=$(poetry version -s)" >> $GITHUB_ENV
-          echo Building project: ${PROJECT_NAME}, version: ${PROJECT_VERSION}
       - name: Prepare directories
         run: |
+          mkdir variables
           mkdir dist
           mkdir pypi
+      - uses: actions/download-artifact@v2
+        with:
+          name: variables
+          path: variables
+      - name: Set project info from variables to ENV
+        run: |
+          source variables/project_variables
+          echo "PROJECT_NAME=${PROJECT_NAME}" >> $GITHUB_ENV
+          echo "PROJECT_VERSION=${PROJECT_VERSION}" >> $GITHUB_ENV
+          echo Publishing project: ${PROJECT_NAME}, version: ${PROJECT_VERSION}
       - uses: actions/download-artifact@v2
         with:
           name: pypi-requirements-${{ env.RELEASE_VERSION }}
@@ -65,8 +91,16 @@ jobs:
         with:
           name: dist-${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}
           path: pypi
-      - name: Prepare production requirements
+      - name: Generate production requirements
         run: |
           echo "$PROJECT_NAME==$PROJECT_VERSION \\" > pypi/requirements.txt
           cat pypi/requirements-build.txt >> pypi/requirements.txt
           cat pypi/requirements.txt
+      - name: Upload requirements and dist assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/*
+            pypi/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

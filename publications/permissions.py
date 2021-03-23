@@ -5,9 +5,8 @@
 # CESNET OA Publication Repository is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
-from flask_principal import Permission, RoleNeed, UserNeed
+from flask_principal import Permission, RoleNeed
 from invenio_access import authenticated_user
-from oarepo_fsm.permissions import require_any
 
 CURATOR_ROLE_PERMISSIONS = Permission(
     RoleNeed('curator')
