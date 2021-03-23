@@ -1,4 +1,4 @@
-name: OARepo UI SPA CI Test
+name: OARepo API CI
 
 on: [push]
 
