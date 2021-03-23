@@ -1,0 +1,60 @@
+name: OARepo UI SPA CI Test
+
+on: [push]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          mkdir pypi
+          pip install --upgrade pip setuptools py poetry
+          poetry config virtualenvs.in-project true --local
+          python -m venv .venv
+          source .venv/bin/activate
+          .venv/bin/pip install -U setuptools pip wheel
+          poetry update --lock
+          poetry export --without-hashes -f requirements.txt -o pypi/requirements-build.txt
+          poetry export --without-hashes --dev -f requirements.txt -o pypi/requirements-dev.txt
+          .venv/bin/pip install -r pypi/requirements-build.txt
+          poetry install -vvv --no-dev
+          cp poetry.lock pypi/
+      - name: Set PACKAGE_VERSION
+        run: |
+          echo "PACKAGE_VERSION=$(poetry version -s)" >> $GITHUB_ENV
+          echo $PACKAGE_VERSION
+      - name: Upload pypi artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: pypi-requirements-${{ env.PACKAGE_VERSION }}
+          path: pypi
+          retention-days: 14
+      - name: Build package
+        run: poetry build
+      - name: DEBUG
+        run: ls -R ./
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build_and_test
+    steps:
+      - name: Set RELEASE_VERSION
+        run: |
+          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          echo $RELEASE_VERSION
+      - uses: actions/download-artifact@v2
+        with:
+          name: dist-spa-${{ env.RELEASE_VERSION }}
+      - name: Publishing distribution
+        run: ls -R
+      - name: Package SPA distribution asset
+        run: tar czvf /tmp/dist-spa-${{ env.RELEASE_VERSION }}.tar.gz spa
+      - name: Release SPA distribution asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: /tmp/dist-spa-${{ env.RELEASE_VERSION }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

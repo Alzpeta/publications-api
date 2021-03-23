@@ -34,12 +34,12 @@ RECORDS_DRAFT_ENDPOINTS = {
         'links_factory_imp': community_record_links_factory,
 
         # Who can publish a draft article record
-        'publish_permission_factory_imp': allow_all,
+        'publish_permission_factory_imp': 'publications.articles.permissions.publish_draft_object_permission_impl',
         # Who can unpublish (delete published & create a new draft version of)
         # a published article record
-        'unpublish_permission_factory_imp': allow_all,
+        'unpublish_permission_factory_imp': 'publications.articles.permissions.unpublish_draft_object_permission_impl',
         # Who can edit (create a new draft version of) a published dataset record
-        'edit_permission_factory_imp': allow_all,
+        'edit_permission_factory_imp': 'publications.datasets.permissions.update_object_permission_impl',
         # Who can enumerate published articles
         'list_permission_factory_imp': allow_all,
         # Who can view a detail of an existing published article
