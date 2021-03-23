@@ -40,10 +40,12 @@ jobs:
           .venv/bin/pip install -r pypi/requirements-build.txt
           poetry install -vvv --no-dev
           cp poetry.lock pypi/
-      - name: Set project info to ENV
+      - name: Set project info to GITHUB_ENV
         run: |
           echo "PROJECT_NAME=$(poetry version | cut -d' ' -f1)" >> $GITHUB_ENV
           echo "PROJECT_VERSION=$(poetry version -s)" >> $GITHUB_ENV
+      - name: Generate project variables
+        run: |
           echo "PROJECT_NAME=$PROJECT_NAME" > variables/project_variables
           echo "PROJECT_VERSION=$PROJECT_VERSION" >> variables/project_variables
           echo source variables/project_variables
