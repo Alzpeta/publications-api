@@ -13,6 +13,7 @@ from elasticsearch_dsl.query import Bool
 from flask import request
 from invenio_records_rest.query import default_search_factory
 from invenio_search import RecordsSearch
+from oarepo_communities.search import CommunitySearch
 
 from publications.permissions import MODIFICATION_ROLE_PERMISSIONS
 
@@ -25,7 +26,7 @@ def article_search_factory(self, search, query_parser=None):
     return search, kwargs
 
 
-class ArticleRecordsSearch(RecordsSearch):
+class ArticleRecordsSearch(CommunitySearch):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._source = [

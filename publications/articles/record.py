@@ -7,6 +7,7 @@
 #
 
 import datetime
+import os
 
 from flask import url_for, jsonify, request
 from flask_login import current_user
@@ -17,7 +18,7 @@ from oarepo_communities.record import CommunityRecordMixin
 from oarepo_documents.api import DocumentRecordMixin, getMetadataFromDOI
 from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.endpoints import make_draft_minter
-from oarepo_records_draft.record import DraftRecordMixin
+from oarepo_records_draft.record import DraftRecordMixin, InvalidRecordAllowedMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin
 from simplejson import JSONDecodeError
 from werkzeug.local import LocalProxy
@@ -29,20 +30,29 @@ from .constants import (
 )
 from .marshmallow import ArticleMetadataSchemaV1
 
+published_index_name = 'articles-publication-article-v1.0.0'
+draft_index_name = 'draft-articles-publication-article-v1.0.0'
+all_index_name = 'all-articles'
 
-class ArticleRecord(SchemaKeepingRecordMixin,
-                    MarshmallowValidatedRecordMixin,
-                    InheritedSchemaRecordMixin,
-                    CommunityRecordMixin,
-                    Record,
-                    ):
+prefixed_published_index_name = os.environ.get('INVENIO_SEARCH_INDEX_PREFIX', '') + published_index_name
+prefixed_draft_index_name = os.environ.get('INVENIO_SEARCH_INDEX_PREFIX', '') + draft_index_name
+prefixed_all_index_name = os.environ.get('INVENIO_SEARCH_INDEX_PREFIX', '') + all_index_name
+
+
+class ArticleBaseRecord(SchemaKeepingRecordMixin,
+                        MarshmallowValidatedRecordMixin,
+                        InheritedSchemaRecordMixin,
+                        CommunityRecordMixin,
+                        Record):
     """Record class for an Article Record"""
     ALLOWED_SCHEMAS = ARTICLE_ALLOWED_SCHEMAS
     PREFERRED_SCHEMA = ARTICLE_PREFERRED_SCHEMA
     MARSHMALLOW_SCHEMA = ArticleMetadataSchemaV1
 
-    # index_name = 'oarepo-demo-s3-articles-publication-article-v1.0.0'
-    index_name = 'articles-publication-article-v1.0.0'
+
+class ArticleRecord(InvalidRecordAllowedMixin, ArticleBaseRecord):
+    index_name = published_index_name
+    _schema = 'publication-article-v1.0.0.json'
 
     @property
     def canonical_url(self):
@@ -50,13 +60,11 @@ class ArticleRecord(SchemaKeepingRecordMixin,
                        pid_value=self['id'], _external=True)
 
 
-class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleRecord):
+class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleBaseRecord):
     DOCUMENT_MINTER = LocalProxy(lambda: make_draft_minter(ARTICLE_DRAFT_PID_TYPE, 'publications-article'))
     DOCUMENT_INDEXER = RecordIndexer
 
-    index_name = 'draft-articles-publication-article-v1.0.0'
-
-    # index_name = 'oarepo-demo-s3-draft-articles-publication-article-v1.0.0'
+    index_name = draft_index_name
 
     def validate(self, *args, **kwargs):
         if 'created' not in self:

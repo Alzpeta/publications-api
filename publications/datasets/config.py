@@ -9,9 +9,8 @@
 from elasticsearch_dsl import Q
 from elasticsearch_dsl.query import Bool
 from invenio_records_rest.facets import terms_filter, range_filter
-from invenio_records_rest.utils import allow_all, deny_all, check_elasticsearch
+from invenio_records_rest.utils import allow_all, deny_all
 from oarepo_communities.links import community_record_links_factory
-from oarepo_communities.search import CommunitySearch
 from oarepo_multilingual import language_aware_text_match_filter
 from oarepo_records_draft import DRAFT_IMPORTANT_FACETS, DRAFT_IMPORTANT_FILTERS
 from oarepo_ui import translate_facets, translate_filters, translate_facet
@@ -19,6 +18,7 @@ from oarepo_ui import translate_facets, translate_filters, translate_facet
 from publications.datasets.constants import DATASET_DRAFT_PID_TYPE, DATASET_PID_TYPE, DATASET_ALL_PID_TYPE, \
     DATASET_RECORD_CLASS, DATASET_DRAFT_RECORD_CLASS, DATASET_ALL_RECORD_CLASS
 from publications.datasets.record import published_index_name, draft_index_name, all_index_name
+from publications.datasets.search import DatasetRecordsSearch
 from publications.indexer import CommitingRecordIndexer
 
 _ = lambda x: x
@@ -33,6 +33,7 @@ RECORDS_DRAFT_ENDPOINTS = {
         'default_endpoint_prefix': True,
 
         'record_class': DATASET_RECORD_CLASS,
+        'links_factory_imp': community_record_links_factory,
 
         # Who can publish a draft dataset record
         'publish_permission_factory_imp': 'publications.datasets.permissions.publish_draft_object_permission_impl',
@@ -52,9 +53,8 @@ RECORDS_DRAFT_ENDPOINTS = {
 
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
-        'search_class': CommunitySearch,
+        'search_class': DatasetRecordsSearch,
         'search_index': published_index_name,
-        'links_factory_imp': community_record_links_factory,
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
         },
@@ -73,13 +73,13 @@ RECORDS_DRAFT_ENDPOINTS = {
     },
     'draft-publications/datasets': {
         'pid_type': DATASET_DRAFT_PID_TYPE,
-        'search_class': CommunitySearch,
+        'search_class': DatasetRecordsSearch,
         'search_index': draft_index_name,
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
         },
         'record_serializers': {
-            'application/json': 'publications.datasets.serializer.json_response',
+            'application/json': 'oarepo_validate:json_response',
         },
         'record_class': DATASET_DRAFT_RECORD_CLASS,
         'links_factory_imp': community_record_links_factory,
@@ -122,7 +122,7 @@ RECORDS_REST_ENDPOINTS = {
         pid_fetcher='all-publications-datasets',
         default_endpoint_prefix=True,
         record_class=DATASET_ALL_RECORD_CLASS,
-        search_class=CommunitySearch,
+        search_class=DatasetRecordsSearch,
         search_index=all_index_name,
         search_serializers={
             'application/json': 'oarepo_validate:json_search',

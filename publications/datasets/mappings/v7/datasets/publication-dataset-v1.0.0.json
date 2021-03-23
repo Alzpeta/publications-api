@@ -50,9 +50,6 @@
       "fsm-record-v1.0.0.json#/FSMRecord"
     ],
     "properties": {
-      "state": {
-        "type": "keyword"
-      }
     }
   }
 }

@@ -13,13 +13,6 @@
     },
     {
       "$ref": "/schemas/fsm-record-v1.0.0.json#/definitions/FSMRecord"
-    },
-    {
-      "properties": {
-        "state": {
-          "type": "string"
-        }
-      }
     }
   ],
   "required": [

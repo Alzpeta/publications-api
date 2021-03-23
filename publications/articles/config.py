@@ -11,14 +11,14 @@ from flask_security.utils import _
 from invenio_records_rest.facets import terms_filter, range_filter
 from invenio_records_rest.utils import allow_all, deny_all, check_elasticsearch
 from oarepo_communities.links import community_record_links_factory
-from oarepo_communities.search import CommunitySearch
 from oarepo_multilingual import language_aware_text_match_filter
 from oarepo_records_draft import DRAFT_IMPORTANT_FACETS, DRAFT_IMPORTANT_FILTERS
 from oarepo_ui import translate_facets, translate_filters, translate_facet
 
 from publications.articles.constants import ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_TYPE, ARTICLE_ALL_PID_TYPE, \
     ARTICLE_DRAFT_RECORD_CLASS, ARTICLE_RECORD_CLASS, ARTICLE_ALL_RECORD_CLASS
-from publications.articles.record import AllArticlesRecord
+from publications.articles.record import published_index_name, draft_index_name, all_index_name
+from publications.articles.search import ArticleRecordsSearch
 from publications.indexer import CommitingRecordIndexer
 
 RECORDS_DRAFT_ENDPOINTS = {
@@ -33,7 +33,6 @@ RECORDS_DRAFT_ENDPOINTS = {
         'record_class': ARTICLE_RECORD_CLASS,
         'links_factory_imp': community_record_links_factory,
 
-        # TODO: implement proper permissions
         # Who can publish a draft article record
         'publish_permission_factory_imp': allow_all,
         # Who can unpublish (delete published & create a new draft version of)
@@ -52,15 +51,15 @@ RECORDS_DRAFT_ENDPOINTS = {
 
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
-        # 'search_index': 'oarepo-demo-s3-articles-publication-article-v1.0.0',
-        'search_index': 'articles-publication-article-v1.0.0',
-        'search_class': CommunitySearch,
+        'search_class': ArticleRecordsSearch,
+        'search_index': published_index_name,
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
         },
 
-        'list_route': '/<community_id>/articles/',
-        'item_route': f'/<commpid({ARTICLE_PID_TYPE},model="articles",record_class="{ARTICLE_RECORD_CLASS}"):pid_value>',
+        'list_route': '/<community_id>/articles/published/',  # will not be used
+        'item_route':
+            f'/<commpid({ARTICLE_PID_TYPE},model="articles",record_class="{ARTICLE_RECORD_CLASS}"):pid_value>',
         'files': dict(
             # File attachments are currently not allowed on article records
             put_file_factory=deny_all,
@@ -70,16 +69,17 @@ RECORDS_DRAFT_ENDPOINTS = {
     },
     'draft-publications/articles': {
         'pid_type': ARTICLE_DRAFT_PID_TYPE,
-        'record_class': ARTICLE_DRAFT_RECORD_CLASS,
-        'links_factory_imp': community_record_links_factory,
-
-        'search_index': 'draft-articles-publication-article-v1.0.0',
-        'search_class': CommunitySearch,
+        'search_class': ArticleRecordsSearch,
+        'search_index': draft_index_name,
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
         },
-        'list_route': '/<community_id>/articles/draft/',
-        'item_route': f'/<commpid({ARTICLE_DRAFT_PID_TYPE},model="articles/draft",record_class="{ARTICLE_DRAFT_RECORD_CLASS}"):pid_value>',
+        'record_serializers': {
+            'application/json': 'oarepo_validate:json_response',
+        },
+        'record_class': ARTICLE_DRAFT_RECORD_CLASS,
+        'links_factory_imp': community_record_links_factory,
+
         # Who can create a new draft article record?
         # TODO: owner of the dataset referenced in article create request?
         # TODO: IMPORTANT!!! harden all permissions
@@ -93,8 +93,11 @@ RECORDS_DRAFT_ENDPOINTS = {
         # Who can enumerate a draft article record collection
         'list_permission_factory_imp': allow_all,
 
+        'list_route': '/<community_id>/articles/draft/',
+        'item_route':
+            f'/<commpid({ARTICLE_DRAFT_PID_TYPE},model="articles/draft",record_class="{ARTICLE_DRAFT_RECORD_CLASS}"):pid_value>',
         'record_loaders': {
-            'application/json-patch+json': 'oarepo_validate.json_files_loader',
+            'application/json-patch+json': 'oarepo_validate.json_loader',
             'application/json': 'oarepo_validate.json_files_loader'
         },
         'files': dict(
@@ -115,8 +118,8 @@ RECORDS_REST_ENDPOINTS = {
         pid_fetcher='all-publications-articles',
         default_endpoint_prefix=True,
         record_class=ARTICLE_ALL_RECORD_CLASS,
-        search_class=CommunitySearch,
-        search_index='all-articles',
+        search_class=ArticleRecordsSearch,
+        search_index=all_index_name,
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
         },
@@ -127,6 +130,7 @@ RECORDS_REST_ENDPOINTS = {
         # not used really
         item_route=f'/articles'
                    f'/not-used-but-must-be-present',
+        list_permission_factory_imp=allow_all,
         create_permission_factory_imp=deny_all,
         delete_permission_factory_imp=deny_all,
         update_permission_factory_imp=deny_all,
@@ -134,7 +138,8 @@ RECORDS_REST_ENDPOINTS = {
         record_serializers={
             'application/json': 'oarepo_validate:json_response',
         },
-        search_factory_imp='publications.articles.search:article_search_factory'
+        use_options_view=False,
+        # search_factory_imp='publications.articles.search:article_search_factory'
     )
 }
 

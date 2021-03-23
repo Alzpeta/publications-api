@@ -38,7 +38,6 @@ update_object_permission_impl = ADMIN_ROLE_PERMISSIONS
 
 
 # ALL dataset list
-# TODO: push to oarepo_communities
 def community_member_permission_impl(record, *args, **kwargs):
     community = OARepoCommunity.get_community(request.view_args['community_id'])
     return Permission(RoleNeed(OARepoCommunity.get_role(community, 'member').name))
