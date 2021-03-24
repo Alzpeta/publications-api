@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "publications-api"
-version = "0.0.2"
+version = "0.0.3"
 description = "CESNET repository for scientific publications and datasets"
 authors = [
     "Miroslav Bauer <bauer@cesnet.cz>"
@@ -35,9 +35,6 @@ oarepo-documents = "^1.0.8"
 oarepo-communities = "^1.0.0"
 cesnet-openid-remote = "^2.0.0"
 boltons = "^20.0.0"
-
-[tool.poetry.plugins.oarepo_mapping_handlers]
-titled-term = "publications.mappings:titled_term"
 
 [tool.poetry.plugins."invenio_config.module"]
 publications = "publications.config"
