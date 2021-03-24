@@ -1,4 +1,8 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "https://repozitar-test.cesnet.cz/schemas/publications/publication-article-v1.0.0.json",
+  "additionalProperties": false,
+  "title": "CESNET Publications repository - article record v1.0.0",
   "type": "object",
   "allOf": [
     {
@@ -22,6 +26,5 @@
     {
       "$ref": "/schemas/communities-v1.0.0.json#/definitions/Communities"
     }
-  ],
-  "additionalProperties": "false"
+  ]
 }
