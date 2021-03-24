@@ -91,6 +91,7 @@ jobs:
           source variables/project_variables
           echo "PROJECT_NAME=${PROJECT_NAME}" >> $GITHUB_ENV
           echo "PROJECT_VERSION=${PROJECT_VERSION}" >> $GITHUB_ENV
+          cat $GITHUB_ENV
           echo Publishing project: ${PROJECT_NAME}, version: ${PROJECT_VERSION}
       - uses: actions/download-artifact@v2
         with:

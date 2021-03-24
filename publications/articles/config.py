@@ -39,7 +39,7 @@ RECORDS_DRAFT_ENDPOINTS = {
         # a published article record
         'unpublish_permission_factory_imp': 'publications.articles.permissions.unpublish_draft_object_permission_impl',
         # Who can edit (create a new draft version of) a published dataset record
-        'edit_permission_factory_imp': 'publications.datasets.permissions.update_object_permission_impl',
+        'edit_permission_factory_imp': 'publications.articles.permissions.update_object_permission_impl',
         # Who can enumerate published articles
         'list_permission_factory_imp': allow_all,
         # Who can view a detail of an existing published article
@@ -82,16 +82,15 @@ RECORDS_DRAFT_ENDPOINTS = {
 
         # Who can create a new draft article record?
         # TODO: owner of the dataset referenced in article create request?
-        # TODO: IMPORTANT!!! harden all permissions
-        'create_permission_factory_imp': allow_all,
+        'create_permission_factory_imp': 'publications.articles.permissions.create_draft_object_permission_impl',
         # Who can edit an existing draft article record
-        'update_permission_factory_imp': allow_all,
+        'update_permission_factory_imp': 'publications.articles.permissions.update_draft_object_permission_impl',
         # Who can view an existing draft article record
-        'read_permission_factory_imp': allow_all,
+        'read_permission_factory_imp': 'publications.articles.permissions.read_draft_object_permission_impl',
         # Who can delete an existing draft article record
-        'delete_permission_factory_imp': allow_all,
+        'delete_permission_factory_imp': 'publications.articles.permissions.delete_draft_object_permission_impl',
         # Who can enumerate a draft article record collection
-        'list_permission_factory_imp': allow_all,
+        'list_permission_factory_imp': 'publications.articles.permissions.list_draft_object_permission_impl',
 
         'list_route': '/<community_id>/articles/draft/',
         'item_route':
@@ -139,7 +138,6 @@ RECORDS_REST_ENDPOINTS = {
             'application/json': 'oarepo_validate:json_response',
         },
         use_options_view=False,
-        # search_factory_imp='publications.articles.search:article_search_factory'
     )
 }
 
