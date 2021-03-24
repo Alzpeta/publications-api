@@ -46,8 +46,8 @@ jobs:
           echo "PROJECT_VERSION=$(poetry version -s)" >> $GITHUB_ENV
       - name: Generate project variables
         run: |
-          echo "PROJECT_NAME=$PROJECT_NAME" > variables/project_variables
-          echo "PROJECT_VERSION=$PROJECT_VERSION" >> variables/project_variables
+          echo "export PROJECT_NAME=$PROJECT_NAME" > variables/project_variables
+          echo "export PROJECT_VERSION=$PROJECT_VERSION" >> variables/project_variables
           echo source variables/project_variables
           echo Building project: ${PROJECT_NAME}, version: ${PROJECT_VERSION}
       - name: Upload variables artifacts
