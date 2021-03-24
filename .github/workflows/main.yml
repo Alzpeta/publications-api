@@ -102,8 +102,7 @@ jobs:
           path: pypi
       - name: Generate production requirements
         run: |
-          echo "$PROJECT_NAME==$PROJECT_VERSION \\" > pypi/requirements.txt
-          cat pypi/requirements-build.txt >> pypi/requirements.txt
+          cat pypi/requirements-build.txt > pypi/requirements.txt
           cat pypi/requirements.txt
       - name: Upload requirements and dist assets
         uses: softprops/action-gh-release@v1
