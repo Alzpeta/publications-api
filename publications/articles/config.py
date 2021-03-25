@@ -182,7 +182,7 @@ def state_terms_filter(field):
 FILTERS = {
     _('category'): terms_filter('category'),
     _('creator'): terms_filter('creator.raw'),
-    _('title'): language_aware_text_match_filter('titles'),
+    _('title'): language_aware_text_match_filter('title'),
     _('state'): state_terms_filter('state'),
     # draft
     **DRAFT_IMPORTANT_FILTERS
@@ -234,7 +234,7 @@ RECORDS_REST_SORT_OPTIONS = {
         'alphabetical': {
             'title': 'alphabetical',
             'fields': [
-                'titles.cs.raw'
+                'title.cs.raw'
             ],
             'default_order': 'asc',
             'order': 1
