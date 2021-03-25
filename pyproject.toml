@@ -33,7 +33,7 @@ s3-client-lib = { git = "https://github.com/CESNET/s3-client.git" }
 oarepo-fsm = "^1.4.1"
 oarepo-actions = "^1.0.5"
 tqdm = "^4.56.0"
-oarepo-documents = "^1.0.8"
+oarepo-documents = "^1.1.0"
 
 [tool.poetry.plugins.oarepo_mapping_handlers]
 titled-term = "publications.mappings:titled_term"
