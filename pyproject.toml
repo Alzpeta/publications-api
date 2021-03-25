@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "publications-api"
-version = "0.0.6"
+version = "0.0.7"
 description = "CESNET repository for scientific publications and datasets"
 authors = [
     "Miroslav Bauer <bauer@cesnet.cz>"
