@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "publications-api"
-version = "0.0.5"
+version = "0.0.6"
 description = "CESNET repository for scientific publications and datasets"
 authors = [
     "Miroslav Bauer <bauer@cesnet.cz>"
@@ -53,7 +53,7 @@ publications-article = "publications.articles.ext:PublicationsArticles"
 invenio_i18n = "invenio_i18n:InvenioI18N"
 
 [tool.poetry.plugins."flask.commands"]
-dataset-records = "publications.cli:dataset_records"
+publications = "publications.cli:publications"
 
 [tool.poetry.plugins."invenio_jsonschemas.schemas"]
 publications-dataset = "publications.datasets.jsonschemas"
