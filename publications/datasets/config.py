@@ -9,17 +9,17 @@
 from elasticsearch_dsl import Q
 from elasticsearch_dsl.query import Bool
 from invenio_records_rest.facets import terms_filter, range_filter
-from invenio_records_rest.utils import allow_all, deny_all, check_elasticsearch
-from invenio_search import RecordsSearch
+from invenio_records_rest.utils import allow_all, deny_all
+from oarepo_communities.links import community_record_links_factory
 from oarepo_multilingual import language_aware_text_match_filter
 from oarepo_records_draft import DRAFT_IMPORTANT_FACETS, DRAFT_IMPORTANT_FILTERS
 from oarepo_ui import translate_facets, translate_filters, translate_facet
 
-from publications.datasets.constants import DATASET_DRAFT_PID_TYPE, DATASET_PID_TYPE, DATASET_ALL_PID_TYPE
-from publications.datasets.record import published_index_name, draft_index_name, AllDatasetsRecord, all_index_name
+from publications.datasets.constants import DATASET_DRAFT_PID_TYPE, DATASET_PID_TYPE, DATASET_ALL_PID_TYPE, \
+    DATASET_RECORD_CLASS, DATASET_DRAFT_RECORD_CLASS, DATASET_ALL_RECORD_CLASS
+from publications.datasets.record import published_index_name, draft_index_name, all_index_name
 from publications.datasets.search import DatasetRecordsSearch
 from publications.indexer import CommitingRecordIndexer
-from publications.search import FilteredRecordsSearch
 
 _ = lambda x: x
 
@@ -32,7 +32,8 @@ RECORDS_DRAFT_ENDPOINTS = {
         'pid_fetcher': 'publications-dataset',
         'default_endpoint_prefix': True,
 
-        'record_class': 'publications.datasets.record.DatasetRecord',
+        'record_class': DATASET_RECORD_CLASS,
+        'links_factory_imp': community_record_links_factory,
 
         # Who can publish a draft dataset record
         'publish_permission_factory_imp': 'publications.datasets.permissions.publish_draft_object_permission_impl',
@@ -52,15 +53,15 @@ RECORDS_DRAFT_ENDPOINTS = {
 
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
-        'search_class': RecordsSearch,
+        'search_class': DatasetRecordsSearch,
         'search_index': published_index_name,
-        'links_factory_imp': 'oarepo_fsm.links:record_fsm_links_factory',
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
         },
 
-        'list_route': '/datasets/published',
-        'item_route': '/datasets/',
+        'list_route': '/<community_id>/datasets/published/',  # will not be used really
+        'item_route':
+            f'/<commpid({DATASET_PID_TYPE},model="datasets",record_class="{DATASET_RECORD_CLASS}"):pid_value>',
         'files': dict(
             # Who can upload attachments to a draft dataset record
             put_file_factory=deny_all,
@@ -72,15 +73,16 @@ RECORDS_DRAFT_ENDPOINTS = {
     },
     'draft-publications/datasets': {
         'pid_type': DATASET_DRAFT_PID_TYPE,
-        'search_class': FilteredRecordsSearch,
+        'search_class': DatasetRecordsSearch,
         'search_index': draft_index_name,
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
         },
         'record_serializers': {
-            'application/json': 'publications.datasets.serializer.json_response',
+            'application/json': 'oarepo_validate:json_response',
         },
-        'record_class': 'publications.datasets.record.DatasetDraftRecord',
+        'record_class': DATASET_DRAFT_RECORD_CLASS,
+        'links_factory_imp': community_record_links_factory,
 
         # Who can create a new draft dataset record
         'create_permission_factory_imp': 'publications.datasets.permissions.create_draft_object_permission_impl',
@@ -93,8 +95,9 @@ RECORDS_DRAFT_ENDPOINTS = {
         # Who can enumerate a draft dataset record collection
         'list_permission_factory_imp': 'publications.datasets.permissions.list_draft_object_permission_impl',
 
-        'list_route': '/datasets/draft/',
-        'item_route': '/datasets/draft/',
+        'list_route': '/<community_id>/datasets/draft/',
+        'item_route':
+            f'/<commpid({DATASET_DRAFT_PID_TYPE},model="datasets/draft",record_class="{DATASET_DRAFT_RECORD_CLASS}"):pid_value>',
         'record_loaders': {
             'application/json': 'oarepo_validate.json_files_loader',
             'application/json-patch+json': 'oarepo_validate.json_loader'
@@ -118,22 +121,24 @@ RECORDS_REST_ENDPOINTS = {
         pid_minter='all-publications-datasets',
         pid_fetcher='all-publications-datasets',
         default_endpoint_prefix=True,
-        record_class=AllDatasetsRecord,
+        record_class=DATASET_ALL_RECORD_CLASS,
         search_class=DatasetRecordsSearch,
         search_index=all_index_name,
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
         },
-        list_route='/datasets/',
+        list_route='/<community_id>/datasets/',
+        links_factory_imp=community_record_links_factory,
         default_media_type='application/json',
         max_result_window=10000,
-
         # not used really
-        item_route='/datasets/not-used-but-must-be-present',
+        item_route=f'/datasets'
+                   f'/not-used-but-must-be-present',
+        list_permission_factory_imp='publications.datasets.permissions.list_all_object_permission_impl',
         create_permission_factory_imp=deny_all,
         delete_permission_factory_imp=deny_all,
         update_permission_factory_imp=deny_all,
-        read_permission_factory_imp=check_elasticsearch,
+        read_permission_factory_imp=deny_all,
         record_serializers={
             'application/json': 'oarepo_validate:json_response',
         },

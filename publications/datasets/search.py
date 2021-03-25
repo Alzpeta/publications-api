@@ -10,12 +10,10 @@ import traceback
 from elasticsearch_dsl import Q
 from elasticsearch_dsl.query import Bool
 from flask import request
-from invenio_search import RecordsSearch
-
-from publications.permissions import MODIFICATION_ROLE_PERMISSIONS
+from oarepo_communities.search import CommunitySearch
 
 
-class DatasetRecordsSearch(RecordsSearch):
+class DatasetRecordsSearch(CommunitySearch):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._source = [

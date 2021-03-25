@@ -12,10 +12,9 @@ from flask import url_for, jsonify
 from flask_login import current_user
 from invenio_records_files.api import Record
 from oarepo_actions.decorators import action
-from oarepo_fsm.mixins import FSMMixin
+from oarepo_communities.record import CommunityRecordMixin
 from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.record import DraftRecordMixin, InvalidRecordAllowedMixin
-from oarepo_references import ReferenceEnabledRecordMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin, FilesKeepingRecordMixin
 
 from publications.datasets.constants import DATASET_ALLOWED_SCHEMAS, \
@@ -35,8 +34,7 @@ prefixed_all_index_name = os.environ.get('INVENIO_SEARCH_INDEX_PREFIX', '') + al
 class DatasetBaseRecord(SchemaKeepingRecordMixin,
                         MarshmallowValidatedRecordMixin,
                         InheritedSchemaRecordMixin,
-                        ReferenceEnabledRecordMixin,
-                        FSMMixin,
+                        CommunityRecordMixin,
                         Record):
     """Base Data set record class for Data set records."""
     ALLOWED_SCHEMAS = DATASET_ALLOWED_SCHEMAS
@@ -77,7 +75,7 @@ class DatasetDraftRecord(DraftRecordMixin,
                        pid_value=self['id'], _external=True)
 
 
-class AllDatasetsRecord(Record):
+class AllDatasetsRecord(DatasetRecord):
     @classmethod
     @action(detail=False, url_path='mine')
     def my_records(cls, **kwargs):
