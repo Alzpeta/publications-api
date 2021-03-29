@@ -13,6 +13,7 @@ from oarepo_multilingual.marshmallow import MultilingualStringV2
 class TitledMixin:
     title = MultilingualStringV2()
 
+
 #
 # def TitledTaxonomyField(*args, **kwargs):
 #     return TaxonomyField(

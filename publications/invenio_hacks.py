@@ -1,4 +1,4 @@
-from flask import current_app, session, request_started
+from flask import current_app
 from invenio_base.signals import app_loaded
 from invenio_search import current_search
 from wrapt import ObjectProxy

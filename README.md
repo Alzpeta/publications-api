@@ -66,14 +66,14 @@ To setup your development environment, follow these steps:
    cd example/
    export INGEST_TOKEN=<put your token here>
    export UI_ADDRESS='https://127.0.0.1:5000'
-   poetry run python load_data.py $INGEST_TOKEN ${UI_ADDRESS}/api/
+   poetry run python load_data.py $INGEST_TOKEN ${UI_ADDRESS}/
    ```
 ## Usage
 
 You can check if everything worked out by listing the API of dataset collection:
 
 ```shell
-curl -k  https://127.0.0.1:5000/api/publications/all-datasets/ | jq
+curl -k  https://127.0.0.1:5000/datasets/ | jq
 ```
 
 
