@@ -50,6 +50,7 @@ class ArticleRecord(SchemaKeepingRecordMixin,
 
     #index_name = 'oarepo-demo-s3-articles-publication-article-v1.0.0'
     index_name = 'articles-publication-article-v1.0.0'
+
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.publications/articles_item',
@@ -74,6 +75,7 @@ class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleRecord):
 
         self['modified'] = datetime.date.today().strftime('%Y-%m-%d')
         return super().validate(*args, **kwargs)
+
     @classmethod
     @action(detail=False, url_path='from-doi/', method='post')
     def from_doi(cls, **kwargs):
