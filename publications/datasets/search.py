@@ -29,7 +29,7 @@ class DatasetRecordsSearch(CommunitySearch):
 
     class Meta:
         doc_types = ['_doc']
-        default_anonymous_filter = Q('term', state=STATE_PUBLISHED),
+        default_anonymous_filter = Q('term', state=STATE_PUBLISHED)
         default_authenticated_filter = Q('terms', state=[STATE_APPROVED, STATE_PUBLISHED])
 
         @staticmethod
@@ -42,7 +42,6 @@ class DatasetRecordsSearch(CommunitySearch):
             else:
                 if COMMUNITY_CURATOR_PERMISSION(None).can():
                     # Curators can see all community records
-                    print('curator')
                     return CommunitySearch.community_filter()
 
                 # Community member sees both APPROVED and PUBLISHED community records only
