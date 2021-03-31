@@ -11,7 +11,7 @@
 from invenio_records_rest.utils import deny_all, allow_all
 from oarepo_communities.permissions import read_object_permission_impl, create_object_permission_impl, \
     update_object_permission_impl, delete_object_permission_impl, publish_permission_impl, unpublish_permission_impl
-from oarepo_fsm.permissions import require_any
+from oarepo_fsm.permissions import require_any, require_all
 
 from publications.permissions import ADMIN_ROLE_PERMISSIONS, INGESTER_ROLE_PERMISSIONS
 
@@ -46,7 +46,7 @@ publish_draft_object_permission_impl = publish_permission_impl
 unpublish_draft_object_permission_impl = unpublish_permission_impl
 
 # PUBLISHED dataset manipulation
-update_object_permission_impl = ADMIN_ROLE_PERMISSIONS
+update_object_permission_impl = require_all(ADMIN_ROLE_PERMISSIONS)
 
 # ALL dataset list
 list_all_object_permission_impl = allow_all
