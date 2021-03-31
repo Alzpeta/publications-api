@@ -1,12 +1,9 @@
-import copy
 import json
+import multiprocessing as mp
 import os
-from collections import defaultdict
-
 import sys
 from pprint import pprint
 from urllib.parse import urlencode, urlparse
-import multiprocessing as mp
 
 import bleach
 import requests
@@ -49,8 +46,8 @@ def simplify_strings(data):
 
 
 def publish_dataset(dataset_json, id):
-    col_url = DATA_URL + 'datasets/draft/?access_token=%s' % TOKEN
-    dataset_url = DATA_URL + 'datasets/draft/%s?access_token=%s' % (id, TOKEN)
+    col_url = DATA_URL + 'cesnet/datasets/draft/?access_token=%s' % TOKEN
+    dataset_url = DATA_URL + 'cesnet/datasets/draft/%s?access_token=%s' % (id, TOKEN)
 
     headers = {'Content-type': 'application/json'}
 
@@ -91,7 +88,6 @@ def upload_file(files_url, files_dir, fle, published_files):
     files_url += ('&' if urlparse(files_url).query else '?') + urlencode({
         'multipart': True
     })
-
 
     resp = requests.post(
         files_url,
@@ -180,8 +176,7 @@ def import_dataset(pid, dataset_json, files_dir):
             metadata['creators'][ix]['identifiers'] = {'orcid': orcid}
         aff = metadata['creators'][ix].pop('affiliation', None)
         if aff:
-         metadata['creators'][ix]['affiliations'] = [{'name': aff}]
-
+            metadata['creators'][ix]['affiliations'] = [{'name': aff}]
 
     related = metadata.get('related_identifiers', None)
     if related:
@@ -202,7 +197,7 @@ def import_dataset(pid, dataset_json, files_dir):
 
     # Drop unsupported fields
     metadata.pop('relations', None)
-    metadata.pop('communities', None)
+    metadata['_communities'] = [com['id'] for com in metadata.pop('communities', [])]
     metadata.pop('meeting', None)
     metadata.pop('method', None)
 

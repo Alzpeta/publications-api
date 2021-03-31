@@ -5,82 +5,51 @@
 # CESNET OA Publication Repository is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
-import traceback
 
 from elasticsearch_dsl import Q
 from elasticsearch_dsl.query import Bool
-from flask import request
-from invenio_search import RecordsSearch
+from oarepo_communities.constants import STATE_PUBLISHED, PRIMARY_COMMUNITY_FIELD, SECONDARY_COMMUNITY_FIELD, \
+    STATE_APPROVED
+from oarepo_communities.search import CommunitySearch
 
-from publications.permissions import MODIFICATION_ROLE_PERMISSIONS
+from publications.permissions import COMMUNITY_MEMBER_PERMISSION, AUTHENTICATED_PERMISSION, COMMUNITY_CURATOR_PERMISSION
 
 
-class DatasetRecordsSearch(RecordsSearch):
+class DatasetRecordsSearch(CommunitySearch):
+    """Dataset collection search."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._source = [
-            'id', 'oarepo:validity.valid', 'oarepo:draft', 'abstract', 'titles', 'created', 'descriptions']
+            'id', 'oarepo:validity.valid', 'oarepo:draft', 'titles', 'created',
+            'abstract', 'state', PRIMARY_COMMUNITY_FIELD, SECONDARY_COMMUNITY_FIELD]
         self._highlight['titles.cs'] = {}
         self._highlight['titles._'] = {}
         self._highlight['titles.en'] = {}
-        self._highlight['abstract.description.cs'] = {}
-        self._highlight['abstract.description._'] = {}
-        self._highlight['abstract.description.en'] = {}
 
     class Meta:
         doc_types = ['_doc']
-
-        default_anonymous_filter = Q('term', state='published')
-        default_authenticated_filter = Q('terms', state=['approved', 'published'])
+        default_anonymous_filter = Q('term', state=STATE_PUBLISHED)
+        default_authenticated_filter = Q('terms', state=[STATE_APPROVED, STATE_PUBLISHED])
 
         @staticmethod
         def default_filter_factory(search=None, **kwargs):
-            try:
-                quick_filter = request.args.get('quick-filter', None)
-            except:
-                traceback.print_exc()
-                quick_filter = None
-
-            if quick_filter == 'mine':
-                q = Q('match_none')
+            if not AUTHENTICATED_PERMISSION.can() or not COMMUNITY_MEMBER_PERMISSION(None).can():
+                # Anonymous or non-community members sees published community records only
+                return Bool(must=[
+                    DatasetRecordsSearch.Meta.default_anonymous_filter,
+                    CommunitySearch.community_filter()])
             else:
-                if MODIFICATION_ROLE_PERMISSIONS.can():
-                    # if current user is ingestion user or curator, return all records
-                    q = Q('match_all')
-                else:
-                    # otherwise return approved and published
-                    q = DatasetRecordsSearch.Meta.default_authenticated_filter
+                if COMMUNITY_CURATOR_PERMISSION(None).can():
+                    # Curators can see all community records
+                    return CommunitySearch.community_filter()
 
-            if quick_filter == 'filling':
+                # Community member sees both APPROVED and PUBLISHED community records only
                 q = Bool(must=[
-                    q,
-                    Bool(
-                        should=[
-                            Q('term', state='filling'),
-                            Bool(
-                                must_not=[
-                                    Q('exists', field='state')
-                                ]
-                            )
-                        ],
-                        minimum_should_match=1
-                    )
-                ])
-            elif quick_filter == 'approving':
-                q = Bool(must=[
-                    q,
-                    Q('term', state='approving')
-                ])
-            elif quick_filter == 'approved':
-                q = Bool(must=[
-                    q,
-                    Q('term', state='approved')
-                ])
-            elif quick_filter == 'published':
-                q = Bool(must=[
-                    q,
-                    Q('term', state='published')
-                ])
+                    CommunitySearch.community_filter(),
+                    DatasetRecordsSearch.Meta.default_authenticated_filter])
+
+                # TODO(mirekys): implement owned records filter
             return q
 
 

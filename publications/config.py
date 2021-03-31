@@ -8,10 +8,8 @@
 import os
 from datetime import timedelta
 
-from flask import current_app
+from cesnet_openid_remote import CesnetOpenIdRemote
 from flask_babelex import lazy_gettext as _
-from invenio_openid_connect import InvenioAuthOpenIdRemote
-from werkzeug.local import LocalProxy
 
 PIDSTORE_RECID_FIELD = 'id'
 JSONSCHEMAS_HOST = 'repozitar.cesnet.cz'
@@ -71,15 +69,31 @@ SESSION_COOKIE_PATH = '/'
 OAISERVER_ID_PREFIX = 'oai:repozitar.cesnet.cz:'
 MAIL_SUPPRESS_SEND = os.environ.get('FLASK_DEBUG', False)
 
-OPENIDC_CONFIG = dict(
-    base_url='https://login.cesnet.cz/oidc/',
-    consumer_key=LocalProxy(lambda: current_app.config['OPENIDC_KEY']),
-    consumer_secret=os.environ.get('OPENIDC_SECRET', 'MISSING_OIDC_SECRET'),
-    scope='openid email profile eduperson_entitlement_extended isCesnetEligibleLastSeen'
+OAUTHCLIENT_REST_REMOTE_APPS = dict(
+    eduid=CesnetOpenIdRemote().remote_app(),
 )
 
-OAUTHCLIENT_REST_REMOTE_APPS = dict(
-    eduid=InvenioAuthOpenIdRemote().remote_app(),
-)
+OAREPO_COMMUNITIES_ENDPOINTS = [
+    'publications/datasets',
+    'draft-publications/datasets',
+    'publications/all-datasets',
+    'publications/articles',
+    'draft-publications/articles',
+    'publications/all-articles'
+]
+"""List of community enabled endpoints."""
+
+OAREPO_FSM_ENABLED_REST_ENDPOINTS = [
+    'publications/datasets',
+    'draft-publications/datasets',
+    'publications/all-datasets',
+    'publications/articles',
+    'draft-publications/articles',
+    'publications/all-articles'
+]
+"""Enable FSM transitions for the community record collection."""
+
+OAREPO_COMMUNITIES_ROLES = ['member', 'curator', 'publisher']
+"""Roles present in each community."""
 
 from . import invenio_hacks  # noqa to register app loaded event

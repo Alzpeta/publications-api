@@ -8,28 +8,45 @@
 
 
 # DRAFT dataset record manipulation
+from invenio_records_rest.utils import deny_all, allow_all
+from oarepo_communities.permissions import read_object_permission_impl, create_object_permission_impl, \
+    update_object_permission_impl, delete_object_permission_impl, publish_permission_impl, unpublish_permission_impl
 from oarepo_fsm.permissions import require_any
 
-from publications.permissions import MODIFICATION_ROLE_PERMISSIONS, AUTHENTICATED_PERMISSION, DELETER_ROLE_PERMISSIONS, \
-    ADMIN_ROLE_PERMISSIONS
+from publications.permissions import ADMIN_ROLE_PERMISSIONS, INGESTER_ROLE_PERMISSIONS
 
 create_draft_object_permission_impl = require_any(
-    MODIFICATION_ROLE_PERMISSIONS,
-    AUTHENTICATED_PERMISSION
+    INGESTER_ROLE_PERMISSIONS,
+    create_object_permission_impl
 )
-update_draft_object_permission_impl = MODIFICATION_ROLE_PERMISSIONS
-read_draft_object_permission_impl = update_draft_object_permission_impl
-delete_draft_object_permission_impl = DELETER_ROLE_PERMISSIONS
-list_draft_object_permission_impl = AUTHENTICATED_PERMISSION
+update_draft_object_permission_impl = require_any(
+    INGESTER_ROLE_PERMISSIONS,
+    update_object_permission_impl
+)
+read_draft_object_permission_impl = require_any(
+    INGESTER_ROLE_PERMISSIONS,
+    read_object_permission_impl
+)
+delete_draft_object_permission_impl = delete_object_permission_impl
+list_draft_object_permission_impl = deny_all
 
 # DRAFT dataset file manipulation
-put_draft_file_permission_impl = update_draft_object_permission_impl
-delete_draft_file_permission_impl = update_draft_object_permission_impl
-get_draft_file_permission_impl = update_draft_object_permission_impl
+put_draft_file_permission_impl = require_any(
+    INGESTER_ROLE_PERMISSIONS,
+    update_object_permission_impl
+)
+get_draft_file_permission_impl = require_any(
+    INGESTER_ROLE_PERMISSIONS,
+    read_draft_object_permission_impl
+)
+delete_draft_file_permission_impl = update_object_permission_impl
 
 # DRAFT dataset publishing
-publish_draft_object_permission_impl = MODIFICATION_ROLE_PERMISSIONS
-unpublish_draft_object_permission_impl = MODIFICATION_ROLE_PERMISSIONS
+publish_draft_object_permission_impl = publish_permission_impl
+unpublish_draft_object_permission_impl = unpublish_permission_impl
 
 # PUBLISHED dataset manipulation
 update_object_permission_impl = ADMIN_ROLE_PERMISSIONS
+
+# ALL dataset list
+list_all_object_permission_impl = allow_all

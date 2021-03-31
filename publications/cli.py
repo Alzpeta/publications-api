@@ -7,16 +7,22 @@
 #
 """Publications API cli commands."""
 import json
+import subprocess
 import traceback
 
 import click
 import tqdm
 from flask.cli import with_appcontext
 from invenio_app.factory import create_api
+from invenio_db import db
+from invenio_files_rest.models import ObjectVersion, FileInstance, Bucket
 from invenio_indexer.api import RecordIndexer
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
+from invenio_records.models import RecordMetadata
+from invenio_records_files.models import RecordsBuckets
 from invenio_search import current_search_client
 from invenio_search.utils import build_alias_name
+from sqlalchemy_continuum import version_class, versioning_manager
 
 from publications.articles.constants import ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_TYPE
 from publications.articles.record import ArticleRecord, ArticleDraftRecord
@@ -25,12 +31,58 @@ from publications.datasets.record import DatasetRecord, DatasetDraftRecord
 
 
 @click.group()
-def dataset_records():
-    """Do Data set records commands."""
+def publications():
+    """Commands for publications repository."""
     pass
 
 
-@dataset_records.command('reindex')
+@publications.command('clear')
+@with_appcontext
+@click.pass_context
+def clear(ctx, raise_on_error=True, only=None):
+    """Clear all record data in publications repository."""
+    RecordsBuckets.query.delete()
+    RecordMetadata.query.delete()
+    PersistentIdentifier.query.delete()
+    ObjectVersion.query.delete()
+    FileInstance.query.delete()
+    Bucket.query.delete()
+    version_cls = version_class(RecordMetadata)
+    version_cls.query.delete()
+    versioning_manager.transaction_cls.query.delete()
+    # RecordReference.query.delete()
+    # ReferencingRecord.query.delete()
+    # ClassName.query.delete()
+
+    subprocess.call([
+        'invenio',
+        'index',
+        'destroy',
+        '--yes-i-know',
+        '--force'
+    ])
+
+    subprocess.call([
+        'invenio',
+        'index',
+        'init',
+        '--force'
+    ])
+
+    db.session.commit()
+
+
+@publications.group('datasets')
+def datasets():
+    """Commands for dataset collection management."""
+
+
+@publications.group('articles')
+def articles():
+    """Commands for article collection management."""
+
+
+@datasets.command('reindex')
 @click.option(
     '--raise-on-error/--skip-errors', default=True,
     help='Controls if Elasticsearch bulk indexing errors raise an exception.')
@@ -71,13 +123,7 @@ def dataset_reindex(ctx, raise_on_error=True, only=None):
         reindex_pid(DATASET_DRAFT_PID_TYPE, DatasetDraftRecord)
 
 
-@click.group()
-def article_records():
-    """Do Data set records commands."""
-    pass
-
-
-@article_records.command('reindex')
+@articles.command('reindex')
 @click.option(
     '--raise-on-error/--skip-errors', default=True,
     help='Controls if Elasticsearch bulk indexing errors raise an exception.')

@@ -44,6 +44,7 @@
   "revision": 4,
   "id": 2541656,
   "metadata": {
+    "_primary_community": "cesnet",
     "access_right_category": "success",
     "doi": "10.5281/zenodo.2541656",
     "description": "<p>We conducted a lattice free cell based simulation of tumor spheroids within an artificial vasculature as<br>\ndocumented in the related publication. This dataset contains time snapshots of the simulation where the initial<br>\ntumour seed was place in the center of the simulation domain. The data is stored as uncompressed hdf5 file.</p>",
