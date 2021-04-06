@@ -12,6 +12,8 @@ from flask import url_for, jsonify
 from flask_login import current_user
 from invenio_records_files.api import Record
 from oarepo_actions.decorators import action
+from oarepo_communities.constants import PRIMARY_COMMUNITY_FIELD
+from oarepo_communities.converters import CommunityPIDValue
 from oarepo_communities.record import CommunityRecordMixin
 from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.record import DraftRecordMixin, InvalidRecordAllowedMixin
@@ -49,7 +51,7 @@ class DatasetRecord(InvalidRecordAllowedMixin, DatasetBaseRecord):
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.publications/datasets_item',
-                       pid_value=self['id'], _external=True)
+                       pid_value=CommunityPIDValue(self['id'], self[PRIMARY_COMMUNITY_FIELD]), _external=True)
 
 
 class DatasetDraftRecord(DraftRecordMixin,
@@ -72,7 +74,7 @@ class DatasetDraftRecord(DraftRecordMixin,
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.draft-publications/datasets_item',
-                       pid_value=self['id'], _external=True)
+                       pid_value=CommunityPIDValue(self['id'], self[PRIMARY_COMMUNITY_FIELD]), _external=True)
 
 
 class AllDatasetsRecord(DatasetRecord):
