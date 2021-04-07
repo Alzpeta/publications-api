@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "publications-api"
-version = "0.1.3"
+version = "0.3.0"
 description = "CESNET repository for scientific publications and datasets"
 authors = [
     "Miroslav Bauer <bauer@cesnet.cz>"
@@ -32,7 +32,7 @@ oarepo-fsm = "^1.5"
 oarepo-actions = "^1.0.5"
 tqdm = "^4.56.0"
 oarepo-documents = "^1.0.8"
-oarepo-communities = "^1.3.4"
+oarepo-communities = "^1.4.0"
 cesnet-openid-remote = "^2.0.0"
 boltons = "^20.0.0"
 invenio-logging = {extras = ["sentry-sdk"], version = "^1.3.0"}
@@ -45,10 +45,12 @@ datasets = "publications.datasets.mappings"
 articles = "publications.articles.mappings"
 
 [tool.poetry.plugins."invenio_base.apps"]
+publications = "publications.ext:Publications"
 publications-dataset = "publications.datasets.ext:PublicationsDatasets"
 publications-article = "publications.articles.ext:PublicationsArticles"
 
 [tool.poetry.plugins."invenio_base.api_apps"]
+publications = "publications.ext:Publications"
 publications-dataset = "publications.datasets.ext:PublicationsDatasets"
 publications-article = "publications.articles.ext:PublicationsArticles"
 invenio_i18n = "invenio_i18n:InvenioI18N"
