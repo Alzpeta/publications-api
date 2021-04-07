@@ -7,49 +7,52 @@
 #
 
 import datetime
-import uuid
+import os
 
-from flask import url_for, jsonify, request, Response
+from flask import url_for, jsonify, request
 from flask_login import current_user
-from invenio_accounts.utils import obj_or_import_string
-from invenio_db import db
 from invenio_indexer.api import RecordIndexer
-from invenio_pidstore import current_pidstore
-from invenio_pidstore.errors import PIDDoesNotExistError
-from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from invenio_records_files.api import Record
-from oarepo_documents.document_json_mapping import schema_mapping
+from oarepo_actions.decorators import action
+from oarepo_communities.record import CommunityRecordMixin
+from oarepo_documents.api import DocumentRecordMixin, getMetadataFromDOI
 from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.endpoints import make_draft_minter
-from oarepo_records_draft.record import DraftRecordMixin
+from oarepo_records_draft.record import DraftRecordMixin, InvalidRecordAllowedMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin
-from oarepo_actions.decorators import action
 from simplejson import JSONDecodeError
-
-from publications.articles.search import MineRecordsSearch
 from werkzeug.local import LocalProxy
 
-from . import minters
+from publications.articles.search import MineRecordsSearch
 from .constants import (
     ARTICLE_ALLOWED_SCHEMAS,
-    ARTICLE_PREFERRED_SCHEMA, ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_TYPE
+    ARTICLE_PREFERRED_SCHEMA, ARTICLE_DRAFT_PID_TYPE
 )
 from .marshmallow import ArticleMetadataSchemaV1
-from oarepo_documents.api import DocumentRecordMixin, getMetadataFromDOI, create_document
+
+published_index_name = 'articles-publication-article-v1.0.0'
+draft_index_name = 'draft-articles-publication-article-v1.0.0'
+all_index_name = 'all-articles'
+
+prefixed_published_index_name = os.environ.get('INVENIO_SEARCH_INDEX_PREFIX', '') + published_index_name
+prefixed_draft_index_name = os.environ.get('INVENIO_SEARCH_INDEX_PREFIX', '') + draft_index_name
+prefixed_all_index_name = os.environ.get('INVENIO_SEARCH_INDEX_PREFIX', '') + all_index_name
 
 
-class ArticleRecord(SchemaKeepingRecordMixin,
-                    MarshmallowValidatedRecordMixin,
-                    InheritedSchemaRecordMixin,
-                    Record,
-                    ):
+class ArticleBaseRecord(SchemaKeepingRecordMixin,
+                        MarshmallowValidatedRecordMixin,
+                        InheritedSchemaRecordMixin,
+                        CommunityRecordMixin,
+                        Record):
     """Record class for an Article Record"""
     ALLOWED_SCHEMAS = ARTICLE_ALLOWED_SCHEMAS
     PREFERRED_SCHEMA = ARTICLE_PREFERRED_SCHEMA
     MARSHMALLOW_SCHEMA = ArticleMetadataSchemaV1
 
-    #index_name = 'oarepo-demo-s3-articles-publication-article-v1.0.0'
-    index_name = 'articles-publication-article-v1.0.0'
+
+class ArticleRecord(InvalidRecordAllowedMixin, ArticleBaseRecord):
+    index_name = published_index_name
+    _schema = 'publication-article-v1.0.0.json'
 
     @property
     def canonical_url(self):
@@ -57,12 +60,11 @@ class ArticleRecord(SchemaKeepingRecordMixin,
                        pid_value=self['id'], _external=True)
 
 
-class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleRecord):
-    DOCUMENT_MINTER = LocalProxy(lambda: make_draft_minter(ARTICLE_DRAFT_PID_TYPE,'publications-article'))
+class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleBaseRecord):
+    DOCUMENT_MINTER = LocalProxy(lambda: make_draft_minter(ARTICLE_DRAFT_PID_TYPE, 'publications-article'))
     DOCUMENT_INDEXER = RecordIndexer
 
-    index_name = 'draft-articles-publication-article-v1.0.0'
-    #index_name = 'oarepo-demo-s3-draft-articles-publication-article-v1.0.0'
+    index_name = draft_index_name
 
     def validate(self, *args, **kwargs):
         if 'created' not in self:
@@ -76,68 +78,11 @@ class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleRecord):
         self['modified'] = datetime.date.today().strftime('%Y-%m-%d')
         return super().validate(*args, **kwargs)
 
-    @classmethod
-    @action(detail=False, url_path='from-doi/', method='post')
-    def from_doi(cls, **kwargs):
-        doi = request.json['doi']
-        try:
-            pid = PersistentIdentifier.get('doi', doi)
-            record = cls.get_record(pid.object_uuid)
-
-            return Response(status=302, headers={"Location": record.canonical_url})
-        except PIDDoesNotExistError:
-            pass
-        try:
-            existing_document = getMetadataFromDOI(doi)
-            article = schema_mapping(existing_record=existing_document, doi=doi)
-        except(JSONDecodeError):
-            return jsonify()
-
-        if article is None:
-            return jsonify()
-        else:
-            return jsonify(article=article)
-
-    @classmethod
-    @action(detail=False, url_path='create_article/', method='post')
-    def create_article(cls, **kwargs):
-        changes = request.json['changes']
-        authors = request.json['authors']
-        generated_article = request.json['generated_article']
-        article = data_to_article(changes,generated_article, authors)
-        create_document(cls, article, changes['doi'])
-
-    #temporary solution todo: delet this and create own doi
-    @classmethod
-    @action(detail=False, url_path='without_doi/', method='post')
-    def without_doi(cls, **kwargs):
-        changes = request.json['changes']
-        authors = request.json['authors']
-        generated_article = request.json['generated_article']
-        article = data_to_article(changes, generated_article, authors)
-        record_uuid = uuid.uuid4()
-        minter = cls.DOCUMENT_MINTER
-        if hasattr(minter, '_get_current_object'):
-            minter = minter._get_current_object()
-        if isinstance(minter, str):
-            minter = obj_or_import_string(current_pidstore.minters[minter])
-        pid = minter(record_uuid, article)
-        record = cls.create(data=article, id_=record_uuid)
-        indexer = cls.DOCUMENT_INDEXER()
-        indexer.index(record)
-
-        PersistentIdentifier.create(cls.DOI_PID_TYPE, pid.pid_value, object_type='rec',
-                                    object_uuid=record_uuid,
-                                    status=PIDStatus.REGISTERED)
-        db.session.commit()
-        return Response(status=302, headers={"Location": record.canonical_url})
-
-
-
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.draft-publications/articles_item',
                        pid_value=self['id'], _external=True)
+
 
 class AllArticlesRecord(ArticleRecord):
     @classmethod
@@ -145,15 +90,7 @@ class AllArticlesRecord(ArticleRecord):
     def from_doi(cls, **kwargs):
         doi = request.json['doi']
         try:
-            pid = PersistentIdentifier.get('doi', doi)
-            record = cls.get_record(pid.object_uuid)
-
-            return Response(status=302, headers={"Location": record.canonical_url})
-        except PIDDoesNotExistError:
-            pass
-        try:
-            existing_document = getMetadataFromDOI(doi)
-            article = schema_mapping(existing_record=existing_document, doi=doi)
+            article = getMetadataFromDOI(doi)
         except(JSONDecodeError):
             return jsonify()
 
@@ -179,10 +116,3 @@ class AllArticlesRecord(ArticleRecord):
         }
 
         return jsonify(search_result)
-
-def data_to_article(data, article, authors):
-    article['title'] = {data['title_lang'] : data['title_val']}
-    article['abstract'] = {data['abstract_lang']: data['abstract_val']}
-    article['authors'] = authors
-    article['document_type'] = data['document_type']
-    return article

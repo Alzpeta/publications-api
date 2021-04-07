@@ -10,15 +10,16 @@ from elasticsearch_dsl.query import Bool
 from flask_security.utils import _
 from invenio_records_rest.facets import terms_filter, range_filter
 from invenio_records_rest.utils import allow_all, deny_all, check_elasticsearch
-from invenio_search import RecordsSearch
+from oarepo_communities.links import community_record_links_factory
 from oarepo_multilingual import language_aware_text_match_filter
 from oarepo_records_draft import DRAFT_IMPORTANT_FACETS, DRAFT_IMPORTANT_FILTERS
 from oarepo_ui import translate_facets, translate_filters, translate_facet
 
-from publications.articles.constants import ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_TYPE, ARTICLE_ALL_PID_TYPE
-from publications.articles.record import AllArticlesRecord
+from publications.articles.constants import ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_TYPE, ARTICLE_ALL_PID_TYPE, \
+    ARTICLE_DRAFT_RECORD_CLASS, ARTICLE_RECORD_CLASS, ARTICLE_ALL_RECORD_CLASS
+from publications.articles.record import published_index_name, draft_index_name, all_index_name
+from publications.articles.search import ArticleRecordsSearch
 from publications.indexer import CommitingRecordIndexer
-from publications.search import FilteredRecordsSearch
 
 RECORDS_DRAFT_ENDPOINTS = {
     'publications/articles': {
@@ -29,16 +30,16 @@ RECORDS_DRAFT_ENDPOINTS = {
         'pid_fetcher': 'publications-article',
         'default_endpoint_prefix': True,
 
-        'record_class': 'publications.articles.record.ArticleRecord',
+        'record_class': ARTICLE_RECORD_CLASS,
+        'links_factory_imp': community_record_links_factory,
 
-        # TODO: implement proper permissions
         # Who can publish a draft article record
-        'publish_permission_factory_imp': allow_all,
+        'publish_permission_factory_imp': 'publications.articles.permissions.publish_draft_object_permission_impl',
         # Who can unpublish (delete published & create a new draft version of)
         # a published article record
-        'unpublish_permission_factory_imp': allow_all,
+        'unpublish_permission_factory_imp': 'publications.articles.permissions.unpublish_draft_object_permission_impl',
         # Who can edit (create a new draft version of) a published dataset record
-        'edit_permission_factory_imp': allow_all,
+        'edit_permission_factory_imp': 'publications.articles.permissions.update_object_permission_impl',
         # Who can enumerate published articles
         'list_permission_factory_imp': allow_all,
         # Who can view a detail of an existing published article
@@ -50,15 +51,15 @@ RECORDS_DRAFT_ENDPOINTS = {
 
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
-        # 'search_index': 'oarepo-demo-s3-articles-publication-article-v1.0.0',
-        'search_index': 'articles-publication-article-v1.0.0',
-        'search_class': RecordsSearch,
+        'search_class': ArticleRecordsSearch,
+        'search_index': published_index_name,
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
         },
 
-        'list_route': '/articles/published',
-        'item_route': '/articles/',
+        'list_route': '/<community_id>/articles/published/',  # will not be used
+        'item_route':
+            f'/<commpid({ARTICLE_PID_TYPE},model="articles",record_class="{ARTICLE_RECORD_CLASS}"):pid_value>',
         'files': dict(
             # File attachments are currently not allowed on article records
             put_file_factory=deny_all,
@@ -68,30 +69,34 @@ RECORDS_DRAFT_ENDPOINTS = {
     },
     'draft-publications/articles': {
         'pid_type': ARTICLE_DRAFT_PID_TYPE,
-        'record_class': 'publications.articles.record.ArticleDraftRecord',
-        # 'search_index': 'oarepo-demo-s3-draft-publication-article-v1.0.0',
-        'search_index': 'draft-articles-publication-article-v1.0.0',
-        'search_class': FilteredRecordsSearch,
+        'search_class': ArticleRecordsSearch,
+        'search_index': draft_index_name,
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
         },
-        'list_route': '/articles/draft/',
-        'item_route': '/articles/draft/',
+        'record_serializers': {
+            'application/json': 'oarepo_validate:json_response',
+        },
+        'record_class': ARTICLE_DRAFT_RECORD_CLASS,
+        'links_factory_imp': community_record_links_factory,
+
         # Who can create a new draft article record?
         # TODO: owner of the dataset referenced in article create request?
-        # TODO: IMPORTANT!!! harden all permissions
-        'create_permission_factory_imp': allow_all,
+        'create_permission_factory_imp': 'publications.articles.permissions.create_draft_object_permission_impl',
         # Who can edit an existing draft article record
-        'update_permission_factory_imp': allow_all,
+        'update_permission_factory_imp': 'publications.articles.permissions.update_draft_object_permission_impl',
         # Who can view an existing draft article record
-        'read_permission_factory_imp': allow_all,
+        'read_permission_factory_imp': 'publications.articles.permissions.read_draft_object_permission_impl',
         # Who can delete an existing draft article record
-        'delete_permission_factory_imp': allow_all,
+        'delete_permission_factory_imp': 'publications.articles.permissions.delete_draft_object_permission_impl',
         # Who can enumerate a draft article record collection
-        'list_permission_factory_imp': allow_all,
+        'list_permission_factory_imp': 'publications.articles.permissions.list_draft_object_permission_impl',
 
+        'list_route': '/<community_id>/articles/draft/',
+        'item_route':
+            f'/<commpid({ARTICLE_DRAFT_PID_TYPE},model="articles/draft",record_class="{ARTICLE_DRAFT_RECORD_CLASS}"):pid_value>',
         'record_loaders': {
-            'application/json-patch+json': 'oarepo_validate.json_files_loader',
+            'application/json-patch+json': 'oarepo_validate.json_loader',
             'application/json': 'oarepo_validate.json_files_loader'
         },
         'files': dict(
@@ -107,22 +112,24 @@ RECORDS_REST_ENDPOINTS = {
     # readonly url for both endpoints, does not have item route
     # as it is accessed from the endpoints above
     'publications/all-articles': dict(
-        record_class=AllArticlesRecord,
         pid_type=ARTICLE_ALL_PID_TYPE,
         pid_minter='all-publications-articles',
         pid_fetcher='all-publications-articles',
         default_endpoint_prefix=True,
-        search_class=FilteredRecordsSearch,
-        search_index='all-articles',
+        record_class=ARTICLE_ALL_RECORD_CLASS,
+        search_class=ArticleRecordsSearch,
+        search_index=all_index_name,
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
         },
-        list_route='/articles/',
+        list_route='/<community_id>/articles/',
         default_media_type='application/json',
         max_result_window=10000,
 
         # not used really
-        item_route='/articles/not-used-but-must-be-present',
+        item_route=f'/articles'
+                   f'/not-used-but-must-be-present',
+        list_permission_factory_imp=allow_all,
         create_permission_factory_imp=deny_all,
         delete_permission_factory_imp=deny_all,
         update_permission_factory_imp=deny_all,
@@ -130,7 +137,7 @@ RECORDS_REST_ENDPOINTS = {
         record_serializers={
             'application/json': 'oarepo_validate:json_response',
         },
-        search_factory_imp='publications.articles.search:article_search_factory'
+        use_options_view=False,
     )
 }
 
@@ -175,7 +182,7 @@ def state_terms_filter(field):
 FILTERS = {
     _('category'): terms_filter('category'),
     _('creator'): terms_filter('creator.raw'),
-    _('title'): language_aware_text_match_filter('titles'),
+    _('title'): language_aware_text_match_filter('title'),
     _('state'): state_terms_filter('state'),
     # draft
     **DRAFT_IMPORTANT_FILTERS
@@ -227,7 +234,7 @@ RECORDS_REST_SORT_OPTIONS = {
         'alphabetical': {
             'title': 'alphabetical',
             'fields': [
-                'titles.cs.raw'
+                'title.cs.raw'
             ],
             'default_order': 'asc',
             'order': 1

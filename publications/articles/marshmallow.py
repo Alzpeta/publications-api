@@ -10,12 +10,15 @@ from __future__ import absolute_import, print_function
 
 from invenio_records_rest.schemas import StrictKeysMixin
 from marshmallow import fields
+from oarepo_communities.marshmallow import OARepoCommunitiesMixin
 from oarepo_documents.marshmallow.document import DocumentSchemaV1
-from oarepo_invenio_model.marshmallow import InvenioRecordMetadataSchemaV1Mixin, InvenioRecordMetadataFilesMixin
+from oarepo_fsm.marshmallow import FSMRecordSchemaMixin
+from oarepo_invenio_model.marshmallow import InvenioRecordMetadataSchemaV1Mixin
 
 
-class ArticleMetadataSchemaV1(InvenioRecordMetadataFilesMixin,
-                              InvenioRecordMetadataSchemaV1Mixin,
+class ArticleMetadataSchemaV1(InvenioRecordMetadataSchemaV1Mixin,
+                              OARepoCommunitiesMixin,
+                              FSMRecordSchemaMixin,
                               StrictKeysMixin,
                               DocumentSchemaV1):
     datasets = fields.List(fields.Str())

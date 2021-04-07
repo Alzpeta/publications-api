@@ -6,14 +6,13 @@
   "type": "object",
   "allOf": [
     {
-      "$ref": "dataset-v1.0.0.json"
+      "$ref": "dataset-v1.0.0.json#/definitions/DataSet"
     },
     {
-      "properties": {
-        "state": {
-          "type": "string"
-        }
-      }
+      "$ref": "communities-v1.0.0.json#/definitions/Communities"
+    },
+    {
+      "$ref": "/schemas/fsm-record-v1.0.0.json#/definitions/FSMRecord"
     }
   ],
   "required": [
