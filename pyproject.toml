@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "publications-api"
-version = "0.3.1"
+version = "0.3.2"
 description = "CESNET repository for scientific publications and datasets"
 authors = [
     "Miroslav Bauer <bauer@cesnet.cz>"
@@ -33,7 +33,7 @@ oarepo-actions = "^1.0.5"
 tqdm = "^4.56.0"
 oarepo-documents = "^1.0.8"
 oarepo-communities = "^1.4.0"
-cesnet-openid-remote = "^2.0.0"
+cesnet-openid-remote = "^2.1.5"
 boltons = "^20.0.0"
 invenio-logging = {extras = ["sentry-sdk"], version = "^1.3.0"}
 
