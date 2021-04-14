@@ -14,6 +14,8 @@ from flask_login import current_user
 from invenio_indexer.api import RecordIndexer
 from invenio_records_files.api import Record
 from oarepo_actions.decorators import action
+from oarepo_communities.converters import CommunityPIDValue
+from oarepo_communities.proxies import current_oarepo_communities
 from oarepo_communities.record import CommunityRecordMixin
 from oarepo_documents.api import DocumentRecordMixin, getMetadataFromDOI
 from oarepo_invenio_model import InheritedSchemaRecordMixin
@@ -57,7 +59,10 @@ class ArticleRecord(InvalidRecordAllowedMixin, ArticleBaseRecord):
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.publications/articles_item',
-                       pid_value=self['id'], _external=True)
+                       pid_value=CommunityPIDValue(
+                           self['id'],
+                           current_oarepo_communities.get_primary_community_field(self)
+                       ), _external=True)
 
 
 class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleBaseRecord):
@@ -81,7 +86,10 @@ class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleBaseRecor
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.draft-publications/articles_item',
-                       pid_value=self['id'], _external=True)
+                       pid_value=CommunityPIDValue(
+                           self['id'],
+                           current_oarepo_communities.get_primary_community_field(self)
+                       ), _external=True)
 
 
 class AllArticlesRecord(ArticleRecord):

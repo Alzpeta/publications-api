@@ -5,6 +5,8 @@
 # CESNET OA Publication Repository is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
+from functools import partial
+
 from elasticsearch_dsl import Q
 from elasticsearch_dsl.query import Bool
 from flask_security.utils import _
@@ -20,6 +22,7 @@ from publications.articles.constants import ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_
 from publications.articles.record import published_index_name, draft_index_name, all_index_name
 from publications.articles.search import ArticleRecordsSearch
 from publications.indexer import CommitingRecordIndexer
+from publications.links import publications_links_factory
 
 RECORDS_DRAFT_ENDPOINTS = {
     'publications/articles': {
@@ -31,7 +34,7 @@ RECORDS_DRAFT_ENDPOINTS = {
         'default_endpoint_prefix': True,
 
         'record_class': ARTICLE_RECORD_CLASS,
-        'links_factory_imp': community_record_links_factory,
+        'links_factory_imp': partial(community_record_links_factory, original_links_factory=publications_links_factory),
 
         # Who can publish a draft article record
         'publish_permission_factory_imp': 'publications.articles.permissions.publish_draft_object_permission_impl',
@@ -78,7 +81,7 @@ RECORDS_DRAFT_ENDPOINTS = {
             'application/json': 'oarepo_validate:json_response',
         },
         'record_class': ARTICLE_DRAFT_RECORD_CLASS,
-        'links_factory_imp': community_record_links_factory,
+        'links_factory_imp': partial(community_record_links_factory, original_links_factory=publications_links_factory),
 
         # Who can create a new draft article record?
         # TODO: owner of the dataset referenced in article create request?
@@ -125,6 +128,7 @@ RECORDS_REST_ENDPOINTS = {
         list_route='/<community_id>/articles/',
         default_media_type='application/json',
         max_result_window=10000,
+        links_factory_imp=partial(community_record_links_factory, original_links_factory=publications_links_factory),
 
         # not used really
         item_route=f'/articles'

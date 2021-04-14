@@ -12,9 +12,10 @@ from flask import url_for, jsonify
 from flask_login import current_user
 from invenio_records_files.api import Record
 from oarepo_actions.decorators import action
-from oarepo_communities.constants import PRIMARY_COMMUNITY_FIELD
+from oarepo_communities.proxies import current_oarepo_communities
 from oarepo_communities.converters import CommunityPIDValue
 from oarepo_communities.record import CommunityRecordMixin
+from oarepo_communities.search import CommunitySearch
 from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.record import DraftRecordMixin, InvalidRecordAllowedMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin, FilesKeepingRecordMixin
@@ -22,7 +23,6 @@ from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecord
 from publications.datasets.constants import DATASET_ALLOWED_SCHEMAS, \
     DATASET_PREFERRED_SCHEMA
 from publications.datasets.marshmallow import PublicationDatasetMetadataSchemaV1
-from publications.datasets.search import MineRecordsSearch
 
 published_index_name = 'datasets-publication-dataset-v1.0.0'
 draft_index_name = 'draft-datasets-publication-dataset-v1.0.0'
@@ -51,7 +51,10 @@ class DatasetRecord(InvalidRecordAllowedMixin, DatasetBaseRecord):
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.publications/datasets_item',
-                       pid_value=CommunityPIDValue(self['id'], self[PRIMARY_COMMUNITY_FIELD]), _external=True)
+                       pid_value=CommunityPIDValue(
+                           self['id'],
+                           current_oarepo_communities.get_primary_community_field(self)
+                       ), _external=True)
 
 
 class DatasetDraftRecord(DraftRecordMixin,
@@ -74,14 +77,17 @@ class DatasetDraftRecord(DraftRecordMixin,
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.draft-publications/datasets_item',
-                       pid_value=CommunityPIDValue(self['id'], self[PRIMARY_COMMUNITY_FIELD]), _external=True)
+                       pid_value=CommunityPIDValue(
+                           self['id'],
+                           current_oarepo_communities.get_primary_community_field(self)
+                       ), _external=True)
 
 
 class AllDatasetsRecord(DatasetRecord):
     @classmethod
     @action(detail=False, url_path='mine')
     def my_records(cls, **kwargs):
-        search = MineRecordsSearch(index=all_index_name, doc_type='_doc')
+        search = CommunitySearch(index=all_index_name, doc_type='_doc')
         search = search.with_preference_param().params(version=True)
         search = search[0:10]
         search_result = search.execute().to_dict()
