@@ -7,12 +7,23 @@
 #
 
 import datetime
+import uuid
 import os
+import re
 
-from flask import url_for, jsonify, request
+from flask import url_for, jsonify, request, Response
 from flask_login import current_user
+from invenio_accounts.utils import obj_or_import_string
+from invenio_db import db
 from invenio_indexer.api import RecordIndexer
+from invenio_pidstore import current_pidstore
+from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from invenio_records_files.api import Record
+from oarepo_communities.converters import CommunityPIDValue
+from oarepo_documents.document_json_mapping import schema_mapping
+from deepmerge import always_merger
+
 from oarepo_actions.decorators import action
 from oarepo_communities.record import CommunityRecordMixin
 from oarepo_documents.api import DocumentRecordMixin, getMetadataFromDOI
@@ -20,15 +31,19 @@ from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.endpoints import make_draft_minter
 from oarepo_records_draft.record import DraftRecordMixin, InvalidRecordAllowedMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin
+from oarepo_actions.decorators import action
 from simplejson import JSONDecodeError
+from .minters import article_minter_withoutdoi
+from publications.articles.search import MineRecordsSearch
 from werkzeug.local import LocalProxy
 
-from publications.articles.search import MineRecordsSearch
+from . import minters
 from .constants import (
     ARTICLE_ALLOWED_SCHEMAS,
-    ARTICLE_PREFERRED_SCHEMA, ARTICLE_DRAFT_PID_TYPE
+    ARTICLE_PREFERRED_SCHEMA, ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_TYPE
 )
 from .marshmallow import ArticleMetadataSchemaV1
+from oarepo_documents.api import DocumentRecordMixin, getMetadataFromDOI, create_document
 
 published_index_name = 'articles-publication-article-v1.0.0'
 draft_index_name = 'draft-articles-publication-article-v1.0.0'
@@ -57,7 +72,8 @@ class ArticleRecord(InvalidRecordAllowedMixin, ArticleBaseRecord):
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.publications/articles_item',
-                       pid_value=self['id'], _external=True)
+                       pid_value=CommunityPIDValue(self['id'], self.primary_community), _external=True)
+
 
 
 class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleBaseRecord):
@@ -65,6 +81,11 @@ class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleBaseRecor
     DOCUMENT_INDEXER = RecordIndexer
 
     index_name = draft_index_name
+
+    @property
+    def canonical_url(self):
+        return url_for(f'invenio_records_rest.draft-publications/articles_item',
+                      pid_value=CommunityPIDValue(self['id'], self.primary_community), _external=True)
 
     def validate(self, *args, **kwargs):
         if 'created' not in self:
@@ -78,10 +99,56 @@ class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleBaseRecor
         self['modified'] = datetime.date.today().strftime('%Y-%m-%d')
         return super().validate(*args, **kwargs)
 
-    @property
-    def canonical_url(self):
-        return url_for(f'invenio_records_rest.draft-publications/articles_item',
-                       pid_value=self['id'], _external=True)
+    @classmethod
+    @action(detail=False, url_path='from-doi/', method='post')
+    def from_doi(cls, **kwargs):
+        doi = request.json['doi']
+        try:
+            pid = PersistentIdentifier.get('doi', doi)
+            record = cls.get_record(pid.object_uuid)
+            return Response(status=302, headers={"Location": record.canonical_url})
+        except PIDDoesNotExistError:
+            pass
+        try:
+            existing_document = getMetadataFromDOI(doi)
+            article = schema_mapping(existing_record=existing_document, doi=doi)
+        except(JSONDecodeError):
+            return jsonify()
+
+        if article is None:
+            return jsonify()
+        else:
+            return jsonify(article=article)
+
+    #temporary solution todo: delet this and create own doi
+    @classmethod
+    @action(detail=False, url_path='without_doi/', method='post')
+    def without_doi(cls, **kwargs):
+        changes = request.json['changes']
+        authors = request.json['authors']
+        datasetUrl = request.json['datasetUrl']
+        article = {}
+        article['title'] = {changes['title_lang']: changes['title_val']}
+        article['abstract'] = {changes['abstract_lang']: changes['abstract_val']}
+        article['authors'] = authors
+        article['document_type'] = changes['document_type']
+        always_merger.merge(article, {
+            "_primary_community": 'cesnet',
+            "access_right_category": "success"
+        })
+        article['datasets'] = [datasetUrl]
+        print(article)
+        record_uuid = uuid.uuid4()
+        pid = article_minter_withoutdoi(record_uuid, article)
+        record = cls.create(data=article, id_=record_uuid)
+        indexer = cls.DOCUMENT_INDEXER()
+        indexer.index(record)
+
+        PersistentIdentifier.create('dpsart', pid.pid_value, object_type='rec',
+                                    object_uuid=record_uuid,
+                                    status=PIDStatus.REGISTERED)
+        db.session.commit()
+        return Response(status=302, headers={"Location": record.canonical_url})
 
 
 class AllArticlesRecord(ArticleRecord):
@@ -90,7 +157,15 @@ class AllArticlesRecord(ArticleRecord):
     def from_doi(cls, **kwargs):
         doi = request.json['doi']
         try:
-            article = getMetadataFromDOI(doi)
+            pid = PersistentIdentifier.get('doi', doi)
+            record = cls.get_record(pid.object_uuid)
+
+            return Response(status=302, headers={"Location": record.canonical_url})
+        except PIDDoesNotExistError:
+            pass
+        try:
+            existing_document = getMetadataFromDOI(doi)
+            article = schema_mapping(existing_record=existing_document, doi=doi)
         except(JSONDecodeError):
             return jsonify()
 

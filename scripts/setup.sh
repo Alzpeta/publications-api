@@ -18,7 +18,7 @@ oarepo index queue init purge
 
 oarepo files location --default 'default-s3' s3://oarepo
 
-# Create roles to manage access
+# Create roles to manage accessi
 oarepo roles create ingester -d 'data ingester'
 oarepo roles create curator -d 'curator'
 oarepo roles create admin -d 'system administrator'

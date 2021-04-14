@@ -51,7 +51,7 @@ class DatasetRecord(InvalidRecordAllowedMixin, DatasetBaseRecord):
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.publications/datasets_item',
-                       pid_value=CommunityPIDValue(self['id'], self[PRIMARY_COMMUNITY_FIELD]), _external=True)
+                       pid_value=CommunityPIDValue(self['id'], self.primary_community), _external=True)
 
 
 class DatasetDraftRecord(DraftRecordMixin,
@@ -74,7 +74,7 @@ class DatasetDraftRecord(DraftRecordMixin,
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.draft-publications/datasets_item',
-                       pid_value=CommunityPIDValue(self['id'], self[PRIMARY_COMMUNITY_FIELD]), _external=True)
+                       pid_value=CommunityPIDValue(self['id'], self.primary_community), _external=True)
 
 
 class AllDatasetsRecord(DatasetRecord):
