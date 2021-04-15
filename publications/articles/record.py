@@ -25,6 +25,8 @@ from oarepo_documents.document_json_mapping import schema_mapping
 from deepmerge import always_merger
 
 from oarepo_actions.decorators import action
+from oarepo_communities.converters import CommunityPIDValue
+from oarepo_communities.proxies import current_oarepo_communities
 from oarepo_communities.record import CommunityRecordMixin
 from oarepo_documents.api import DocumentRecordMixin, getMetadataFromDOI
 from oarepo_invenio_model import InheritedSchemaRecordMixin
@@ -37,7 +39,6 @@ from .minters import article_minter_withoutdoi
 from publications.articles.search import MineRecordsSearch
 from werkzeug.local import LocalProxy
 
-from . import minters
 from .constants import (
     ARTICLE_ALLOWED_SCHEMAS,
     ARTICLE_PREFERRED_SCHEMA, ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_TYPE
@@ -72,8 +73,10 @@ class ArticleRecord(InvalidRecordAllowedMixin, ArticleBaseRecord):
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.publications/articles_item',
-                       pid_value=CommunityPIDValue(self['id'], self.primary_community), _external=True)
-
+                       pid_value=CommunityPIDValue(
+                           self['id'],
+                           current_oarepo_communities.get_primary_community_field(self)
+                       ), _external=True)
 
 
 class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleBaseRecord):
@@ -150,8 +153,18 @@ class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleBaseRecor
         db.session.commit()
         return Response(status=302, headers={"Location": record.canonical_url})
 
+    @property
+    def canonical_url(self):
+        return url_for(f'invenio_records_rest.draft-publications/articles_item',
+                       pid_value=CommunityPIDValue(
+                           self['id'],
+                           current_oarepo_communities.get_primary_community_field(self)
+                       ), _external=True)
+
 
 class AllArticlesRecord(ArticleRecord):
+    index_name = all_index_name
+
     @classmethod
     @action(detail=False, url_path='from-doi/', method='post')
     def from_doi(cls, **kwargs):
@@ -173,21 +186,3 @@ class AllArticlesRecord(ArticleRecord):
             return jsonify()
         else:
             return jsonify(article=article)
-
-    @classmethod
-    @action(detail=False, url_path='mine')
-    def my_records(cls, **kwargs):
-        search = MineRecordsSearch(index='all-articles', doc_type='_doc')
-        search = search.with_preference_param().params(version=True)
-        search = search[0:10]
-        search_result = search.execute().to_dict()
-        search_result = {
-            'hits': {
-                'hits': [
-                    x['_source'] for x in search_result['hits']['hits']
-                ],
-                'total': search_result['hits']['total']['value']
-            },
-        }
-
-        return jsonify(search_result)
