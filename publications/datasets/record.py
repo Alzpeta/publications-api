@@ -8,14 +8,12 @@
 import datetime
 import os
 
-from flask import url_for, jsonify
+from flask import url_for
 from flask_login import current_user
 from invenio_records_files.api import Record
-from oarepo_actions.decorators import action
-from oarepo_communities.proxies import current_oarepo_communities
 from oarepo_communities.converters import CommunityPIDValue
+from oarepo_communities.proxies import current_oarepo_communities
 from oarepo_communities.record import CommunityRecordMixin
-from oarepo_communities.search import CommunitySearch
 from oarepo_invenio_model import InheritedSchemaRecordMixin
 from oarepo_records_draft.record import DraftRecordMixin, InvalidRecordAllowedMixin
 from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecordMixin, FilesKeepingRecordMixin
@@ -84,20 +82,4 @@ class DatasetDraftRecord(DraftRecordMixin,
 
 
 class AllDatasetsRecord(DatasetRecord):
-    @classmethod
-    @action(detail=False, url_path='mine')
-    def my_records(cls, **kwargs):
-        search = CommunitySearch(index=all_index_name, doc_type='_doc')
-        search = search.with_preference_param().params(version=True)
-        search = search[0:10]
-        search_result = search.execute().to_dict()
-        search_result = {
-            'hits': {
-                'hits': [
-                    x['_source'] for x in search_result['hits']['hits']
-                ],
-                'total': search_result['hits']['total']['value']
-            },
-        }
-
-        return jsonify(search_result)
+    index_name = all_index_name

@@ -13,6 +13,7 @@ from flask_security.utils import _
 from invenio_records_rest.facets import terms_filter, range_filter
 from invenio_records_rest.utils import allow_all, deny_all, check_elasticsearch
 from oarepo_communities.links import community_record_links_factory
+from oarepo_communities.search import community_search_factory
 from oarepo_multilingual import language_aware_text_match_filter
 from oarepo_records_draft import DRAFT_IMPORTANT_FACETS, DRAFT_IMPORTANT_FILTERS
 from oarepo_ui import translate_facets, translate_filters, translate_facet
@@ -55,6 +56,7 @@ RECORDS_DRAFT_ENDPOINTS = {
         'default_media_type': 'application/json',
         'indexer_class': CommitingRecordIndexer,
         'search_class': ArticleRecordsSearch,
+        'search_factory_imp': community_search_factory,
         'search_index': published_index_name,
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
@@ -74,6 +76,7 @@ RECORDS_DRAFT_ENDPOINTS = {
         'pid_type': ARTICLE_DRAFT_PID_TYPE,
         'search_class': ArticleRecordsSearch,
         'search_index': draft_index_name,
+        'search_factory_imp': community_search_factory,
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
         },
@@ -122,6 +125,7 @@ RECORDS_REST_ENDPOINTS = {
         record_class=ARTICLE_ALL_RECORD_CLASS,
         search_class=ArticleRecordsSearch,
         search_index=all_index_name,
+        search_factory_imp=community_search_factory,
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
         },

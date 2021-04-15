@@ -25,7 +25,6 @@ from oarepo_validate import SchemaKeepingRecordMixin, MarshmallowValidatedRecord
 from simplejson import JSONDecodeError
 from werkzeug.local import LocalProxy
 
-from publications.articles.search import MineRecordsSearch
 from .constants import (
     ARTICLE_ALLOWED_SCHEMAS,
     ARTICLE_PREFERRED_SCHEMA, ARTICLE_DRAFT_PID_TYPE
@@ -93,6 +92,8 @@ class ArticleDraftRecord(DocumentRecordMixin, DraftRecordMixin, ArticleBaseRecor
 
 
 class AllArticlesRecord(ArticleRecord):
+    index_name = all_index_name
+
     @classmethod
     @action(detail=False, url_path='from-doi/', method='post')
     def from_doi(cls, **kwargs):
@@ -106,21 +107,3 @@ class AllArticlesRecord(ArticleRecord):
             return jsonify()
         else:
             return jsonify(article=article)
-
-    @classmethod
-    @action(detail=False, url_path='mine')
-    def my_records(cls, **kwargs):
-        search = MineRecordsSearch(index='all-articles', doc_type='_doc')
-        search = search.with_preference_param().params(version=True)
-        search = search[0:10]
-        search_result = search.execute().to_dict()
-        search_result = {
-            'hits': {
-                'hits': [
-                    x['_source'] for x in search_result['hits']['hits']
-                ],
-                'total': search_result['hits']['total']['value']
-            },
-        }
-
-        return jsonify(search_result)
