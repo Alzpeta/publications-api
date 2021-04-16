@@ -87,13 +87,9 @@ RECORDS_DRAFT_ENDPOINTS = {
         'links_factory_imp': partial(community_record_links_factory, original_links_factory=publications_links_factory),
 
         # Who can create a new draft article record?
-        # TODO: owner of the dataset referenced in article create request?
         'create_permission_factory_imp': 'publications.articles.permissions.create_draft_object_permission_impl',
         # Who can edit an existing draft article record
-
-        #'update_permission_factory_imp': allow_all,
         'update_permission_factory_imp': 'publications.articles.permissions.update_draft_object_permission_impl',
-
         # Who can view an existing draft article record
         'read_permission_factory_imp': 'publications.articles.permissions.read_draft_object_permission_impl',
         # Who can delete an existing draft article record
@@ -149,8 +145,6 @@ RECORDS_REST_ENDPOINTS = {
             'application/json': 'oarepo_validate:json_response',
         },
         use_options_view=False,
-        links_factory_imp = community_record_links_factory,
-
     )
 }
 

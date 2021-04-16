@@ -40,12 +40,8 @@ oarepo access allow superuser-access role admin
 
 echo 'Setting up default CESNET community'
 oarepo oarepo:communities create cesnet 'CESNET community' --description 'Default CESNET OA repository community'
-oarepo oarepo:communities actions allow cesnet member create read
-oarepo oarepo:communities actions allow cesnet curator update approve request-changes
-oarepo oarepo:communities actions allow cesnet publisher revert-approve publish
-oarepo oarepo:communities actions allow cesnet author update request-approval
 oarepo oarepo:communities actions list -c cesnet
 
 echo 'Thats all folks!'
 echo
-echo "To import some example datasets, run: python example/load_data.py ${demo-ingest-token} https://${oarepo_SERVER_NAME}:5000/api/"
+echo "To import some example datasets, run: python example/load_data.py ${demo-ingest-token} https://${oarepo_SERVER_NAME}/"

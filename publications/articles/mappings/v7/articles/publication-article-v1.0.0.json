@@ -51,7 +51,14 @@
     ],
     "properties": {
       "datasets": {
-        "type": "keyword"
+        "properties": {
+          "pid_value": {
+            "type": "keyword"
+          },
+          "oarepo:draft": {
+            "type": "boolean"
+          }
+        }
       }
     }
   }

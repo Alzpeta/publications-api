@@ -1,9 +1,0 @@
-{
-  "DataSet": {
-    "oarepo:extends": [
-      "dataset-v1.0.0.json#/DataSet"
-    ],
-    "properties": {
-    }
-  }
-}

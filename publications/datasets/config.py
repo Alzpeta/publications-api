@@ -62,7 +62,10 @@ RECORDS_DRAFT_ENDPOINTS = {
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
         },
-
+        'record_loaders': {
+            'application/json': 'oarepo_validate.json_files_loader',
+            'application/json-patch+json': 'oarepo_validate.json_loader'
+        },
         'list_route': '/<community_id>/datasets/published/',  # will not be used really
         'item_route':
             f'/<commpid({DATASET_PID_TYPE},model="datasets",record_class="{DATASET_RECORD_CLASS}"):pid_value>',
@@ -132,6 +135,10 @@ RECORDS_REST_ENDPOINTS = {
         search_index=all_index_name,
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
+        },
+        record_loaders={
+            'application/json': 'oarepo_validate.json_files_loader',
+            'application/json-patch+json': 'oarepo_validate.json_loader'
         },
         list_route='/<community_id>/datasets/',
         links_factory_imp=partial(community_record_links_factory, original_links_factory=publications_links_factory),
