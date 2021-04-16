@@ -9,11 +9,17 @@
 from __future__ import absolute_import, print_function
 
 from invenio_records_rest.schemas import StrictKeysMixin
-from marshmallow import fields
+from marshmallow import fields, Schema
+from marshmallow_utils.fields import SanitizedUnicode
 from oarepo_communities.marshmallow import OARepoCommunitiesMixin
 from oarepo_documents.marshmallow.document import DocumentSchemaV1
 from oarepo_fsm.marshmallow import FSMRecordSchemaMixin
 from oarepo_invenio_model.marshmallow import InvenioRecordMetadataSchemaV1Mixin
+
+
+class NestedDatasetMetadataSchemaV1(Schema):
+    pid_value = SanitizedUnicode
+    _oarepo_draft = fields.Boolean(attribute='oarepo:draft')
 
 
 class ArticleMetadataSchemaV1(InvenioRecordMetadataSchemaV1Mixin,
@@ -21,4 +27,4 @@ class ArticleMetadataSchemaV1(InvenioRecordMetadataSchemaV1Mixin,
                               FSMRecordSchemaMixin,
                               StrictKeysMixin,
                               DocumentSchemaV1):
-    datasets = fields.List(fields.Str())
+    datasets = fields.List(fields.Nested(NestedDatasetMetadataSchemaV1), default=list)

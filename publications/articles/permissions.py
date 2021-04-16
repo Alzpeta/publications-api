@@ -17,7 +17,7 @@ read_draft_object_permission_impl = read_object_permission_impl
 delete_draft_object_permission_impl = delete_object_permission_impl
 list_draft_object_permission_impl = deny_all
 
-# DRAFT dataset file manipulation
+# DRAFT artic file manipulation
 put_draft_file_permission_impl = update_object_permission_impl
 delete_draft_file_permission_impl = update_object_permission_impl
 get_draft_file_permission_impl = read_draft_object_permission_impl

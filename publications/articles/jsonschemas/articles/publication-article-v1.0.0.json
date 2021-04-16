@@ -8,12 +8,18 @@
     {
       "properties": {
         "datasets": {
-          "minItems": 0,
-          "items": {
-            "type": "string"
-          },
           "type": "array",
-          "uniqueItems": true
+          "items": {
+            "type": "object",
+            "properties": {
+              "oarepo:draft": {
+                "type": "boolean"
+              },
+              "pid_value": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     },
