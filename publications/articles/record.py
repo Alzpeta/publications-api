@@ -48,8 +48,8 @@ prefixed_draft_index_name = os.environ.get('INVENIO_SEARCH_INDEX_PREFIX', '') + 
 prefixed_all_index_name = os.environ.get('INVENIO_SEARCH_INDEX_PREFIX', '') + all_index_name
 
 
-class ArticleBaseRecord(SchemaKeepingRecordMixin,
-                        MarshmallowValidatedRecordMixin,
+class ArticleBaseRecord(MarshmallowValidatedRecordMixin,
+                        SchemaKeepingRecordMixin,
                         InheritedSchemaRecordMixin,
                         CommunityRecordMixin,
                         Record):
@@ -57,6 +57,7 @@ class ArticleBaseRecord(SchemaKeepingRecordMixin,
     ALLOWED_SCHEMAS = ARTICLE_ALLOWED_SCHEMAS
     PREFERRED_SCHEMA = ARTICLE_PREFERRED_SCHEMA
     MARSHMALLOW_SCHEMA = ArticleMetadataSchemaV1
+    VALIDATE_PATCH = True
 
 
 class DOIRecordMixin:
