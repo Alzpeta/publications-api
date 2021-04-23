@@ -14,10 +14,5 @@
     {
       "$ref": "../fsm-record-v1.0.0.json#/definitions/FSMRecord"
     }
-  ],
-  "required": [
-    "$schema",
-    "id",
-    "title"
   ]
 }
