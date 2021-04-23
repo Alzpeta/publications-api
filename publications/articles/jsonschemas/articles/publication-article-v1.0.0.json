@@ -3,6 +3,7 @@
   "id": "https://repozitar-test.cesnet.cz/schemas/publications/publication-article-v1.0.0.json",
   "additionalProperties": false,
   "title": "CESNET Publications repository - article record v1.0.0",
+  "description": "Record metadata schema specification for `https://repozitar.cesnet.cz/cesnet/articles{/draft}/` record collections",
   "type": "object",
   "allOf": [
     {
