@@ -7,6 +7,7 @@
 #
 """Publications API cli commands."""
 import json
+import os
 import subprocess
 import tempfile
 import traceback
@@ -97,6 +98,7 @@ def schema_docs(schemas):
         # TODO: this is necessary to resolve JSONRefs in allOf
         schema = json.loads(json.dumps(schema, default=lambda x: x.__subject__))
 
+        # Generate and save html docs for the schema
         with tempfile.NamedTemporaryFile(mode="w+") as schema_source:
             schema_source.write(json.dumps(schema))
             schema_source.flush()
@@ -109,6 +111,22 @@ def schema_docs(schemas):
                     minify=True,
                     expand_buttons=True
                 )
+
+    # Generate and save schema index page
+    index_md = r"""
+---
+layout: default
+---
+
+# Data Models Schema Docs
+
+"""
+    for f in os.listdir('docs/schemas/'):
+        if f.endswith('.html'):
+            index_md += f'- [{f}](./{f})\n'
+
+    with open(f'docs/schemas/index.md', mode='w+') as index_file:
+        index_file.write(index_md)
 
 
 @publications.group('datasets')
