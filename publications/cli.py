@@ -123,7 +123,7 @@ layout: default
 """
     for f in os.listdir('docs/schemas/'):
         if f.endswith('.html'):
-            index_md += f'- [{f}](./{f})\n'
+            index_md += f'- [{f.rstrip(".html")}](./{f})\n'
 
     with open(f'docs/schemas/index.md', mode='w+') as index_file:
         index_file.write(index_md)
