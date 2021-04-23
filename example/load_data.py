@@ -30,10 +30,8 @@ def validate_dataset(dataset_json):
         raise
 
 
-def simplify_strings(data):
-    def simplify(p, k, v):
-        if k != 'cs':
-            return True
+def sanitize_strings(data):
+    def sanitize(p, k, v):
         return (k, bleach.clean(v, [
             'div', 'p', 'span', 'b', 'ul', 'li', 'ol', 'sub', 'sup', 'pre',
             'a', 'blockquote',
@@ -42,7 +40,7 @@ def simplify_strings(data):
             'br',
         ], strip=True, strip_comments=True))
 
-    return remap(data, simplify)
+    return remap(data, sanitize)
 
 
 def publish_dataset(dataset_json, id):
@@ -143,23 +141,22 @@ def upload_file(files_url, files_dir, fle, published_files):
         raise Exception()
 
 
-def import_dataset(pid, dataset_json, files_dir):
-    files = dataset_json.pop('files', [])
-
-    dataset_json['_created_by'] = 1  # should be dataset-ingest user
-    id = dataset_json['id']
-    metadata = dataset_json['metadata']
-    metadata = simplify_strings(metadata)
-
-    metadata.pop('access_right_category')
-    metadata['_owners'] = dataset_json.pop('owners')
-    metadata['_created_by'] = metadata['_owners'][0]
-    metadata['_access'] = {
+def generate_rdm_access(metadata):
+    return {
         'metadata': True,
         'files': True,
-        'access_right': metadata.pop('access_right'),
-        'owned_by': metadata['_owners']
+        'access_right': metadata.pop('access_right', None),
+        'owned_by': None
     }
+
+
+def convert_to_rdm(metadata):
+    """Convert a current Zenodo dataset metadata to new RDM format."""
+    metadata.pop('access_right_category')
+    metadata['_owners'] = dataset_json.pop('owners')
+    metadata['_created'] = dataset_json.pop('created')
+    metadata['_created_by'] = metadata['_owners'][0]
+    metadata['access'] = generate_rdm_access(metadata)
     metadata['resource_type'].pop('title')
     metadata.pop('language', None)
     # TODO: update language mapping in oarepo-rdm-records to contain code prop!
@@ -200,6 +197,15 @@ def import_dataset(pid, dataset_json, files_dir):
     metadata['_communities'] = [com['id'] for com in metadata.pop('communities', [])]
     metadata.pop('meeting', None)
     metadata.pop('method', None)
+    return metadata
+
+
+def import_dataset(pid, dataset_json, files_dir):
+    files = dataset_json.pop('files', [])
+    id = dataset_json['id']
+    metadata = dataset_json['metadata']
+    metadata = sanitize_strings(metadata)
+    metadata = convert_to_rdm(metadata)
 
     dataset_json = validate_dataset(metadata)
     published_files = set()

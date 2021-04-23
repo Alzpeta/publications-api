@@ -8,10 +8,10 @@
 
 from oarepo_communities.marshmallow import OARepoCommunitiesMixin
 from oarepo_fsm.marshmallow import FSMRecordSchemaMixin
-from oarepo_rdm_records.marshmallow import DataSetMetadataSchemaV1
+from oarepo_rdm_records.marshmallow import DataSetMetadataSchemaV2
 
 
 class PublicationDatasetMetadataSchemaV1(OARepoCommunitiesMixin,
                                          FSMRecordSchemaMixin,
-                                         DataSetMetadataSchemaV1):
+                                         DataSetMetadataSchemaV2):
     """Schema for dataset drafts metadata."""

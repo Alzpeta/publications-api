@@ -1,18 +1,18 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "id": "https://repozitar-test.cesnet.cz/schemas/publications/publication-dataset-v1.0.0.json",
+  "id": "https://repozitar.cesnet.cz/schemas/publications/publication-dataset-v1.0.0.json",
   "additionalProperties": false,
   "title": "CESNET Publications repository - data set record v1.0.0",
   "type": "object",
   "allOf": [
     {
-      "$ref": "dataset-v1.0.0.json#/definitions/DataSet"
+      "$ref": "../dataset-v2.0.0.json#/definitions/DataSet"
     },
     {
-      "$ref": "communities-v1.0.0.json#/definitions/Communities"
+      "$ref": "../communities-v1.0.0.json#/definitions/Communities"
     },
     {
-      "$ref": "/schemas/fsm-record-v1.0.0.json#/definitions/FSMRecord"
+      "$ref": "../fsm-record-v1.0.0.json#/definitions/FSMRecord"
     }
   ],
   "required": [
