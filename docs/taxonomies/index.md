@@ -49,7 +49,7 @@ Holds enumeration of types of described documents or resources.
 To use a certain taxonomic term in your record's metadata taxonomic field, reference the term by putting the
 links['self'] object with self url of the term into the metadata, e.g.:
 
-```json
+```python
 ...
 'contributors': [
   {
