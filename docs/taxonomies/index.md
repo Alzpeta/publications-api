@@ -18,7 +18,7 @@ Defines types of contributors of the described document/resource.
 
 **API_URL**: `https://127.0.0.1:5000/2.0/taxonomies/contributor-type/`
 
-## Languages _[languages]_
+## Languages _[languages]_ ##
 Defines all available language codes and names of each language.
 
 **API_URL**: `https://127.0.0.1:5000/2.0/taxonomies/languages/`
