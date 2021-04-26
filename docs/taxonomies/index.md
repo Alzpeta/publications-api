@@ -7,28 +7,39 @@ layout: default
 The following are the managed taxonomic trees currently available on the repository API.
 
 To determine which terms are currently available in each taxonomic tree, run:
-```
-curl -XGET $API_URL
+```shell
+curl -XGET ${API_URL}?representation:include=dsc
 ```
 
 _NOTE:_ replace the `127.0.0.1:5000` in API URLs with your actual repository `SERVER_NAME`
 
-### Contributor Type [contributor-type]
+## Contributor Type [contributor-type]
 
-**API_URL**: http://127.0.0.1:5000/2.0/taxonomies/contributor-type/
+Defines types of contributors of the described document/resource.
 
-### Languages [languages]
+**API_URL**: https://127.0.0.1:5000/2.0/taxonomies/contributor-type/
 
-**API_URL**: http://127.0.0.1:5000/2.0/taxonomies/languages/
+## Languages [languages]
 
-### Licenses [licenses]
+Defines all available language codes and names of each language.
 
-**API_URL**: http://127.0.0.1:5000/2.0/taxonomies/licenses/
+**API_URL**: https://127.0.0.1:5000/2.0/taxonomies/languages/
 
-### The type of relationship of the described document to the interconnected item (unit) [itemRelationType]
+## Licenses [licenses]
 
-**API_URL**: http://127.0.0.1:5000/2.0/taxonomies/itemRelationType/
+Contains all available licences for described documents/resources.
 
-### Resource type [resourceType]
+**API_URL**: https//127.0.0.1:5000/2.0/taxonomies/licenses/
 
-**API_URL**: http://127.0.0.1:5000/2.0/taxonomies/resourceType/
+## The type of relationship of the described document to the interconnected item (unit) [itemRelationType]
+
+Defines relationship types of possible relationships between documents or
+resources.
+
+**API_URL**: https://127.0.0.1:5000/2.0/taxonomies/itemRelationType/
+
+## Resource type [resourceType]
+
+Holds enumeration of types of described documents or resources.
+
+**API_URL**: https://127.0.0.1:5000/2.0/taxonomies/resourceType/
