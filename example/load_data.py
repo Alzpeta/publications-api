@@ -2,10 +2,12 @@ import json
 import multiprocessing as mp
 import os
 import sys
+from datetime import datetime
 from pprint import pprint
 from urllib.parse import urlencode, urlparse
 
 import bleach
+import dateutil
 import requests
 from boltons.iterutils import remap
 from s3_client_lib.s3_multipart_client import upload_part
@@ -15,10 +17,9 @@ from publications.datasets.marshmallow import PublicationDatasetMetadataSchemaV1
 TOKEN = sys.argv[1]
 DATA_URL = sys.argv[2] if len(sys.argv) > 2 else 'https://localhost:8080/'
 DRY_RUN = False
+COMPUTED_FIELDS = ['stats', 'links', 'revision', 'conceptrecid', 'conceptdoi', 'id', 'owners']
 UNSUPPORTED_FIELDS = ['access_right', 'access_right_category',
-                      'relations', 'meeting', 'method']
-
-    metadata['_communities'] = [com['id'] for com in metadata.pop('communities', [])]
+                      'relations', 'meeting', 'method', 'language', 'doi', 'license', 'communities', 'created']
 
 
 def validate_dataset(dataset_json):
@@ -36,15 +37,25 @@ def validate_dataset(dataset_json):
 
 def sanitize_strings(data):
     def sanitize(p, k, v):
-        return (k, bleach.clean(v, [
-            'div', 'p', 'span', 'b', 'ul', 'li', 'ol', 'sub', 'sup', 'pre',
-            'a', 'blockquote',
-            'h1', 'h2', 'h3', 'h4', 'h5',
-            'strong', 'em',
-            'br',
-        ], strip=True, strip_comments=True))
+        if isinstance(v, str):
+            return (k, bleach.clean(v, [
+                'div', 'p', 'span', 'b', 'ul', 'li', 'ol', 'sub', 'sup', 'pre',
+                'a', 'blockquote',
+                'h1', 'h2', 'h3', 'h4', 'h5',
+                'strong', 'em',
+                'br',
+            ], strip=True, strip_comments=True))
+        return k, v
 
     return remap(data, sanitize)
+
+
+def taxonomy_reference(code, term):
+    return dict(
+        links=dict(
+            self=f'{DATA_URL}2.0/taxonomies/{code}/{term}'
+        )
+    )
 
 
 def publish_dataset(dataset_json, id):
@@ -148,11 +159,11 @@ def upload_file(files_url, files_dir, fle, published_files):
 def generate_access(metadata):
     """Generates access metadata section.
 
-        https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#allOf_i0_allOf_i1_metadata_access
+        https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#allOf_i0_allOf_i1_access
     """
     return {
-        'record': True,
-        'files': True,
+        'record': 'restricted',
+        'files': 'restricted',
         'owned_by': []
     }
 
@@ -160,7 +171,7 @@ def generate_access(metadata):
 def generate_creators(metadata):
     """Generates record creators metadata.
 
-       https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#allOf_i0_allOf_i1_metadata_creators
+       https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#allOf_i0_allOf_i1_creators
     """
     creators = []
     for creator in metadata['creators']:
@@ -177,7 +188,7 @@ def generate_creators(metadata):
 
         aff = creator.pop('affiliation', None)
         if aff:
-           c['affiliations'] = [{'name': aff}]
+            c['affiliations'] = [{'name': aff}]
 
         creators.append(c)
 
@@ -185,7 +196,100 @@ def generate_creators(metadata):
 
 
 def generate_languages(metadata):
+    """Generates languages metadata.
 
+       https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#allOf_i0_allOf_i1_languages
+    """
+    lang = metadata.pop('language', None)
+    languages = []
+    if not lang:
+        lang = 'eng'
+
+    languages.append(taxonomy_reference('languages', lang))
+
+    return languages
+
+
+def generate_resource_type(metadata):
+    """Generates resource type taxonomy field metadata.
+
+       https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#allOf_i0_allOf_i1_resource_type
+    """
+    # types: Taxonomy = current_flask_taxonomies.get_taxonomy('resourceType')
+    rtype = metadata['resource_type'].pop('type')
+    if rtype == 'dataset':
+        rtype = 'datasets'
+
+    return {
+        'type': taxonomy_reference('resourceType', rtype)
+    }
+
+
+def generate_record_identifiers(metadata):
+    """Generates additional record identifiers metadata.
+
+       https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#allOf_i0_allOf_i1_identifiers
+    """
+    return  [{'identifier': metadata.pop('doi'), 'scheme': 'doi'}]
+
+
+def generate_related_identifiers(metadata):
+    """Generates related identifiers field metadata.
+
+       https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#allOf_i0_allOf_i1_related_identifiers
+    """
+    identifiers = []
+    for identifier in metadata.pop('related_identifiers', []):
+            identifiers.append({
+                'relation_type': taxonomy_reference('itemRelationType', str(identifier['relation']).lower()),
+                'identifier': identifier['identifier'],
+                'scheme': identifier['scheme'].lower()
+            })
+
+    return identifiers
+
+
+def generate_rights(metadata):
+    """Generates metadata for license rights field.
+
+       https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#allOf_i0_allOf_i1_rights
+    """
+    rights = []
+
+    # Maps license id codes to licenses taxonomy term paths
+    licmap = {
+        'CC-BY-4.0': 'cc/4-0/4-by',
+        'CC0-1.0': 'cc/zero/1-0'
+    }
+
+    license = metadata.pop('license')
+    if license:
+        rights.append(taxonomy_reference('licenses', licmap[license['id']]))
+
+    return rights
+
+
+def generate_secondary_communities(metadata):
+    """Generates record's secondary communities metadata."""
+    return [com['id'] for com in metadata.pop('communities', [])]
+
+
+def generate_dates(metadata):
+    """Generate date list from metadata.
+
+       https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#allOf_i0_allOf_i1_rights
+    """
+    created = metadata.pop('created', None)
+    dates = []
+    create_date = dateutil.parser.parse(created)
+
+    if created:
+        dates.append({
+            'date': create_date.strftime('%Y-%m-%d'),
+            'type': 'created'
+        })
+
+    return dates
 
 
 def convert_to_rdm(metadata):
@@ -193,35 +297,29 @@ def convert_to_rdm(metadata):
 
         https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#tab-pane_allOf_i0_allOf_i1
     """
-    
     metadata['created'] = dataset_json.pop('created')
     metadata['access'] = generate_access(metadata)
+    metadata['creator'] = 'dataset-ingest@cesnet.cz'
     metadata['creators'] = generate_creators(metadata)
     metadata['languages'] = generate_languages(metadata)
-    metadata['resource_type'].pop('title')
-    metadata.pop('language', None)
-    # TODO: update language mapping in oarepo-rdm-records to contain code prop!
-    # if lang:
-    #     metadata['language'] = {'code': lang[:2]}
+    metadata['resource_type'] = generate_resource_type(metadata)
+    metadata['identifiers'] = generate_record_identifiers(metadata)
+    metadata['related_identifiers'] = generate_related_identifiers(metadata)
+    metadata['rights'] = generate_rights(metadata)
+    metadata['_communities'] = generate_secondary_communities(metadata)
+    metadata['dates'] = generate_dates(metadata)
 
-    related = metadata.get('related_identifiers', None)
-    if related:
-        metadata['related_identifiers'] = [
-            {
-                'relation_type': str(r['relation']).lower(),
-                'identifier': r['identifier'],
-                'scheme': r['scheme'].lower()
-            } for r in related]
-    metadata['titles'] = [{'en': metadata.pop('title')}]
-    metadata['identifiers'] = [{'identifier': metadata.pop('doi'), 'scheme': 'doi'}]
-    metadata['abstract'] = {'description': {'en': metadata.pop('description')}, 'type': 'abstract'}
+    title = metadata.pop('title')
+    metadata['title'] = {'en': title, '_': title}
+    abstract = metadata.pop('description')
+    metadata['abstract'] = {'en': abstract, '_': abstract}
     notes = metadata.pop('notes', None)
     if notes:
-        metadata['additional_descriptions'] = [{'description': {'en': notes}, 'type': 'other'}]
-    license = metadata.pop('license')
-    metadata['rights'] = [{'rights': license['id'], 'identifier': license['id']}]
+        metadata['additional_descriptions'] = [{'en': notes, '_': notes}]
 
     # Drop unsupported fields
+    for fld in UNSUPPORTED_FIELDS:
+        metadata.pop(fld, None)
 
     return metadata
 
@@ -229,6 +327,11 @@ def convert_to_rdm(metadata):
 def import_dataset(pid, dataset_json, files_dir):
     files = dataset_json.pop('files', [])
     id = dataset_json['id']
+
+    # Drop computed internal fields which we don't need
+    for fld in COMPUTED_FIELDS:
+        dataset_json.pop(fld, None)
+
     metadata = dataset_json['metadata']
     metadata = sanitize_strings(metadata)
     metadata = convert_to_rdm(metadata)
