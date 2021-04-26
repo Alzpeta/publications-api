@@ -113,8 +113,7 @@ def schema_docs(schemas):
                 )
 
     # Generate and save schema index page
-    index_md = r"""
----
+    index_md = r"""---
 layout: default
 ---
 

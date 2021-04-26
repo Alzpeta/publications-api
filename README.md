@@ -19,6 +19,11 @@ and [OARepo-documents](https://github.com/oarepo/oarepo-documents).
 * Record references tracking
 * Harvesting of article metadata from DOI
 
+## Documentation
+
+You can find further documentation here:
+https://oarepo.github.io/publications-api/
+
 ## Instalation
 
 To setup your development environment, follow these steps:
