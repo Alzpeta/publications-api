@@ -96,4 +96,7 @@ OAREPO_FSM_ENABLED_REST_ENDPOINTS = [
 OAREPO_COMMUNITIES_ROLES = ['member', 'curator', 'publisher']
 """Roles present in each community."""
 
+OAREPO_COMMUNITIES_OWNED_BY_FIELD = 'access.owned_by'
+"""JSONpath to owned_by field in record's metadata to determine record owner for access control."""
+
 from . import invenio_hacks  # noqa to register app loaded event

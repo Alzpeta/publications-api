@@ -7,21 +7,29 @@
 #
 """Publications API cli commands."""
 import json
+import os
 import subprocess
+import tempfile
 import traceback
+from os.path import basename
 
 import click
 import tqdm
+from flask import current_app
 from flask.cli import with_appcontext
 from invenio_app.factory import create_api
 from invenio_db import db
 from invenio_files_rest.models import ObjectVersion, FileInstance, Bucket
 from invenio_indexer.api import RecordIndexer
+from invenio_jsonschemas import current_jsonschemas
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
+from invenio_records.api import _records_state
 from invenio_records.models import RecordMetadata
 from invenio_records_files.models import RecordsBuckets
 from invenio_search import current_search_client
 from invenio_search.utils import build_alias_name
+from json_schema_for_humans.generate import generate_from_file_object
+from jsonref import JsonRef
 from sqlalchemy_continuum import version_class, versioning_manager
 
 from publications.articles.constants import ARTICLE_PID_TYPE, ARTICLE_DRAFT_PID_TYPE
@@ -55,7 +63,7 @@ def clear(ctx, raise_on_error=True, only=None):
     # ClassName.query.delete()
 
     subprocess.call([
-        'invenio',
+        'oarepo',
         'index',
         'destroy',
         '--yes-i-know',
@@ -63,13 +71,61 @@ def clear(ctx, raise_on_error=True, only=None):
     ])
 
     subprocess.call([
-        'invenio',
+        'oarepo',
         'index',
         'init',
         '--force'
     ])
 
     db.session.commit()
+
+
+@publications.command('schema-docs')
+@click.argument('schemas', nargs=-1)
+@with_appcontext
+def schema_docs(schemas):
+    """Generates jsonschema docs for data models."""
+    for schema_path in schemas:
+        click.secho(f'Generating docs for schema {schema_path}')
+        schema = current_jsonschemas.get_schema(schema_path, with_refs=False, resolved=False)
+        schema = JsonRef.replace_refs(
+            schema,
+            jsonschema=True,
+            base_uri=current_app.config.get('JSONSCHEMAS_HOST'),
+            loader=_records_state.loader_cls(),
+        )
+
+        # TODO: this is necessary to resolve JSONRefs in allOf
+        schema = json.loads(json.dumps(schema, default=lambda x: x.__subject__))
+
+        # Generate and save html docs for the schema
+        with tempfile.NamedTemporaryFile(mode="w+") as schema_source:
+            schema_source.write(json.dumps(schema))
+            schema_source.flush()
+
+            with open(f'docs/schemas/{basename(schema_path.rstrip(".json"))}.html', mode='w+') as result_file:
+                click.secho(f'Writing schema docs to {result_file.name}', color='green')
+                generate_from_file_object(
+                    schema_file=schema_source,
+                    result_file=result_file,
+                    minify=True,
+                    expand_buttons=True
+                )
+
+    # Generate and save schema index page
+    index_md = r"""---
+layout: default
+---
+
+# Data Models Schema Docs
+
+"""
+    for f in os.listdir('docs/schemas/'):
+        if f.endswith('.html'):
+            index_md += f'- [{f.rstrip(".html")}](./{f})\n'
+
+    with open(f'docs/schemas/index.md', mode='w+') as index_file:
+        index_file.write(index_md)
 
 
 @publications.group('datasets')

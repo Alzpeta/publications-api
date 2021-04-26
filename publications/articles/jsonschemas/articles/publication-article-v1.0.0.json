@@ -1,21 +1,27 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "id": "https://repozitar-test.cesnet.cz/schemas/publications/publication-article-v1.0.0.json",
+  "id": "https://repozitar.cesnet.cz/schemas/publications/publication-article-v1.0.0.json",
   "additionalProperties": false,
   "title": "CESNET Publications repository - article record v1.0.0",
+  "description": "Record metadata schema specification for `https://repozitar.cesnet.cz/cesnet/articles{/draft}/` record collections",
   "type": "object",
   "allOf": [
     {
+      "title": "References to datasets",
+      "type": "object",
       "properties": {
         "datasets": {
+          "title": "List of datasets referenced by the article",
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
               "oarepo:draft": {
+                "title": "Is the referenced dataset in draft state?",
                 "type": "boolean"
               },
               "pid_value": {
+                "title": "Primary identifier of the referenced dataset",
                 "type": "string"
               }
             }
@@ -24,13 +30,13 @@
       }
     },
     {
-      "$ref": "/schemas/document-v1.0.0.json#/definitions/Document"
+      "$ref": "../document-v1.0.0.json#/definitions/Document"
     },
     {
-      "$ref": "/schemas/fsm-record-v1.0.0.json#/definitions/FSMRecord"
+      "$ref": "../fsm-record-v1.0.0.json#/definitions/FSMRecord"
     },
     {
-      "$ref": "/schemas/communities-v1.0.0.json#/definitions/Communities"
+      "$ref": "../communities-v1.0.0.json#/definitions/Communities"
     }
   ]
 }

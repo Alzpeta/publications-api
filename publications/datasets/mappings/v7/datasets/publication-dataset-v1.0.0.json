@@ -45,7 +45,7 @@
     "date_detection": false,
     "numeric_detection": false,
     "oarepo:extends": [
-      "dataset-v1.0.0.json#/DataSet",
+      "dataset-v2.0.0.json#/DataSet",
       "communities-v1.0.0.json#/Communities",
       "fsm-record-v1.0.0.json#/FSMRecord"
     ],
