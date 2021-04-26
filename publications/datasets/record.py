@@ -60,18 +60,6 @@ class DatasetDraftRecord(DraftRecordMixin,
                          DatasetBaseRecord):
     index_name = draft_index_name
 
-    def validate(self, *args, **kwargs):
-        if 'created' not in self:
-            self['created'] = datetime.date.today().strftime('%Y-%m-%d')
-        if 'creator' not in self:
-            if current_user and current_user.is_authenticated:
-                self['creator'] = current_user.email
-            else:
-                self['creator'] = 'anonymous'
-
-        self['modified'] = datetime.date.today().strftime('%Y-%m-%d')
-        return super().validate(*args, **kwargs)
-
     @property
     def canonical_url(self):
         return url_for(f'invenio_records_rest.draft-publications/datasets_item',

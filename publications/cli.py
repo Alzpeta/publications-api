@@ -63,7 +63,7 @@ def clear(ctx, raise_on_error=True, only=None):
     # ClassName.query.delete()
 
     subprocess.call([
-        'invenio',
+        'oarepo',
         'index',
         'destroy',
         '--yes-i-know',
@@ -71,7 +71,7 @@ def clear(ctx, raise_on_error=True, only=None):
     ])
 
     subprocess.call([
-        'invenio',
+        'oarepo',
         'index',
         'init',
         '--force'
