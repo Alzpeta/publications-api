@@ -184,6 +184,10 @@ def generate_creators(metadata):
     return creators
 
 
+def generate_languages(metadata):
+
+
+
 def convert_to_rdm(metadata):
     """Convert a current Zenodo dataset metadata to new RDM format.
 
@@ -193,14 +197,12 @@ def convert_to_rdm(metadata):
     metadata['created'] = dataset_json.pop('created')
     metadata['access'] = generate_access(metadata)
     metadata['creators'] = generate_creators(metadata)
+    metadata['languages'] = generate_languages(metadata)
     metadata['resource_type'].pop('title')
     metadata.pop('language', None)
     # TODO: update language mapping in oarepo-rdm-records to contain code prop!
     # if lang:
     #     metadata['language'] = {'code': lang[:2]}
-
-    # Convert creators
-
 
     related = metadata.get('related_identifiers', None)
     if related:
