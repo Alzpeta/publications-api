@@ -15,6 +15,10 @@ from publications.datasets.marshmallow import PublicationDatasetMetadataSchemaV1
 TOKEN = sys.argv[1]
 DATA_URL = sys.argv[2] if len(sys.argv) > 2 else 'https://localhost:8080/'
 DRY_RUN = False
+UNSUPPORTED_FIELDS = ['access_right', 'access_right_category',
+                      'relations', 'meeting', 'method']
+
+    metadata['_communities'] = [com['id'] for com in metadata.pop('communities', [])]
 
 
 def validate_dataset(dataset_json):
@@ -141,22 +145,54 @@ def upload_file(files_url, files_dir, fle, published_files):
         raise Exception()
 
 
-def generate_rdm_access(metadata):
+def generate_access(metadata):
+    """Generates access metadata section.
+
+        https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#allOf_i0_allOf_i1_metadata_access
+    """
     return {
-        'metadata': True,
+        'record': True,
         'files': True,
-        'access_right': metadata.pop('access_right', None),
-        'owned_by': None
+        'owned_by': []
     }
 
 
+def generate_creators(metadata):
+    """Generates record creators metadata.
+
+       https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#allOf_i0_allOf_i1_metadata_creators
+    """
+    creators = []
+    for creator in metadata['creators']:
+        c = {
+            'person_or_org': {
+                'type': 'personal',
+                'family_name': creator['name'].split(',')[0],
+                'given_name': creator['name'].split(',')[-1].strip()
+            }
+        }
+        orcid = creator.pop('orcid', None)
+        if orcid:
+            c['person_or_org']['identifiers'] = [{'identifier': orcid, 'scheme': 'orcid'}]
+
+        aff = creator.pop('affiliation', None)
+        if aff:
+           c['affiliations'] = [{'name': aff}]
+
+        creators.append(c)
+
+    return creators
+
+
 def convert_to_rdm(metadata):
-    """Convert a current Zenodo dataset metadata to new RDM format."""
-    metadata.pop('access_right_category')
-    metadata['_owners'] = dataset_json.pop('owners')
-    metadata['_created'] = dataset_json.pop('created')
-    metadata['_created_by'] = metadata['_owners'][0]
-    metadata['access'] = generate_rdm_access(metadata)
+    """Convert a current Zenodo dataset metadata to new RDM format.
+
+        https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#tab-pane_allOf_i0_allOf_i1
+    """
+    
+    metadata['created'] = dataset_json.pop('created')
+    metadata['access'] = generate_access(metadata)
+    metadata['creators'] = generate_creators(metadata)
     metadata['resource_type'].pop('title')
     metadata.pop('language', None)
     # TODO: update language mapping in oarepo-rdm-records to contain code prop!
@@ -164,16 +200,7 @@ def convert_to_rdm(metadata):
     #     metadata['language'] = {'code': lang[:2]}
 
     # Convert creators
-    for ix, c in enumerate(metadata['creators']):
-        metadata['creators'][ix]['type'] = 'personal'
-        metadata['creators'][ix]['family_name'] = c['name'].split(',')[0]
-        metadata['creators'][ix]['given_name'] = c['name'].split(',')[-1].strip()
-        orcid = metadata['creators'][ix].pop('orcid', None)
-        if orcid:
-            metadata['creators'][ix]['identifiers'] = {'orcid': orcid}
-        aff = metadata['creators'][ix].pop('affiliation', None)
-        if aff:
-            metadata['creators'][ix]['affiliations'] = [{'name': aff}]
+
 
     related = metadata.get('related_identifiers', None)
     if related:
@@ -193,10 +220,7 @@ def convert_to_rdm(metadata):
     metadata['rights'] = [{'rights': license['id'], 'identifier': license['id']}]
 
     # Drop unsupported fields
-    metadata.pop('relations', None)
-    metadata['_communities'] = [com['id'] for com in metadata.pop('communities', [])]
-    metadata.pop('meeting', None)
-    metadata.pop('method', None)
+
     return metadata
 
 
