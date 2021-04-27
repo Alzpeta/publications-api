@@ -14,13 +14,12 @@ COPY ./ .
 COPY ./docker/uwsgi/ ${INVENIO_INSTANCE_PATH}
 
 # Install 3rdparty unpublished deps
-RUN pip install poetry # 3rdparty/invenio-cesnet-proxyidp poetry
+RUN pip install poetry
 RUN poetry config virtualenvs.create false
 WORKDIR 3rdparty/s3-client
 RUN poetry install
 WORKDIR ../..
 RUN pip install 3rdparty/s3-client
-
+USER uwsgi
 RUN poetry install
-USER invenio
 ENTRYPOINT [ "bash", "-c"]

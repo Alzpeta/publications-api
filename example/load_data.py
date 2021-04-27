@@ -2,7 +2,6 @@ import json
 import multiprocessing as mp
 import os
 import sys
-from datetime import datetime
 from pprint import pprint
 from urllib.parse import urlencode, urlparse
 
@@ -230,7 +229,7 @@ def generate_record_identifiers(metadata):
 
        https://oarepo.github.io/publications-api/schemas/publication-dataset-v1.0.0.html#allOf_i0_allOf_i1_identifiers
     """
-    return  [{'identifier': metadata.pop('doi'), 'scheme': 'doi'}]
+    return [{'identifier': metadata.pop('doi'), 'scheme': 'doi'}]
 
 
 def generate_related_identifiers(metadata):
@@ -240,11 +239,11 @@ def generate_related_identifiers(metadata):
     """
     identifiers = []
     for identifier in metadata.pop('related_identifiers', []):
-            identifiers.append({
-                'relation_type': taxonomy_reference('itemRelationType', str(identifier['relation']).lower()),
-                'identifier': identifier['identifier'],
-                'scheme': identifier['scheme'].lower()
-            })
+        identifiers.append({
+            'relation_type': taxonomy_reference('itemRelationType', str(identifier['relation']).lower()),
+            'identifier': identifier['identifier'],
+            'scheme': identifier['scheme'].lower()
+        })
 
     return identifiers
 
@@ -338,7 +337,7 @@ def import_dataset(pid, dataset_json, files_dir):
 
     dataset_json = validate_dataset(metadata)
     published_files = set()
-
+    print('dataset json', dataset_json)
     dataset_url = publish_dataset(dataset_json, id)
     print('Created Dataset DRAFT on: ', dataset_url)
     files_url = dataset_url + '/files/?access_token=%s' % TOKEN
