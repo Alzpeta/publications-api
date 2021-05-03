@@ -130,7 +130,7 @@ class ArticleRecord(InvalidRecordAllowedMixin, ArticleBaseRecord):
 
     @property
     def canonical_url(self):
-        return url_for(f'invenio_records_rest.publications/articles_item',
+        return url_for(f'invenio_records_rest.articles_item',
                        pid_value=CommunityPIDValue(
                            self['id'],
                            current_oarepo_communities.get_primary_community_field(self)
@@ -142,7 +142,7 @@ class ArticleDraftRecord(DraftRecordMixin, DOIRecordMixin, ArticleBaseRecord):
 
     @property
     def canonical_url(self):
-        return url_for(f'invenio_records_rest.draft-publications/articles_item',
+        return url_for(f'invenio_records_rest.draft-articles_item',
                        pid_value=CommunityPIDValue(
                            self['id'],
                            current_oarepo_communities.get_primary_community_field(self)
