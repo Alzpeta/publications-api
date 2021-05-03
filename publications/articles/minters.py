@@ -16,17 +16,26 @@ from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 
 from publications.articles.constants import ARTICLE_PID_TYPE
-from publications.providers import PublicationProvider
 
 log = logging.getLogger('article-minter')
 
-class ArticleProvider(PublicationProvider):
+
+class ArticleProvider(RecordIdProviderV2):
     pid_type = ARTICLE_PID_TYPE
     """Type of persistent identifier."""
+
+    @classmethod
+    def generate_id(cls, options=None):
+        """Generate record id."""
+
+        return 'art-' + super().generate_id(options)
+
+
 class DOINotInData(Exception):
     def __init__(self, message="DOI not found in data"):
         self.message = message
         super().__init__(self.message)
+
 
 def getDoi(data):
     alt_id = data['alternative_identifiers']
@@ -34,10 +43,11 @@ def getDoi(data):
     for id in alt_id:
         if id['scheme'] == 'DOI':
             doi = id['value']
-    if(doi != ''):
+    if (doi != ''):
         return doi
     else:
         raise DOINotInData
+
 
 def article_minter(record_uuid, data):
     if 'id' not in data:
@@ -74,7 +84,8 @@ def article_minter(record_uuid, data):
 def article_all_minter(record_uuid, data):
     raise Exception('Should not be used as all datasets are readonly for all view')
 
-#temporary solution todo: delete this
+
+# temporary solution todo: delete this
 def article_minter_withoutdoi(record_uuid, data):
     if 'id' not in data:
         data['id'] = RecordIdProviderV2.generate_id()
