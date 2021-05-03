@@ -18,6 +18,7 @@ and [OARepo-documents](https://github.com/oarepo/oarepo-documents).
 * Record FSM state management for approvement processes
 * Record references tracking
 * Harvesting of article metadata from DOI
+* OARepo Communities for managing permissions on record collections
 
 ## Documentation
 
@@ -78,8 +79,51 @@ To setup your development environment, follow these steps:
 You can check if everything worked out by listing the API of dataset collection:
 
 ```shell
-curl -k  https://127.0.0.1:5000/datasets/ | jq
+curl -k -H 'Authorization: Bearer $INGEST_TOKEN' https://127.0.0.1:5000/datasets/all/ | jq
 ```
+
+## REST APIs
+
+This repository API package exposes the following REST API endpoints:
+
+_NOTE: another API endpoint URLs may be available to you depending on the
+permissions given to you for a specific record. You may find the available
+actions in a metadata returned by a **Record detail route** under `links`, `links->actions`
+or `links->transitions`._
+
+### Datasets
+
+#### Unapproved DRAFTs
+
+Newly created or edited Dataset records not approved by community curator belongs here:
+
+- **Collection route**: ```/<community_id>/datasets/draft/``` (for record creation only - POST)
+- **Record detail route**: ```/<community_id>/datasets/draft/<record_pid>```
+
+#### Approved records
+
+Collection of dataset records that were approved by a community curator:
+
+- **Record detail route**: ```/<community_id>/datasets/<record_pid>```
+
+#### Search for dataset records in all communities
+
+- **Search route**: ```/datasets/all/```
+
+#### Search for dataset records in a specific community
+
+- **Search route**: ```/<community_id>/datasets/all/```
+
+### Articles
+
+#### Unapproved DRAFTs
+
+Newly created or edited Article records not approved by community curator belongs here:
+
+- **Collection route**: ```/<community_id>/articles/draft/``` (for record creation only - POST)
+- **Record detail route**: ```/<community_id>/articles/draft/<record_pid>```
+
+
 
 
   [image]: https://img.shields.io/github/license/oarepo/publications-api.svg

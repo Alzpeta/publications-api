@@ -26,8 +26,8 @@ from publications.indexer import CommitingRecordIndexer
 from publications.links import publications_links_factory
 
 RECORDS_DRAFT_ENDPOINTS = {
-    'publications/articles': {
-        'draft': 'draft-publications/articles',
+    'articles': {
+        'draft': 'draft-articles',
 
         'pid_type': ARTICLE_PID_TYPE,
         'pid_minter': 'publications-article',
@@ -72,7 +72,7 @@ RECORDS_DRAFT_ENDPOINTS = {
             delete_file_factory=deny_all
         )
     },
-    'draft-publications/articles': {
+    'draft-articles': {
         'pid_type': ARTICLE_DRAFT_PID_TYPE,
         'search_class': ArticleRecordsSearch,
         'search_index': draft_index_name,
@@ -116,7 +116,37 @@ RECORDS_DRAFT_ENDPOINTS = {
 RECORDS_REST_ENDPOINTS = {
     # readonly url for both endpoints, does not have item route
     # as it is accessed from the endpoints above
-    'publications/all-articles': dict(
+    'all-community-articles': dict(
+        pid_type=ARTICLE_ALL_PID_TYPE + '-community-all',
+        pid_minter='all-publications-articles',
+        pid_fetcher='all-publications-articles',
+        default_endpoint_prefix=True,
+        record_class=ARTICLE_ALL_RECORD_CLASS,
+        search_class=ArticleRecordsSearch,
+        search_index=all_index_name,
+        search_factory_imp=community_search_factory,
+        search_serializers={
+            'application/json': 'oarepo_validate:json_search',
+        },
+        list_route='/<community_id>/articles/all/',
+        default_media_type='application/json',
+        max_result_window=10000,
+        links_factory_imp=partial(community_record_links_factory, original_links_factory=publications_links_factory),
+
+        # not used really
+        item_route=f'/articles'
+                   f'/not-used-but-must-be-present',
+        list_permission_factory_imp=allow_all,
+        create_permission_factory_imp=deny_all,
+        delete_permission_factory_imp=deny_all,
+        update_permission_factory_imp=deny_all,
+        read_permission_factory_imp=check_elasticsearch,
+        record_serializers={
+            'application/json': 'oarepo_validate:json_response',
+        },
+        use_options_view=False,
+    ),
+    'all-articles': dict(
         pid_type=ARTICLE_ALL_PID_TYPE,
         pid_minter='all-publications-articles',
         pid_fetcher='all-publications-articles',
@@ -128,7 +158,7 @@ RECORDS_REST_ENDPOINTS = {
         search_serializers={
             'application/json': 'oarepo_validate:json_search',
         },
-        list_route='/<community_id>/articles/',
+        list_route='/articles/all/',
         default_media_type='application/json',
         max_result_window=10000,
         links_factory_imp=partial(community_record_links_factory, original_links_factory=publications_links_factory),
