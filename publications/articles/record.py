@@ -36,7 +36,7 @@ from .constants import (
     ARTICLE_PREFERRED_SCHEMA
 )
 from .marshmallow import ArticleMetadataSchemaV1
-from .minters import article_minter_withoutdoi
+from .minters import article_minter
 from .permissions import create_draft_object_permission_impl
 
 published_index_name = 'articles-publication-article-v1.0.0'
@@ -130,7 +130,7 @@ class ArticleRecord(InvalidRecordAllowedMixin, ArticleBaseRecord):
 
     @property
     def canonical_url(self):
-        return url_for(f'invenio_records_rest.publications/articles_item',
+        return url_for(f'invenio_records_rest.articles_item',
                        pid_value=CommunityPIDValue(
                            self['id'],
                            current_oarepo_communities.get_primary_community_field(self)
@@ -142,7 +142,7 @@ class ArticleDraftRecord(DraftRecordMixin, DOIRecordMixin, ArticleBaseRecord):
 
     @property
     def canonical_url(self):
-        return url_for(f'invenio_records_rest.draft-publications/articles_item',
+        return url_for(f'invenio_records_rest.draft-articles_item',
                        pid_value=CommunityPIDValue(
                            self['id'],
                            current_oarepo_communities.get_primary_community_field(self)
@@ -179,7 +179,7 @@ class ArticleDraftRecord(DraftRecordMixin, DOIRecordMixin, ArticleBaseRecord):
         article['datasets'] = [datasetUrl]
         print(article)
         record_uuid = uuid.uuid4()
-        pid = article_minter_withoutdoi(record_uuid, article)
+        pid = article_minter(record_uuid, article)
         record = cls.create(data=article, id_=record_uuid)
         indexer = cls.DOCUMENT_INDEXER()
         indexer.index(record)

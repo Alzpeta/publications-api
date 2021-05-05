@@ -35,6 +35,9 @@ def handle_request_changes(sender, **kwargs):
 def handle_approve(sender, force=False, **kwargs):
     if isinstance(sender, DatasetDraftRecord):
         print('approving draft dataset', sender)
+
+        # TODO: update references in all referencing articles
+
         record_pid = PersistentIdentifier.query. \
             filter_by(pid_type=DATASET_DRAFT_PID_TYPE, object_uuid=sender.id).one()
         try:
@@ -62,6 +65,7 @@ def handle_approve(sender, force=False, **kwargs):
 def handle_revert_approval(sender, force=False, **kwargs):
     if isinstance(sender, DatasetRecord):
         print('reverting dataset approval', sender)
+        # TODO: update references in all referencing articles
         # TODO: send mail notification to interested people
         record_pid = PersistentIdentifier.query. \
             filter_by(pid_type=DATASET_PID_TYPE, object_uuid=sender.id).one()

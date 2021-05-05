@@ -27,8 +27,8 @@ from publications.links import publications_links_factory
 _ = lambda x: x
 
 RECORDS_DRAFT_ENDPOINTS = {
-    'publications/datasets': {
-        'draft': 'draft-publications/datasets',
+    'datasets': {
+        'draft': 'draft-datasets',
 
         'pid_type': DATASET_PID_TYPE,
         'pid_minter': 'publications-dataset',
@@ -78,7 +78,7 @@ RECORDS_DRAFT_ENDPOINTS = {
             delete_file_factory=deny_all
         )
     },
-    'draft-publications/datasets': {
+    'draft-datasets': {
         'pid_type': DATASET_DRAFT_PID_TYPE,
         'search_class': DatasetRecordsSearch,
         'search_index': draft_index_name,
@@ -124,8 +124,8 @@ RECORDS_DRAFT_ENDPOINTS = {
 RECORDS_REST_ENDPOINTS = {
     # readonly url for both endpoints, does not have item route
     # as it is accessed from the endpoints above
-    'publications/all-datasets': dict(
-        pid_type=DATASET_ALL_PID_TYPE,
+    'all-community-datasets': dict(
+        pid_type=DATASET_ALL_PID_TYPE + '-community-all',
         pid_minter='all-publications-datasets',
         pid_fetcher='all-publications-datasets',
         default_endpoint_prefix=True,
@@ -140,8 +140,9 @@ RECORDS_REST_ENDPOINTS = {
             'application/json': 'oarepo_validate.json_files_loader',
             'application/json-patch+json': 'oarepo_validate.json_loader'
         },
-        list_route='/<community_id>/datasets/',
-        links_factory_imp=partial(community_record_links_factory, original_links_factory=publications_links_factory),
+        list_route='/<community_id>/datasets/all/',
+        links_factory_imp=partial(community_record_links_factory,
+                                  original_links_factory=publications_links_factory),
         default_media_type='application/json',
         max_result_window=10000,
         # not used really
@@ -156,7 +157,36 @@ RECORDS_REST_ENDPOINTS = {
             'application/json': 'oarepo_validate:json_response',
         },
         use_options_view=False
-    )
+    ),
+    'all-datasets': dict(
+        pid_type=DATASET_ALL_PID_TYPE,
+        pid_minter='all-publications-datasets',
+        pid_fetcher='all-publications-datasets',
+        default_endpoint_prefix=True,
+        record_class=DATASET_ALL_RECORD_CLASS,
+        search_class=DatasetRecordsSearch,
+        search_index=all_index_name,
+        search_serializers={
+            'application/json': 'oarepo_validate:json_search',
+        },
+        list_route='/datasets/all/',
+        links_factory_imp=partial(community_record_links_factory,
+                                  original_links_factory=publications_links_factory),
+        default_media_type='application/json',
+        max_result_window=10000,
+        # not used really
+        item_route=f'/datasets'
+                   f'/not-used-but-must-be-present',
+        list_permission_factory_imp='publications.datasets.permissions.list_all_object_permission_impl',
+        create_permission_factory_imp=deny_all,
+        delete_permission_factory_imp=deny_all,
+        update_permission_factory_imp=deny_all,
+        read_permission_factory_imp=deny_all,
+        record_serializers={
+            'application/json': 'oarepo_validate:json_response',
+        },
+        use_options_view=False
+    ),
 }
 
 

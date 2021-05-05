@@ -18,6 +18,12 @@ log = logging.getLogger('dataset-minter')
 class DatasetProvider(RecordIdProviderV2):
     pid_type = DATASET_PID_TYPE
 
+    @classmethod
+    def generate_id(cls, options=None):
+        """Generate record id."""
+        
+        return 'dat-' + super().generate_id(options)
+
 
 def dataset_minter(record_uuid, data):
     assert 'id' not in data

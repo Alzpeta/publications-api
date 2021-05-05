@@ -3,7 +3,7 @@
   "id": "https://repozitar.cesnet.cz/schemas/publications/publication-dataset-v1.0.0.json",
   "additionalProperties": false,
   "title": "CESNET Publications repository - data set record v1.0.0",
-  "description": "Record metadata schema specification for `https://repozitar.cesnet.cz/cesnet/datasets{/draft}/` record collections",
+  "description": "Record metadata schema specification for `https://repozitar.cesnet.cz/<community_id>/datasets/draft/` record collections",
   "type": "object",
   "allOf": [
     {

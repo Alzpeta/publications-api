@@ -30,6 +30,14 @@ ELASTICSEARCH_DEFAULT_LANGUAGE_TEMPLATE = {
     }
 }
 
+# NOTE: Uncomment to enable ES trace logging
+# import logging
+#
+# es_trace_logger = logging.getLogger('elasticsearch.trace')
+# es_trace_logger.setLevel(logging.DEBUG)
+# handler = logging.StreamHandler()
+# es_trace_logger.addHandler(handler)
+
 INDEXER_RECORD_TO_INDEX = 'publications.indexer:record_to_index'
 
 # hack to serve schemas both on jsonschemas host and server name (if they differ)
@@ -74,22 +82,24 @@ OAUTHCLIENT_REST_REMOTE_APPS = dict(
 )
 
 OAREPO_COMMUNITIES_ENDPOINTS = [
-    'publications/datasets',
-    'draft-publications/datasets',
-    'publications/all-datasets',
-    'publications/articles',
-    'draft-publications/articles',
-    'publications/all-articles'
+    'datasets',
+    'draft-datasets',
+    'all-community-datasets',
+    'articles',
+    'draft-articles',
+    'all-community-articles'
 ]
 """List of community enabled endpoints."""
 
 OAREPO_FSM_ENABLED_REST_ENDPOINTS = [
-    'publications/datasets',
-    'draft-publications/datasets',
-    'publications/all-datasets',
-    'publications/articles',
-    'draft-publications/articles',
-    'publications/all-articles'
+    'datasets',
+    'draft-datasets',
+    'all-community-datasets',
+    'all-datasets',
+    'articles',
+    'draft-articles',
+    'all-community-articles',
+    'all-articles'
 ]
 """Enable FSM transitions for the community record collection."""
 
