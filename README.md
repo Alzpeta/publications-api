@@ -106,7 +106,7 @@ Collection of dataset records that were approved by a community curator:
 
 - **Record detail route**: ```/<community_id>/datasets/<record_pid>```
 
-#### Search for dataset records in all communities
+#### Search for dataset records across all communities
 
 - **Search route**: ```/datasets/all/```
 
@@ -122,8 +122,21 @@ Newly created or edited Article records not approved by community curator belong
 
 - **Collection route**: ```/<community_id>/articles/draft/``` (for record creation only - POST)
 - **Record detail route**: ```/<community_id>/articles/draft/<record_pid>```
+- **Create from DOI route**: ```/<community_id>/articles/draft/from-doi/``` (accepts POST with `doi` string field)
 
+#### Approved records
 
+Collection of article records that were approved by a community curator:
+
+- **Record detail route**: ```/<community_id>/articles/<record_pid>```
+
+#### Search for article records across all communities
+
+- **Search route**: ```/articles/all/```
+
+#### Search for article records in a specific community
+
+- **Search route**: ```/<community_id>/articles/all/```
 
 
   [image]: https://img.shields.io/github/license/oarepo/publications-api.svg
