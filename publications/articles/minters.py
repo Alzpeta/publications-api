@@ -31,83 +31,44 @@ class ArticleProvider(RecordIdProviderV2):
         return 'art-' + super().generate_id(options)
 
 
-class DOINotInData(Exception):
-    def __init__(self, message="DOI not found in data"):
-        self.message = message
-        super().__init__(self.message)
+def get_doi(data):
+    # TODO: make consistent with article jsonschema identifiers field
+    alt_ids = data['alternative_identifiers']
+    doi = None
+    for idf in alt_ids:
+        # Return the first DOI we find in identifiers field
+        if idf['scheme'] == 'DOI':
+            doi = idf['value']
+            break
 
-
-def getDoi(data):
-    alt_id = data['alternative_identifiers']
-    doi = ''
-    for id in alt_id:
-        if id['scheme'] == 'DOI':
-            doi = id['value']
-    if (doi != ''):
-        return doi
-    else:
-        raise DOINotInData
+    return doi
 
 
 def article_minter(record_uuid, data):
-    if 'id' not in data:
-        data['id'] = RecordIdProviderV2.generate_id()
-        # todo ArticleProvider podedit od RecordIdProviderV2
-        doi = getDoi(data)
-        print(doi)
+    """Similar to Dataset minter, but also creates DOI PIDs for articles."""
+    assert 'id' not in data
+
+    doi = get_doi(data)
+    doi_ids = [d.value for d in data.get('identifiers', []) if d.scheme == 'doi']
+
+    if doi and doi not in doi_ids:
+        # Append DOI to additional article identifiers metadata field
+        data.setdefault('identifiers', []).append({
+            'scheme': 'doi',
+            'value': doi
+        })
+        # And persist DOI PID reference to record in database
         PersistentIdentifier.create('doi', doi, object_type='rec',
                                     object_uuid=record_uuid,
                                     status=PIDStatus.REGISTERED)
 
-        provider = ArticleProvider.create(
-            object_type='rec',
-            object_uuid=record_uuid,
-            pid_value=data['id']
-        )
-    else:
-        try:
-            provider = ArticleProvider.get(pid_value=str(data['id']))
-        except PIDDoesNotExistError:
-            if current_user.has_role('synchronizer'):
-                provider = ArticleProvider.create(
-                    object_type='rec',
-                    object_uuid=record_uuid,
-                    pid_value=data['id'],
-                )
-                return provider.pid
-            else:
-                log.error('Id present in data but user has no role `synchronizer` - bailing out')
-            raise
+    provider = ArticleProvider.create(
+        object_type='rec',
+        object_uuid=record_uuid,
+    )
+    data['id'] = provider.pid.pid_value
     return provider.pid
 
 
 def article_all_minter(record_uuid, data):
     raise Exception('Should not be used as all datasets are readonly for all view')
-
-
-# temporary solution todo: delete this
-def article_minter_withoutdoi(record_uuid, data):
-    if 'id' not in data:
-        data['id'] = RecordIdProviderV2.generate_id()
-        # todo ArticleProvider podedit od RecordIdProviderV2
-        provider = ArticleProvider.create(
-            object_type='rec',
-            object_uuid=record_uuid,
-            pid_value=data['id']
-        )
-    else:
-        try:
-            provider = ArticleProvider.get(pid_value=str(data['id']))
-        except PIDDoesNotExistError:
-            if current_user.has_role('synchronizer'):
-                provider = ArticleProvider.create(
-                    object_type='rec',
-                    object_uuid=record_uuid,
-                    pid_value=data['id'],
-                )
-                return provider.pid
-            else:
-                log.error('Id present in data but user has no role `synchronizer` - bailing out')
-            raise
-
-    return provider.pid
