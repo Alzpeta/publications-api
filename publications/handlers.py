@@ -104,6 +104,7 @@ def handle_delete_draft(sender, **kwargs):
         record_pid.delete()
         db.session.commit()
 
+        # TODO: fix indexer for record (seems to always contact localhost:9200)
         indexer = current_drafts.indexer_for_record(sender)
         indexer.delete(sender, refresh=True)
 
