@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "publications-api"
-version = "0.7.1"
+version = "0.7.2"
 description = "CESNET repository for scientific publications and datasets"
 authors = [
     "Miroslav Bauer <bauer@cesnet.cz>"
@@ -15,7 +15,7 @@ requests = "^2.24.0"
 
 oarepo = "^3.3"
 oarepo-micro-api = "^3.3.0"
-oarepo-whitenoise = "^2.0"
+oarepo-whitenoise = "^2.0.0"
 oarepo-validate = "^1.0.0"
 oarepo-mapping-includes = "^1.2.0"
 oarepo-invenio-model = "^2.1.2"
