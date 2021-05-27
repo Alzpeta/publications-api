@@ -23,7 +23,14 @@ volumes:
   archived_data:
   uploaded_data:
   static_data:
+  uppy_data:
 services:
+#  uppy:
+#    extends:
+#      file: docker-services.yml
+#      service: uppy
+#    volumes:
+#      - uppy_data:/mnt/
   cache:
     ports:
       - "127.0.0.1:6379:6379"

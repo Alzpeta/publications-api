@@ -23,6 +23,10 @@ from publications.datasets.record import published_index_name, draft_index_name,
 from publications.datasets.search import DatasetRecordsSearch
 from publications.indexer import CommitingRecordIndexer
 from publications.links import publications_links_factory
+from oarepo_ui.facets import nested_facet
+from oarepo_ui.filters import nested_filter
+from oarepo_multilingual import language_aware_text_term_facet, language_aware_text_terms_filter
+from oarepo_communities.constants import STATE_PUBLISHED,STATE_EDITING, STATE_APPROVED,STATE_PENDING_APPROVAL,STATE_DELETED
 
 _ = lambda x: x
 
@@ -227,16 +231,6 @@ def state_terms_filter(field):
     return inner
 
 
-FILTERS = {
-    _('category'): terms_filter('category'),
-    _('creator'): terms_filter('creator.raw'),
-    _('title'): language_aware_text_match_filter('title'),
-    _('state'): state_terms_filter('state'),
-    # draft
-    **DRAFT_IMPORTANT_FILTERS
-}
-
-
 def term_facet(field, order='desc', size=100, missing=None):
     ret = {
         'terms': {
@@ -250,15 +244,30 @@ def term_facet(field, order='desc', size=100, missing=None):
     return ret
 
 
+FILTERS = {
+    _('state'): state_terms_filter('state'),
+    _('keywords'): terms_filter('keywords'),
+    _('languages'): nested_filter('languages', language_aware_text_terms_filter('languages.title')),
+    _('creators'): terms_filter('creators.raw'),
+    _('rights'): nested_filter('rights', language_aware_text_terms_filter('rights.title')),
+    _('title'): language_aware_text_match_filter('title'),
+    # draft
+    **DRAFT_IMPORTANT_FILTERS
+}
+
+
 FACETS = {
-    'state': translate_facet(term_facet('state', missing='filling'), possible_values=[
-        _('filling'),
-        _('approving'),
-        _('approved'),
-        _('published'),
-        _('deleted')
+    'state': translate_facet(term_facet('state', missing=STATE_EDITING), possible_values=[
+        _(STATE_EDITING),
+        _(STATE_PENDING_APPROVAL),
+        _(STATE_APPROVED),
+        _(STATE_PUBLISHED),
+        _(STATE_DELETED)
     ]),
-    'creator': term_facet('creator.raw'),
+    # 'contributors': nested_facet('contributors', term_facet('contributors.person_or_org.name.raw')),
+    'languages': nested_facet('languages', language_aware_text_term_facet('languages.title')),
+    'keywords': term_facet('keywords'),
+    'rights': nested_facet('rights', language_aware_text_term_facet('rights.title')),
     **DRAFT_IMPORTANT_FACETS
 }
 

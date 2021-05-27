@@ -62,6 +62,14 @@ services:
       - "POSTGRES_USER=publications-user"
       - "POSTGRES_PASSWORD=publications-pass"
       - "POSTGRES_DB=publications"
+  uppy:
+    image: transloadit/companion
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "127.0.0.1:3020:3020"
+    env_file:
+      - .env.companion
   mq:
     image: rabbitmq:3-management
     restart: "always"
