@@ -296,6 +296,12 @@ RECORDS_REST_SORT_OPTIONS = {
             'default_order': 'asc',
             'order': 1
         },
+        'date_created': {
+            'title': 'date_created',
+            'fields': ['dates'],
+            'default_order': 'desc',
+            'order': 1
+        },
         'best_match': {
             'title': 'Best match',
             'fields': ['_score'],
