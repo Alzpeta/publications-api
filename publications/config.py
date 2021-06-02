@@ -30,6 +30,10 @@ ELASTICSEARCH_DEFAULT_LANGUAGE_TEMPLATE = {
     }
 }
 
+RATELIMIT_PER_ENDPOINT = {
+    'oarepo_records_draft.draft-datasets_presigned_part': '25000 per hour'
+}
+
 # NOTE: Uncomment to enable ES trace logging
 # import logging
 #
