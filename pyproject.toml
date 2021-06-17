@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "publications-api"
-version = "1.0.5"
+version = "1.0.6"
 description = "CESNET repository for scientific publications and datasets"
 authors = [
     "Miroslav Bauer <bauer@cesnet.cz>"
@@ -28,7 +28,7 @@ oarepo-iiif = "^1.1.1"
 oarepo-ui = "^2.0"
 invenio-oauth2server = "^1.2.0"
 invenio-openid-connect = "^2.0"
-s3-client-lib = { git = "https://github.com/CESNET/s3-client.git" }
+s3-client-lib = "0.1.6"
 oarepo-fsm = "^1.5"
 oarepo-actions = "^1.0.5"
 tqdm = "^4.56.0"
