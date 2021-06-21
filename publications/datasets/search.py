@@ -13,10 +13,10 @@ class DatasetRecordsSearch(CommunitySearch):
     """Dataset collection search."""
     LIST_SOURCE_FIELDS = [
         'id', 'oarepo:validity.valid', 'oarepo:draft',
-        'title', 'abstract', 'creator', 'dates', 'resource_type',
-        'contributor', 'keywords', 'subject', 'abstract', 'state',
+        'title', 'abstract', 'creators', 'dates', 'resource_type',
+        'contributor', 'keywords', 'subject', 'abstract', 'state', 'languages',
         '_primary_community', '_communities', 'access'
-        '$schema'
+        '$schema', '_files'
     ]
     HIGHLIGHT_FIELDS = {
         'title.cs': None,
