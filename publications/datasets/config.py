@@ -23,10 +23,11 @@ from publications.datasets.record import published_index_name, draft_index_name,
 from publications.datasets.search import DatasetRecordsSearch
 from publications.indexer import CommitingRecordIndexer
 from publications.links import publications_links_factory
-from oarepo_ui.facets import nested_facet
+from oarepo_ui.facets import nested_facet, RoleFacets
 from oarepo_ui.filters import nested_filter
 from oarepo_multilingual import language_aware_text_term_facet, language_aware_text_terms_filter
-from oarepo_communities.constants import STATE_PUBLISHED,STATE_EDITING, STATE_APPROVED,STATE_PENDING_APPROVAL,STATE_DELETED
+from oarepo_communities.constants import STATE_PUBLISHED, STATE_EDITING, STATE_APPROVED, STATE_PENDING_APPROVAL, \
+    STATE_DELETED
 
 _ = lambda x: x
 
@@ -248,13 +249,13 @@ FILTERS = {
     _('state'): state_terms_filter('state'),
     _('keywords'): terms_filter('keywords'),
     _('languages'): nested_filter('languages', language_aware_text_terms_filter('languages.title')),
-    _('creators'): terms_filter('creators.raw'),
+    _('creators'): nested_filter('creators.person_or_org', terms_filter('creators.person_or_org.name')),
+    _('affiliations'): nested_filter('creators.affiliations', terms_filter('creators.affiliations.name')),
     _('rights'): nested_filter('rights', language_aware_text_terms_filter('rights.title')),
     _('title'): language_aware_text_match_filter('title'),
     # draft
     **DRAFT_IMPORTANT_FILTERS
 }
-
 
 FACETS = {
     'state': translate_facet(term_facet('state', missing=STATE_EDITING), possible_values=[
@@ -267,23 +268,37 @@ FACETS = {
     # 'contributors': nested_facet('contributors', term_facet('contributors.person_or_org.name.raw')),
     'languages': nested_facet('languages', language_aware_text_term_facet('languages.title')),
     'keywords': term_facet('keywords'),
+    'affiliations': nested_facet('creators.affiliations', term_facet('creators.affiliations.name')),
+    'creators': nested_facet('creators.person_or_org', term_facet('creators.person_or_org.name')),
     'rights': nested_facet('rights', language_aware_text_term_facet('rights.title')),
     **DRAFT_IMPORTANT_FACETS
 }
 
+
+class RoleFacetsDict(RoleFacets, dict):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def keys(self):
+        return self.data.get(self.current_role(), {}).keys()
+
+    def __getitem__(self, key):
+        return self.get(key)
+
+
 RECORDS_REST_FACETS = {
-    draft_index_name: {
-        'aggs': translate_facets(FACETS, label='{facet_key}', value='{value_key}'),
-        'filters': translate_filters(FILTERS, label='{filter_key}')
-    },
-    published_index_name: {
-        'aggs': translate_facets(FACETS, label='{facet_key}'),
-        'filters': translate_filters(FILTERS, label='{filter_key}')
-    },
-    all_index_name: {
-        'aggs': translate_facets(FACETS, label='{facet_key}'),
-        'filters': translate_filters(FILTERS, label='{filter_key}')
-    },
+    draft_index_name: dict(
+        aggs=translate_facets(FACETS, label='{facet_key}', value='{value_key}'),
+        filters=translate_filters(FILTERS, label='{filter_key}')
+    ),
+    published_index_name: dict(
+        aggs=translate_facets(FACETS, label='{facet_key}', value='{value_key}'),
+        filters=translate_filters(FILTERS, label='{filter_key}')
+    ),
+    all_index_name: dict(
+        aggs=translate_facets(FACETS, label='{facet_key}', value='{value_key}'),
+        filters=translate_filters(FILTERS, label='{filter_key}')
+    )
 }
 
 RECORDS_REST_SORT_OPTIONS = {
@@ -291,9 +306,21 @@ RECORDS_REST_SORT_OPTIONS = {
         'alphabetical': {
             'title': 'alphabetical',
             'fields': [
-                'title._.raw'
+                'state',
+                'title.cs.raw',
+                'title.en.raw'
             ],
             'default_order': 'asc',
+            'order': 1
+        },
+        'alphabetical_desc': {
+            'title': 'alphabetical_desc',
+            'fields': [
+                'state',
+                '-title.cs.raw',
+                '-title.en.raw',
+            ],
+            'default_order': 'desc',
             'order': 1
         },
         'date_created': {
