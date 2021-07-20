@@ -33,7 +33,7 @@ class ArticleProvider(RecordIdProviderV2):
 
 def get_doi(data):
     # TODO: make consistent with article jsonschema identifiers field
-    alt_ids = data['alternative_identifiers']
+    alt_ids = data.get('alternative_identifiers', [])
     doi = None
     for idf in alt_ids:
         # Return the first DOI we find in identifiers field

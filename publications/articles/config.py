@@ -61,7 +61,10 @@ RECORDS_DRAFT_ENDPOINTS = {
         'search_serializers': {
             'application/json': 'oarepo_validate:json_search',
         },
-
+        'record_loaders': {
+            'application/json-patch+json': 'oarepo_validate.json_loader',
+            'application/json': 'oarepo_validate.json_files_loader'
+        },
         'list_route': '/<community_id>/articles/published/',  # will not be used
         'item_route':
             f'/<commpid({ARTICLE_PID_TYPE},model="articles",record_class="{ARTICLE_RECORD_CLASS}"):pid_value>',
