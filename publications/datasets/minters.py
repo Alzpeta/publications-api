@@ -22,7 +22,7 @@ class DatasetProvider(RecordIdProviderV2):
     def generate_id(cls, options=None):
         """Generate record id."""
         
-        return 'dat-' + super().generate_id(options)
+        return  super().generate_id(options)
 
 
 def dataset_minter(record_uuid, data):

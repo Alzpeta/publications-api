@@ -58,7 +58,7 @@ To setup your development environment, follow these steps:
 7) Run project setup script. Doing so will initialize all tables, indices and user roles. It will also create
    an ingester user and corresponding API TOKEN which you may need later on.
    ```shell
-   bash setup.sh
+   ./scripts/setup.sh
    ```
 8) Start the Publications API server, e.g. by running:
    ```shell

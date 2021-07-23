@@ -79,6 +79,10 @@ all-publications-articles = "publications.articles.fetchers:article_all_fetcher"
 [tool.poetry.plugins."oarepo_iiif.openers"]
 image-opener = "publications.images:opener"
 
+[tool.poetry.plugins."invenio_db.alembic"]
+publications-alembic = "publications:alembic"
+
+
 [tool.poetry.plugins."oarepo_iiif.checks"]
 image-checker = "publications.images:checker"
 

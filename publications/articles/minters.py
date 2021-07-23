@@ -28,7 +28,7 @@ class ArticleProvider(RecordIdProviderV2):
     def generate_id(cls, options=None):
         """Generate record id."""
 
-        return 'art-' + super().generate_id(options)
+        return  super().generate_id(options)
 
 
 def get_doi(data):
