@@ -1,0 +1,97 @@
+[tool.poetry]
+name = "publications-api"
+version = "1.0.8"
+description = "CESNET repository for scientific publications and datasets"
+authors = [
+    "Miroslav Bauer <bauer@cesnet.cz>"
+]
+packages = [
+    { include = "publications" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.24.0"
+
+oarepo = "^3.3"
+oarepo-micro-api = "^3.3.0"
+oarepo-whitenoise = "^2.0.0"
+oarepo-validate = "^1.0.0"
+oarepo-mapping-includes = "^1.2.0"
+oarepo-invenio-model = "^2.1.2"
+oarepo-rdm-records = "^3.2.0"
+oarepo-s3 = "^1.3"
+oarepo-records-draft = "^5.5"
+oarepo-taxonomies = "ˆ3.1.1"
+invenio-records-files = "^1.2.1"
+oarepo-iiif = "^1.1.1"
+oarepo-ui = "^2.0"
+invenio-oauth2server = "^1.2.0"
+invenio-openid-connect = "^2.0"
+s3-client-lib = "0.1.6"
+oarepo-fsm = "^1.5"
+oarepo-actions = "^1.0.5"
+tqdm = "^4.56.0"
+oarepo-documents = "^1.0.8"
+oarepo-communities = "^2.3.0"
+oarepo-health-check = "^1.0.2"
+cesnet-openid-remote = "^2.1.5"
+boltons = "^20.0.0"
+invenio-logging = {extras = ["sentry-sdk"], version = "^1.3.0"}
+json-schema-for-humans = "^0.32.1"
+
+[tool.poetry.plugins."invenio_config.module"]
+publications = "publications.config"
+
+[tool.poetry.plugins."invenio_search.mappings"]
+datasets = "publications.datasets.mappings"
+articles = "publications.articles.mappings"
+
+[tool.poetry.plugins."invenio_base.apps"]
+publications = "publications.ext:Publications"
+publications-dataset = "publications.datasets.ext:PublicationsDatasets"
+publications-article = "publications.articles.ext:PublicationsArticles"
+
+[tool.poetry.plugins."invenio_base.api_apps"]
+publications = "publications.ext:Publications"
+publications-dataset = "publications.datasets.ext:PublicationsDatasets"
+publications-article = "publications.articles.ext:PublicationsArticles"
+invenio_i18n = "invenio_i18n:InvenioI18N"
+
+[tool.poetry.plugins."flask.commands"]
+publications = "publications.cli:publications"
+
+[tool.poetry.plugins."invenio_jsonschemas.schemas"]
+publications-dataset = "publications.datasets.jsonschemas"
+publications-article = "publications.articles.jsonschemas"
+
+[tool.poetry.plugins."invenio_pidstore.minters"]
+publications-dataset = "publications.datasets.minters:dataset_minter"
+publications-article = "publications.articles.minters:article_minter"
+all-publications-datasets = "publications.datasets.minters:dataset_all_minter"
+all-publications-articles = "publications.articles.minters:article_all_minter"
+
+[tool.poetry.plugins."invenio_pidstore.fetchers"]
+publications-dataset = "publications.datasets.fetchers:dataset_fetcher"
+publications-article = "publications.articles.fetchers:article_fetcher"
+all-publications-datasets = "publications.datasets.fetchers:dataset_all_fetcher"
+all-publications-articles = "publications.articles.fetchers:article_all_fetcher"
+
+[tool.poetry.plugins."oarepo_iiif.openers"]
+image-opener = "publications.images:opener"
+
+[tool.poetry.plugins."invenio_db.alembic"]
+publications-alembic = "publications:alembic"
+
+[tool.poetry.plugins."oarepo_iiif.checks"]
+image-checker = "publications.images:checker"
+
+[tool.poetry.plugins."oarepo_iiif.identifier_makers"]
+image-checker = "publications.images:identifier_maker"
+
+[tool.poetry.plugins."invenio_i18n.translations"]
+publications = "publications"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
